@@ -24,6 +24,11 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
               {
                 "glob": "**/*",
                 "input": "node_modules/@taiga-ui/icons/src",
@@ -31,9 +36,9 @@
               }
             ],
             "styles": [
-              "@taiga-ui/styles/taiga-ui-theme.less",
-              "@taiga-ui/styles/taiga-ui-fonts.less",
-              "@taiga-ui/addon-mobile/styles/taiga-ui-mobile.less",
+              "@taiga-ui/core/styles/taiga-ui-theme.less",
+              "@taiga-ui/core/styles/taiga-ui-fonts.less",
+              "@taiga-ui/styles/taiga-ui-global.less",
               "src/styles.scss"
             ],
             "scripts": []
