@@ -1,0 +1,6 @@
+{
+    "*": "prettier --check --ignore-unknown",
+    "*.ts, *.html": "npm run lint",
+    "*.{css,scss,sass}": "stylelint --fix"
+  }
+  

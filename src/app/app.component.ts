@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
-import {TuiRoot} from '@taiga-ui/core';
+
+import { TuiRoot } from '@taiga-ui/core';
+
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, TuiRoot],
@@ -19,12 +21,12 @@ export class AppComponent implements OnInit, OnDestroy {
     // this.brightnessSub = interval(6000).subscribe(() =>
     //   this.toggleBrightness()
     // );
-  //   const data = window.WebApp.initData;
-  //   console.log('initData:', data);
-  //   window.WebApp.requestContact().then(({phone}) => {
-  //     console.log(`Номер телефона пользователя ${phone}`)
-  // });
-  window.WebApp.openMaxLink('https://www.twitch.tv/madarapoe');
+    //   const data = window.WebApp.initData;
+    //   console.log('initData:', data);
+    //   window.WebApp.requestContact().then(({phone}) => {
+    //     console.log(`Номер телефона пользователя ${phone}`)
+    // });
+    window.WebApp.openMaxLink('https://www.twitch.tv/madarapoe');
   }
 
   openLink() {
@@ -64,19 +66,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private async toggleBrightness(): Promise<void> {
     try {
       if (!this.isMaxBrightness) {
-        const { isScreenCaptureEnabled } =
-          await window.WebApp.ScreenCapture.disableScreenCapture();
-        console.log(
-          'Отключена возможность захвата экрана:',
-          isScreenCaptureEnabled
-        );
+        const { isScreenCaptureEnabled } = await window.WebApp.ScreenCapture.disableScreenCapture();
+        console.log('Отключена возможность захвата экрана:', isScreenCaptureEnabled);
       } else {
-        const { isScreenCaptureEnabled } =
-          await window.WebApp.ScreenCapture.enableScreenCapture();
-        console.log(
-          'Включена возможность захвата экрана:',
-          isScreenCaptureEnabled
-        );
+        const { isScreenCaptureEnabled } = await window.WebApp.ScreenCapture.enableScreenCapture();
+        console.log('Включена возможность захвата экрана:', isScreenCaptureEnabled);
       }
       this.isMaxBrightness = !this.isMaxBrightness;
     } catch (error) {

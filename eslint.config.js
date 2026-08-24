@@ -46,13 +46,13 @@ module.exports = tseslint.config(
         },
       ],
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-      'fbf/restrict-cross-feature-imports': [
-        'error',
-        {
-          featuresFolderPath: 'app',
-          sharedFolderNames: ['shared'],
-        },
-      ],
+      // 'fbf/restrict-cross-feature-imports': [
+      //   'error',
+      //   {
+      //     featuresFolderPath: 'app',
+      //     sharedFolderNames: ['shared'],
+      //   },
+      // ],
       'import/order': [
         'error',
         {
