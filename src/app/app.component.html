@@ -1,6 +1,40 @@
 <tui-root>
-    <!-- content of your app -->
-    <ng-container ngProjectAs="tuiOverContent">
-      <!-- Content over app content in the portal layer -->
-    </ng-container>
-  </tui-root>
+  <!-- @switch (initialization.state) {
+    @case ('initializing') {
+        <app-loading-screen />
+    }
+
+    @case ('browser') {
+        <app-auth />
+    }
+
+    @case ('max-authentication-required') {
+        <app-auth />
+    }
+
+    @case ('max-authenticated') {
+        <router-outlet />
+    }
+
+    @case ('error') {
+        <app-error />
+    }
+} -->
+  <router-outlet></router-outlet>
+
+  <ng-container ngProjectAs="tuiOverContent">
+    <!-- Content over app content -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverDialogs">
+    <!-- Content over dialogs -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverAlerts">
+    <!-- Content over alerts -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverDropdowns">
+    <!-- Content over dropdowns -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverHints">
+    <!-- Content over hints -->
+  </ng-container>
+</tui-root>
