@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 
@@ -46,40 +47,24 @@ export class AuthFormComponent {
     this.form.controls.fullName.updateValueAndValidity();
   }
 
-  protected async submit(): Promise<void> {
+  protected submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-
       return;
     }
 
     this.isLoading.set(true);
-    this.errorMessage.set(null);
 
-    try {
-      const { phone, password, fullName, birthday } = this.form.getRawValue();
-
-      if (this.isRegistration()) {
-        await this.authService.register({
-          phone,
-          password,
-          fullName: fullName,
-          birthday: birthday,
-        });
-      } else {
-        await this.authService.login({
-          phone,
-          password,
-        });
-      }
-
-      await this.router.navigate(['/roles']);
-    } catch (error) {
-      console.error(error);
-
-      this.errorMessage.set('Не удалось выполнить операцию. Проверьте введённые данные.');
-    } finally {
-      this.isLoading.set(false);
-    }
+    this.authService
+      .login(this.form.getRawValue())
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: () => {
+          void this.router.navigate(['/roles']);
+        },
+        error: (error) => {
+          // обработка ошибки
+        },
+      });
   }
 }

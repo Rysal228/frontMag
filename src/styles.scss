@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --app-color-text: var(--tui-text-primary);
+  --app-color-text-secondary: green;
+
+  --app-color-background: var(--tui-background-base);
+
+  --app-color-negative: var(--tui-status-negative);
+  --app-color-positive: var(--tui-status-positive);
+
+  --app-color-primary: var(--tui-text-action);
+
+  --app-border-color: var(--tui-border-normal);
+}
