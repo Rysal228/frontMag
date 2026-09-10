@@ -1,11 +1,11 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-import { AppInitializationService } from '../services/max/app-initialization.service';
+import { TokenStore } from '../storage/auth-token-store';
 
 export const authGuard: CanActivateFn = () => {
-  const initialization = inject(AppInitializationService);
+  const tokenStore = inject(TokenStore);
   const router = inject(Router);
 
-  return initialization.state() === 'authenticated' ? true : router.parseUrl('/auth');
+  return tokenStore.isAuthenticated ? true : router.parseUrl('/auth');
 };

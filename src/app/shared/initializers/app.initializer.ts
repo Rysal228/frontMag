@@ -6,12 +6,14 @@ import { AppInitializationService } from '../services/max/app-initialization.ser
 import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.service';
 import { MaxBridgeService } from '../services/max/max-bridge.service';
 import { PlatformService } from '../services/max/platform.service';
+import { TokenStore } from '../storage/auth-token-store';
 
 export async function initializeApplication(): Promise<void> {
   const bridgeLoader = inject(MaxBridgeLoaderService);
   const maxBridge = inject(MaxBridgeService);
   const platform = inject(PlatformService);
   const authService = inject(AuthService);
+  const tokenStore = inject(TokenStore);
   const initialization = inject(AppInitializationService);
 
   initialization.setState('initializing');
@@ -19,7 +21,7 @@ export async function initializeApplication(): Promise<void> {
   const bridgeLoaded = await bridgeLoader.load();
 
   if (!bridgeLoaded || !platform.isMax) {
-    initialization.setState('authentication-required');
+    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
 
     return;
   }
@@ -27,7 +29,7 @@ export async function initializeApplication(): Promise<void> {
   const initData = maxBridge.initData;
 
   if (!initData) {
-    initialization.setState('authentication-required');
+    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
 
     return;
   }
