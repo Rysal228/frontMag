@@ -1,5 +1,55 @@
-<h1>Авторизация</h1>
+<div class="screen">
+  <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1 class="title">
+      {{ isRegistration() ? 'Регистрация' : 'Авторизация' }}
+    </h1>
 
-<p>Для продолжения необходимо авторизоваться.</p>
+    <p class="subtitle">
+      {{ isRegistration() ? 'Создайте аккаунт для продолжения' : 'Введите номер телефона и пароль' }}
+    </p>
 
-<button tuiButton type="button">Войти</button>
+    <tui-textfield>
+      <label tuiLabel>Номер телефона</label>
+
+      <input formControlName="phone" tuiInput type="tel" autocomplete="tel" />
+    </tui-textfield>
+
+    <tui-error formControlName="phone" />
+
+    <tui-textfield>
+      <label tuiLabel>Пароль</label>
+
+      <input formControlName="password" tuiInput type="password" autocomplete="current-password" />
+    </tui-textfield>
+
+    <tui-error formControlName="password" />
+
+    @if (isRegistration()) {
+      <tui-textfield>
+        <label tuiLabel>ФИО</label>
+
+        <input formControlName="fullName" tuiInput autocomplete="name" />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Дата рождения</label>
+
+        <input formControlName="birthday" tuiInput type="date" />
+      </tui-textfield>
+    }
+
+    @if (errorMessage(); as error) {
+      <p class="error">
+        {{ error }}
+      </p>
+    }
+
+    <button tuiButton type="submit" size="l" [disabled]="isLoading()">
+      {{ isRegistration() ? 'Зарегистрироваться' : 'Войти' }}
+    </button>
+
+    <button tuiButton appearance="flat" type="button" (click)="toggleMode()">
+      {{ isRegistration() ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться' }}
+    </button>
+  </form>
+</div>
