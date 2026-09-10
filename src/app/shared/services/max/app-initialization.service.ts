@@ -1,19 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
-export type AppInitializationState =
-  'initializing' | 'browser' | 'max-authenticated' | 'max-authentication-required' | 'error';
+export type AppInitializationState = 'initializing' | 'authentication-required' | 'authenticated' | 'error';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppInitializationService {
-  private _state: AppInitializationState = 'initializing';
+  private readonly _state = signal<AppInitializationState>('initializing');
 
-  public get state(): AppInitializationState {
-    return this._state;
-  }
+  public readonly state = this._state.asReadonly();
 
   public setState(state: AppInitializationState): void {
-    this._state = state;
+    this._state.set(state);
   }
 }

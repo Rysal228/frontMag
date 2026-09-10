@@ -17,8 +17,4 @@ export class PlatformService {
   public get isBrowser(): boolean {
     return !this.isMax;
   }
-
-  public get platform() {
-    return this.maxBridge.platform;
-  }
 }
