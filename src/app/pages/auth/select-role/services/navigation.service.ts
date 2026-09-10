@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog.token';
+import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
 import { UserRole } from 'app/shared/types/roles.types';
 
 @Injectable({ providedIn: 'root' })

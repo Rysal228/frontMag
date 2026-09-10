@@ -1,27 +1,59 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Observable, finalize, firstValueFrom, shareReplay, tap, throwError } from 'rxjs';
 
-type MaxAuthRequest = {
-  initData: string;
-};
-
-type AuthResponse = {
-  accessToken: string;
-  refreshToken: string;
-};
+import { MaxAuthRequest, RefreshTokenRequest } from 'app/shared/models/auth.model';
+import { TokenStore } from 'app/shared/storage/auth-token-store';
+import { AuthTokens } from 'app/shared/types/auth.types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly tokenStore = inject(TokenStore);
 
-  public async authenticateWithMax(initData: string): Promise<AuthResponse> {
-    return firstValueFrom(
-      this.http.post<AuthResponse>('/api/auth/max', {
+  private refreshRequest$: Observable<AuthTokens> | null = null;
+
+  public async authenticateWithMax(initData: string): Promise<void> {
+    const tokens = await firstValueFrom(
+      this.http.post<AuthTokens>('/api/auth/max', {
         initData,
       } satisfies MaxAuthRequest)
     );
+
+    this.tokenStore.set(tokens);
+  }
+
+  public refresh(): Observable<AuthTokens> {
+    if (this.refreshRequest$) {
+      return this.refreshRequest$;
+    }
+
+    const refreshToken = this.tokenStore.refreshToken;
+
+    if (!refreshToken) {
+      return throwError(() => new Error('Refresh token is not available'));
+    }
+
+    this.refreshRequest$ = this.http
+      .post<AuthTokens>('/api/auth/token/refresh/', {
+        refreshToken,
+      } satisfies RefreshTokenRequest)
+      .pipe(
+        tap((tokens) => {
+          this.tokenStore.set(tokens);
+        }),
+        finalize(() => {
+          this.refreshRequest$ = null;
+        }),
+        shareReplay(1)
+      );
+
+    return this.refreshRequest$;
+  }
+
+  public logout(): void {
+    this.tokenStore.clear();
   }
 }

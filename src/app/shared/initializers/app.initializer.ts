@@ -16,10 +16,10 @@ export async function initializeApplication(): Promise<void> {
 
   initialization.setState('initializing');
 
-  await bridgeLoader.load();
+  const bridgeLoaded = await bridgeLoader.load();
 
-  if (!platform.isMax) {
-    initialization.setState('browser');
+  if (!bridgeLoaded || !platform.isMax) {
+    initialization.setState('authentication-required');
 
     return;
   }
@@ -27,7 +27,7 @@ export async function initializeApplication(): Promise<void> {
   const initData = maxBridge.initData;
 
   if (!initData) {
-    initialization.setState('max-authentication-required');
+    initialization.setState('authentication-required');
 
     return;
   }
@@ -35,7 +35,7 @@ export async function initializeApplication(): Promise<void> {
   try {
     await authService.authenticateWithMax(initData);
 
-    initialization.setState('max-authenticated');
+    initialization.setState('authenticated');
   } catch {
     initialization.setState('error');
   }

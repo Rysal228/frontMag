@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 
-import { ROLE_CATALOG } from '../tokens/role-catalog.token';
+import { ROLE_CATALOG } from '../tokens/role-catalog';
 import { UserRole } from '../types/roles.types';
 
 @Pipe({

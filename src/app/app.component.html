@@ -1,39 +1,38 @@
 <tui-root>
-  <!-- @switch (initialization.state) {
+  @switch (initialization.state()) {
     @case ('initializing') {
-        <app-loading-screen />
+      <div class="app-state">Загрузка приложения...</div>
     }
 
-    @case ('browser') {
-        <app-auth />
+    @case ('authentication-required') {
+      <router-outlet />
     }
 
-    @case ('max-authentication-required') {
-        <app-auth />
-    }
-
-    @case ('max-authenticated') {
-        <router-outlet />
+    @case ('authenticated') {
+      <router-outlet />
     }
 
     @case ('error') {
-        <app-error />
+      <div class="app-state">Не удалось выполнить инициализацию приложения.</div>
     }
-} -->
-  <router-outlet></router-outlet>
+  }
 
   <ng-container ngProjectAs="tuiOverContent">
     <!-- Content over app content -->
   </ng-container>
+
   <ng-container ngProjectAs="tuiOverDialogs">
     <!-- Content over dialogs -->
   </ng-container>
+
   <ng-container ngProjectAs="tuiOverAlerts">
     <!-- Content over alerts -->
   </ng-container>
+
   <ng-container ngProjectAs="tuiOverDropdowns">
     <!-- Content over dropdowns -->
   </ng-container>
+
   <ng-container ngProjectAs="tuiOverHints">
     <!-- Content over hints -->
   </ng-container>
