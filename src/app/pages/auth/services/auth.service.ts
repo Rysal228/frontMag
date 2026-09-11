@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, finalize, firstValueFrom, shareReplay, tap, throwError } from 'rxjs';
+import { Observable, finalize, shareReplay, tap, throwError } from 'rxjs';
 
+import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import { MaxAuthRequest, RefreshTokenRequest } from 'app/shared/models/auth.model';
 import { TokenStore } from 'app/shared/storage/auth-token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
@@ -15,14 +16,12 @@ export class AuthService {
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
 
-  public async authenticateWithMax(initData: string): Promise<void> {
-    const tokens = await firstValueFrom(
-      this.http.post<AuthTokens>('/api/auth/max', {
-        initData,
-      } satisfies MaxAuthRequest)
+  public authenticateWithMax(initData: string): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.max, { initData } satisfies MaxAuthRequest).pipe(
+      tap((tokens) => {
+        this.tokenStore.set(tokens);
+      })
     );
-
-    this.tokenStore.set(tokens);
   }
 
   public refresh(): Observable<AuthTokens> {
@@ -37,9 +36,7 @@ export class AuthService {
     }
 
     this.refreshRequest$ = this.http
-      .post<AuthTokens>('/api/auth/token/refresh/', {
-        refreshToken,
-      } satisfies RefreshTokenRequest)
+      .post<AuthTokens>(API_ENDPOINTS.auth.refresh, { refreshToken } satisfies RefreshTokenRequest)
       .pipe(
         tap((tokens) => {
           this.tokenStore.set(tokens);

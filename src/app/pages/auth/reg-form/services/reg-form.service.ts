@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
+import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import { RegisterRequest } from 'app/shared/models/auth.model';
 import { TokenStore } from 'app/shared/storage/auth-token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
@@ -15,7 +16,7 @@ export class RegFormService {
 
   public register(request: RegisterRequest): Observable<AuthTokens> {
     return this.http
-      .post<AuthTokens>('/api/auth/register/', request)
+      .post<AuthTokens>(API_ENDPOINTS.auth.register, request)
       .pipe(tap((tokens) => this.tokenStore.set(tokens)));
   }
 }

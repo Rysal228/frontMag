@@ -1,7 +1,13 @@
-<label tuiLabel>
-  {{ label() }}
+<div class="field">
+  <label class="label">
+    {{ label() }}
+  </label>
 
   <ng-content />
-</label>
 
-<tui-error [formControlName]="controlName()" />
+  @if (showError) {
+    <p class="error">
+      {{ errorMessage }}
+    </p>
+  }
+</div>
