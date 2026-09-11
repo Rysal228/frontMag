@@ -3,7 +3,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
+
+import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
+import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 
 import { AuthFormService } from './services/auth-form.service';
 
@@ -12,7 +15,7 @@ type LoginMethod = 'password' | 'code';
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [ReactiveFormsModule, TuiButton, TuiTextfield, TuiError],
+  imports: [ReactiveFormsModule, TuiButton, FormFieldComponent, TextFieldComponent],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

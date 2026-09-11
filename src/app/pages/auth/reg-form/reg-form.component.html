@@ -1,47 +1,17 @@
-<form class="form" [formGroup]="form" (ngSubmit)="submit()">
-  <div class="heading">
-    <h1 class="title">Регистрация</h1>
+<div class="fields">
+  <app-form-field label="Номер телефона" controlName="phone">
+    <app-text-field formControlName="phone" type="tel" autocomplete="tel" />
+  </app-form-field>
 
-    <p class="subtitle">Создайте аккаунт для продолжения.</p>
-  </div>
+  <app-form-field label="Пароль" controlName="password">
+    <app-password-field formControlName="password" autocomplete="new-password" />
+  </app-form-field>
 
-  <div class="fields">
-    <tui-textfield>
-      <label tuiLabel> Номер телефона </label>
+  <app-form-field label="ФИО" controlName="fullName">
+    <app-text-field formControlName="fullName" autocomplete="name" />
+  </app-form-field>
 
-      <input formControlName="phone" tuiInput type="tel" autocomplete="tel" />
-    </tui-textfield>
-
-    <tui-error formControlName="phone" />
-
-    <tui-textfield>
-      <label tuiLabel> Пароль </label>
-
-      <input formControlName="password" tuiInput type="password" autocomplete="new-password" />
-    </tui-textfield>
-
-    <tui-error formControlName="password" />
-
-    <tui-textfield>
-      <label tuiLabel> ФИО </label>
-
-      <input formControlName="fullName" tuiInput autocomplete="name" />
-    </tui-textfield>
-
-    <tui-error formControlName="fullName" />
-
-    <tui-textfield>
-      <label tuiLabel> Дата рождения </label>
-
-      <input formControlName="birthday" tuiInput type="date" />
-    </tui-textfield>
-  </div>
-
-  @if (errorMessage(); as error) {
-    <p class="error">
-      {{ error }}
-    </p>
-  }
-
-  <button tuiButton type="submit" size="l" [disabled]="isLoading()">Зарегистрироваться</button>
-</form>
+  <app-form-field label="Дата рождения" controlName="birthday">
+    <app-date-field formControlName="birthday" />
+  </app-form-field>
+</div>

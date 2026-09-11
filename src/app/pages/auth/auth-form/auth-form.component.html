@@ -6,13 +6,9 @@
   </div>
 
   <div class="fields">
-    <tui-textfield>
-      <label tuiLabel> Номер телефона </label>
-
-      <input formControlName="phone" tuiInput type="tel" autocomplete="tel" />
-    </tui-textfield>
-
-    <tui-error formControlName="phone" />
+    <app-form-field label="Номер телефона" controlName="phone">
+      <app-text-field formControlName="phone" type="tel" autocomplete="tel" />
+    </app-form-field>
 
     <div class="method">
       <span class="method-title"> Способ входа </span>
@@ -41,23 +37,15 @@
     </div>
 
     @if (loginMethod() === 'password') {
-      <tui-textfield>
-        <label tuiLabel> Пароль </label>
-
-        <input formControlName="password" tuiInput type="password" autocomplete="current-password" />
-      </tui-textfield>
-
-      <tui-error formControlName="password" />
+      <app-form-field label="Пароль" controlName="password">
+        <app-password-field formControlName="password" autocomplete="current-password" />
+      </app-form-field>
     }
 
     @if (loginMethod() === 'code') {
-      <tui-textfield>
-        <label tuiLabel> Код из MAX </label>
-
-        <input formControlName="code" tuiInput inputmode="numeric" autocomplete="one-time-code" />
-      </tui-textfield>
-
-      <tui-error formControlName="code" />
+      <app-form-field label="Код из MAX" controlName="code">
+        <app-text-field formControlName="code" type="text" inputmode="numeric" autocomplete="one-time-code" />
+      </app-form-field>
 
       <p class="hint">Код будет отправлен через MAX.</p>
     }

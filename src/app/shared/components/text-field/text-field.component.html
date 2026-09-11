@@ -1,0 +1,12 @@
+<tui-textfield>
+  <input
+    tuiTextfield
+    [type]="type()"
+    [value]="value"
+    [disabled]="disabled"
+    [autocomplete]="autocomplete()"
+    [placeholder]="placeholder()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+</tui-textfield>
