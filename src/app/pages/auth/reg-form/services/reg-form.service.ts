@@ -14,6 +14,8 @@ export class RegFormService {
   private readonly tokenStore = inject(TokenStore);
 
   public register(request: RegisterRequest): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>('/api/auth/login/', request).pipe(tap((tokens) => this.tokenStore.set(tokens)));
+    return this.http
+      .post<AuthTokens>('/api/auth/register/', request)
+      .pipe(tap((tokens) => this.tokenStore.set(tokens)));
   }
 }

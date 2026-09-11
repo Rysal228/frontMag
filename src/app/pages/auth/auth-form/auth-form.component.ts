@@ -1,50 +1,56 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 
-import { AuthService } from '../services/auth.service';
+import { AuthFormService } from './services/auth-form.service';
+
+type LoginMethod = 'password' | 'code';
 
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [ReactiveFormsModule, TuiButton, TuiError, TuiTextfield],
+  imports: [ReactiveFormsModule, TuiButton, TuiTextfield, TuiError],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthFormComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
+  private readonly authService = inject(AuthFormService);
   private readonly router = inject(Router);
 
-  protected readonly isRegistration = signal(false);
+  protected readonly loginMethod = signal<LoginMethod>('password');
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    phone: ['', [Validators.required]],
+    phone: ['', Validators.required],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    fullName: [''],
-    birthday: [''],
+    code: [''],
   });
 
-  protected toggleMode(): void {
-    this.isRegistration.update((value) => !value);
+  protected setLoginMethod(method: LoginMethod): void {
+    this.loginMethod.set(method);
     this.errorMessage.set(null);
 
-    this.form.reset();
+    const password = this.form.controls.password;
+    const code = this.form.controls.code;
 
-    this.form.controls.password.setValidators([Validators.required, Validators.minLength(8)]);
+    if (method === 'password') {
+      password.setValidators([Validators.required, Validators.minLength(8)]);
 
-    if (this.isRegistration()) {
-      this.form.controls.fullName.setValidators([Validators.maxLength(250)]);
+      code.clearValidators();
     } else {
-      this.form.controls.fullName.clearValidators();
+      password.clearValidators();
+
+      code.setValidators([Validators.required]);
     }
 
-    this.form.controls.fullName.updateValueAndValidity();
+    password.updateValueAndValidity();
+    code.updateValueAndValidity();
   }
 
   protected submit(): void {
@@ -53,17 +59,29 @@ export class AuthFormComponent {
       return;
     }
 
+    if (this.loginMethod() === 'code') {
+      this.errorMessage.set('Авторизация по коду пока недоступна.');
+
+      return;
+    }
+
     this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    const { phone, password } = this.form.getRawValue();
 
     this.authService
-      .login(this.form.getRawValue())
+      .login({
+        phone,
+        password,
+      })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
           void this.router.navigate(['/roles']);
         },
-        error: (error) => {
-          // обработка ошибки
+        error: () => {
+          this.errorMessage.set('Не удалось выполнить авторизацию. Проверьте номер телефона и пароль.');
         },
       });
   }

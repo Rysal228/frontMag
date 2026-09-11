@@ -1,29 +1,73 @@
-<div class="screen">
-  <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+<form class="form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="heading">
     <h1 class="title">Авторизация</h1>
 
+    <p class="subtitle">Войдите в аккаунт удобным способом.</p>
+  </div>
+
+  <div class="fields">
     <tui-textfield>
-      <label tuiLabel>Номер телефона</label>
+      <label tuiLabel> Номер телефона </label>
 
       <input formControlName="phone" tuiInput type="tel" autocomplete="tel" />
     </tui-textfield>
 
     <tui-error formControlName="phone" />
 
-    <tui-textfield>
-      <label tuiLabel>Пароль</label>
+    <div class="method">
+      <span class="method-title"> Способ входа </span>
 
-      <input formControlName="password" tuiInput type="password" autocomplete="current-password" />
-    </tui-textfield>
+      <div class="methods">
+        <button
+          tuiButton
+          type="button"
+          size="m"
+          [appearance]="loginMethod() === 'password' ? 'primary' : 'flat'"
+          (click)="setLoginMethod('password')"
+        >
+          По паролю
+        </button>
 
-    <tui-error formControlName="password" />
+        <button
+          tuiButton
+          type="button"
+          size="m"
+          [appearance]="loginMethod() === 'code' ? 'primary' : 'flat'"
+          (click)="setLoginMethod('code')"
+        >
+          По коду
+        </button>
+      </div>
+    </div>
 
-    @if (errorMessage(); as error) {
-      <p class="error">
-        {{ error }}
-      </p>
+    @if (loginMethod() === 'password') {
+      <tui-textfield>
+        <label tuiLabel> Пароль </label>
+
+        <input formControlName="password" tuiInput type="password" autocomplete="current-password" />
+      </tui-textfield>
+
+      <tui-error formControlName="password" />
     }
 
-    <button tuiButton type="submit" size="l" [disabled]="isLoading()">Войти</button>
-  </form>
-</div>
+    @if (loginMethod() === 'code') {
+      <tui-textfield>
+        <label tuiLabel> Код из MAX </label>
+
+        <input formControlName="code" tuiInput inputmode="numeric" autocomplete="one-time-code" />
+      </tui-textfield>
+
+      <tui-error formControlName="code" />
+
+      <p class="hint">Код будет отправлен через MAX.</p>
+    }
+  </div>
+
+  @if (errorMessage(); as error) {
+    <p class="error">
+      {{ error }}
+    </p>
+  }
+
+  <button tuiButton type="submit" size="l" [disabled]="isLoading()">Войти</button>
+</form>

@@ -5,7 +5,7 @@ import { authGuard } from './shared/guards/auth.guard';
 export const routes: Routes = [
   {
     path: 'auth',
-    loadComponent: () => import('./pages/auth/auth-form/auth-form.component').then((c) => c.AuthFormComponent),
+    loadComponent: () => import('./pages/auth/auth-page.component').then((c) => c.AuthPageComponent),
   },
 
   {

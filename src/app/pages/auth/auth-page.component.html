@@ -1,3 +1,11 @@
-<button tuiButton appearance="flat" type="button" (click)="toggleMode()">
-  {{ isRegistration() ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться' }}
-</button>
+<div class="screen">
+  @if (mode() === 'login') {
+    <app-auth-form />
+  } @else {
+    <app-reg-form />
+  }
+
+  <button tuiButton appearance="flat" type="button" (click)="toggleMode()">
+    {{ mode() === 'login' ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти' }}
+  </button>
+</div>
