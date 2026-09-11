@@ -1,11 +1,14 @@
 :host {
   display: block;
-  inline-size: min(100%, 28rem);
+  width: 50%;
+  background: var(--color-background-01);
+  border-radius: 1rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
+  padding: 1rem;
   gap: 1.25rem;
 }
 
@@ -21,7 +24,6 @@
 
 .subtitle {
   margin: 0;
-  color: var(--app-color-text-secondary);
 }
 
 .fields {
@@ -36,10 +38,6 @@
   gap: 0.5rem;
 }
 
-.method-title {
-  color: var(--app-color-text-secondary);
-}
-
 .methods {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -48,10 +46,9 @@
 
 .hint {
   margin: 0;
-  color: var(--app-color-text-secondary);
 }
 
 .error {
   margin: 0;
-  color: var(--app-color-negative);
+  color: var(--tui-text-negative);
 }

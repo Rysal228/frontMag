@@ -19,6 +19,8 @@ import { TuiTextfield } from '@taiga-ui/core';
   ],
 })
 export class TextFieldComponent implements ControlValueAccessor {
+  public readonly type = input<'text' | 'tel' | 'email'>('text');
+
   public readonly inputmode = input<'none' | 'text' | 'decimal' | 'numeric' | 'tel' | 'search' | 'email' | 'url'>(
     'text'
   );

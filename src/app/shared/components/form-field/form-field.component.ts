@@ -8,8 +8,8 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
-import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-form-field',
@@ -37,7 +37,7 @@ export class FormFieldComponent implements AfterContentInit {
       return;
     }
 
-    control.statusChanges.pipe(takeUntil(this.destroyRef)).subscribe(() => {
+    control.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateError();
       this.cdr.markForCheck();
     });

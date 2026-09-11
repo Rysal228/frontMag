@@ -8,12 +8,8 @@
   gap: 0.375rem;
 }
 
-.label {
-  color: var(--app-color-text);
-}
-
 .error {
   margin: 0;
-  color: var(--app-color-negative);
+  color: var(--tui-text-negative);
   font-size: 0.875rem;
 }
