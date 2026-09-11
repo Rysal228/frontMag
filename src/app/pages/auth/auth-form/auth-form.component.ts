@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { TuiButton } from '@taiga-ui/core';
 
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
+import { PasswordFieldComponent } from 'app/shared/components/password-field/password-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 
 import { AuthFormService } from './services/auth-form.service';
@@ -15,7 +16,7 @@ type LoginMethod = 'password' | 'code';
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [ReactiveFormsModule, TuiButton, FormFieldComponent, TextFieldComponent],
+  imports: [ReactiveFormsModule, TuiButton, FormFieldComponent, TextFieldComponent, PasswordFieldComponent],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

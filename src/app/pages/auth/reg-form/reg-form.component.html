@@ -1,17 +1,30 @@
-<div class="fields">
-  <app-form-field label="Номер телефона">
-    <app-text-field formControlName="phone" type="tel" autocomplete="tel" />
-  </app-form-field>
+<form class="form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="heading">
+    <h1 class="title">Регистрация</h1>
+    <p class="subtitle">Создайте аккаунт для продолжения.</p>
+  </div>
 
-  <app-form-field label="Пароль">
-    <app-password-field formControlName="password" autocomplete="new-password" />
-  </app-form-field>
+  <div class="fields">
+    <app-form-field label="Номер телефона">
+      <app-text-field formControlName="phone" type="tel" autocomplete="tel" />
+    </app-form-field>
 
-  <app-form-field label="ФИО">
-    <app-text-field formControlName="fullName" autocomplete="name" />
-  </app-form-field>
+    <app-form-field label="Пароль">
+      <app-password-field formControlName="password" autocomplete="new-password" />
+    </app-form-field>
 
-  <app-form-field label="Дата рождения">
-    <app-date-field formControlName="birthday" />
-  </app-form-field>
-</div>
+    <app-form-field label="ФИО">
+      <app-text-field formControlName="fullName" autocomplete="name" />
+    </app-form-field>
+
+    <app-form-field label="Дата рождения">
+      <app-date-field formControlName="birthday" />
+    </app-form-field>
+  </div>
+
+  @if (errorMessage(); as error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <button tuiButton type="submit" size="l" [disabled]="isLoading()">Зарегистрироваться</button>
+</form>

@@ -86,11 +86,13 @@
   --tui-background-base: #2a2a2a;
   --tui-text-primary: white;
   --tui-text-action: white;
+  --tui-service-autofill-background: none;
 }
 
 @mixin light-theme-vars {
   --tui-background-base: white;
   --tui-text-primary: blue;
+  --tui-service-autofill-background: none;
 }
 
 @media (prefers-color-scheme: light) {
