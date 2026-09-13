@@ -9,7 +9,7 @@ import {
   input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgControl } from '@angular/forms';
+import { NgControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-form-field',
@@ -52,9 +52,13 @@ export class FormFieldComponent implements AfterContentInit {
     this.errorMessage = this.getErrorMessage(control?.errors);
   }
 
-  private getErrorMessage(errors: Record<string, unknown> | null | undefined): string {
+  private getErrorMessage(errors: ValidationErrors | null | undefined): string {
     if (!errors) {
       return '';
+    }
+
+    if (errors['server']) {
+      return String(errors['server']);
     }
 
     if (errors['required']) {
@@ -67,6 +71,10 @@ export class FormFieldComponent implements AfterContentInit {
 
     if (errors['maxlength']) {
       return 'Значение слишком длинное';
+    }
+
+    if (errors['phone']) {
+      return 'Введите корректный номер телефона';
     }
 
     return 'Некорректное значение';

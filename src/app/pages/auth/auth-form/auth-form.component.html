@@ -7,7 +7,7 @@
 
   <div class="fields">
     <app-form-field label="Номер телефона" controlName="phone">
-      <app-text-field formControlName="phone" type="tel" autocomplete="tel" />
+      <app-text-field formControlName="phone" type="tel" [maskitoOptions]="phoneMaskitoOptions" />
     </app-form-field>
 
     <div class="method">

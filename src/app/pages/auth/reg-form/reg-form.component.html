@@ -6,15 +6,15 @@
 
   <div class="fields">
     <app-form-field label="Номер телефона">
-      <app-text-field formControlName="phone" type="tel" autocomplete="tel" />
+      <app-text-field formControlName="phone" type="tel" [maskitoOptions]="phoneMaskitoOptions" />
     </app-form-field>
 
     <app-form-field label="Пароль">
-      <app-password-field formControlName="password" autocomplete="new-password" />
+      <app-password-field formControlName="password" />
     </app-form-field>
 
     <app-form-field label="ФИО">
-      <app-text-field formControlName="fullName" autocomplete="name" />
+      <app-text-field formControlName="fullName" />
     </app-form-field>
 
     <app-form-field label="Дата рождения">

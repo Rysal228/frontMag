@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MaskitoDirective } from '@maskito/angular';
+import type { MaskitoOptions } from '@maskito/core';
 
 import { TuiTextfield } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-text-field',
   standalone: true,
-  imports: [TuiTextfield],
+  imports: [TuiTextfield, MaskitoDirective],
   templateUrl: './text-field.component.html',
   styleUrl: './text-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +28,8 @@ export class TextFieldComponent implements ControlValueAccessor {
   );
   public readonly autocomplete = input<string | null>(null);
   public readonly placeholder = input<string | null>(null);
+
+  public readonly maskitoOptions = input<MaskitoOptions | null>(null);
 
   protected value = '';
   protected disabled = false;

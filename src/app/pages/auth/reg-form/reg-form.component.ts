@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,6 +10,9 @@ import { DateFieldComponent } from 'app/shared/components/date-field/date-field.
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { PasswordFieldComponent } from 'app/shared/components/password-field/password-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
+import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
+import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
+import { phoneValidator } from 'app/shared/validators/phone.validator';
 
 import { RegFormService } from './services/reg-form.service';
 
@@ -34,9 +38,10 @@ export class RegFormComponent {
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly phoneMaskitoOptions = PHONE_MASKITO_OPTIONS;
 
   protected readonly form = this.fb.nonNullable.group({
-    phone: ['', Validators.required],
+    phone: ['', [Validators.required, phoneValidator()]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     fullName: ['', Validators.maxLength(250)],
     birthday: [''],
@@ -65,8 +70,10 @@ export class RegFormComponent {
         next: () => {
           void this.router.navigate(['/roles']);
         },
-        error: () => {
-          this.errorMessage.set('Не удалось выполнить регистрацию. Проверьте введённые данные.');
+        error: (error: HttpErrorResponse) => {
+          const formError = applyApiFormErrors(error, this.form);
+
+          this.errorMessage.set(formError ?? 'Не удалось выполнить регистрацию.');
         },
       });
   }
