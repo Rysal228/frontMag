@@ -44,27 +44,36 @@ export class RegFormComponent {
   protected readonly form = this.fb.nonNullable.group({
     phone: ['', [Validators.required, phoneValidator()]],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    fullName: ['', Validators.maxLength(250)],
+
+    lastName: ['', [Validators.required, Validators.maxLength(150)]],
+
+    firstName: ['', [Validators.required, Validators.maxLength(150)]],
+
+    patronymic: ['', Validators.maxLength(150)],
+
     birthday: [''],
   });
 
   protected submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+
       return;
     }
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    const { phone, password, fullName, birthday } = this.form.getRawValue();
+    const { phone, password, firstName, lastName, patronymic, birthday } = this.form.getRawValue();
 
     this.authService
       .register({
         phone: normalizePhone(phone),
         password,
-        fullName: fullName,
-        birthday: birthday,
+        firstName,
+        lastName,
+        patronymic,
+        birthday,
       })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
