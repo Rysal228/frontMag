@@ -1,3 +1,5 @@
 export function normalizePhone(value: string): string {
-  return value.replace(/\D/g, '');
+  const digits = value.replace(/\D/g, '');
+
+  return `+${digits}`;
 }

@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import { LoginRequest } from 'app/shared/models/auth.model';
-import { TokenStore } from 'app/shared/storage/auth-token-store';
+import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
 
 @Injectable({

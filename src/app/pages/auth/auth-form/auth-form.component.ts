@@ -11,6 +11,7 @@ import { PasswordFieldComponent } from 'app/shared/components/password-field/pas
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
 import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
+import { normalizePhone } from 'app/shared/utils/phone-normalize.util';
 import { phoneValidator } from 'app/shared/validators/phone.validator';
 
 import { AuthFormService } from './services/auth-form.service';
@@ -81,15 +82,14 @@ export class AuthFormComponent {
 
     this.authService
       .login({
-        phone,
+        phone: normalizePhone(phone),
         password,
       })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
-          void this.router.navigate(['/roles']);
+          return this.router.navigate(['/roles']);
         },
-
         error: (error: HttpErrorResponse) => {
           const formError = applyApiFormErrors(error, this.form);
 

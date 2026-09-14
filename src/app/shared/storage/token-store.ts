@@ -1,16 +1,17 @@
 import { inject, Injectable, signal } from '@angular/core';
 
+import { LocalStorageService } from '../services/local-storage.service';
 import { AuthTokens } from '../types/auth.types';
 
-import { TOKEN_STORAGE } from './token-storage';
+const TOKEN_STORAGE_KEY = 'app_auth_tokens';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenStore {
-  private readonly storage = inject(TOKEN_STORAGE);
+  private readonly storage = inject(LocalStorageService);
 
-  private readonly _tokens = signal<AuthTokens | null>(this.storage.read());
+  private readonly _tokens = signal<AuthTokens | null>(this.readTokens());
 
   public readonly tokens = this._tokens.asReadonly();
 
@@ -28,11 +29,21 @@ export class TokenStore {
 
   public set(tokens: AuthTokens): void {
     this._tokens.set(tokens);
-    this.storage.write(tokens);
+    this.storage.set(TOKEN_STORAGE_KEY, tokens);
   }
 
   public clear(): void {
     this._tokens.set(null);
-    this.storage.clear();
+    this.storage.remove(TOKEN_STORAGE_KEY);
+  }
+
+  private readTokens(): AuthTokens | null {
+    const tokens = this.storage.get<AuthTokens>(TOKEN_STORAGE_KEY);
+
+    if (!tokens?.accessToken || !tokens.refreshToken) {
+      return null;
+    }
+
+    return tokens;
   }
 }

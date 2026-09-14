@@ -6,7 +6,7 @@ import { AppInitializationService } from '../services/max/app-initialization.ser
 import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.service';
 import { MaxBridgeService } from '../services/max/max-bridge.service';
 import { PlatformService } from '../services/max/platform.service';
-import { TokenStore } from '../storage/auth-token-store';
+import { TokenStore } from '../storage/token-store';
 
 export async function initializeApplication(): Promise<void> {
   const bridgeLoader = inject(MaxBridgeLoaderService);

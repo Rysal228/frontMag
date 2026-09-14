@@ -8,8 +8,6 @@ import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { routes } from './app.routes';
 import { initializeApplication } from './shared/initializers/app.initializer';
 import { authInterceptor } from './shared/interceptors/auth.interceptor';
-import { LocalStorageToken } from './shared/storage/local-storage-role';
-import { TOKEN_STORAGE } from './shared/storage/token-storage';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,9 +17,5 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideEventPlugins(),
     provideAppInitializer(initializeApplication),
-    {
-      provide: TOKEN_STORAGE,
-      useClass: LocalStorageToken,
-    },
   ],
 };

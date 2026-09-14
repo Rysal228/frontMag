@@ -9,7 +9,7 @@ import {
   input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, NgControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-form-field',
@@ -37,7 +37,8 @@ export class FormFieldComponent implements AfterContentInit {
       return;
     }
 
-    control.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.clearServerError(control);
       this.updateError();
       this.cdr.markForCheck();
     });
@@ -47,9 +48,21 @@ export class FormFieldComponent implements AfterContentInit {
 
   private updateError(): void {
     const control = this.control?.control;
+    const errors = control?.errors;
 
-    this.showError = Boolean(control?.invalid && control.touched);
-    this.errorMessage = this.getErrorMessage(control?.errors);
+    this.showError = Boolean(errors && (control?.touched || errors['server']));
+
+    this.errorMessage = this.getErrorMessage(errors);
+  }
+
+  private clearServerError(control: AbstractControl): void {
+    if (!control.errors?.['server']) {
+      return;
+    }
+
+    const { server, ...errors } = control.errors;
+
+    control.setErrors(Object.keys(errors).length > 0 ? errors : null);
   }
 
   private getErrorMessage(errors: ValidationErrors | null | undefined): string {
@@ -66,11 +79,15 @@ export class FormFieldComponent implements AfterContentInit {
     }
 
     if (errors['minlength']) {
-      return 'Значение слишком короткое';
+      const requiredLength = errors['minlength'].requiredLength;
+
+      return `Минимальная длина — ${requiredLength} символов`;
     }
 
     if (errors['maxlength']) {
-      return 'Значение слишком длинное';
+      const requiredLength = errors['maxlength'].requiredLength;
+
+      return `Максимальная длина — ${requiredLength} символов`;
     }
 
     if (errors['phone']) {

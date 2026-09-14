@@ -12,6 +12,7 @@ import { PasswordFieldComponent } from 'app/shared/components/password-field/pas
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
 import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
+import { normalizePhone } from 'app/shared/utils/phone-normalize.util';
 import { phoneValidator } from 'app/shared/validators/phone.validator';
 
 import { RegFormService } from './services/reg-form.service';
@@ -60,7 +61,7 @@ export class RegFormComponent {
 
     this.authService
       .register({
-        phone,
+        phone: normalizePhone(phone),
         password,
         fullName: fullName,
         birthday: birthday,
