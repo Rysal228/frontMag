@@ -4,6 +4,8 @@ import { Observable, finalize, shareReplay, tap, throwError } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import { MaxAuthRequest, RefreshTokenRequest } from 'app/shared/models/auth.model';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
 
@@ -13,6 +15,8 @@ import { AuthTokens } from 'app/shared/types/auth.types';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly tokenStore = inject(TokenStore);
+  private readonly currentRole = inject(CurrentRoleStore);
+  private readonly currentUser = inject(CurrentUserStore);
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
 
@@ -52,5 +56,7 @@ export class AuthService {
 
   public logout(): void {
     this.tokenStore.clear();
+    this.currentUser.clear();
+    this.currentRole.clear();
   }
 }

@@ -7,12 +7,7 @@
     </app-form-field>
 
     <app-form-field label="Номер телефона">
-      <app-text-field
-        formControlName="phone"
-        type="tel"
-        inputmode="tel"
-        placeholder="+7(XXX)XXX-XX-XX"
-      />
+      <app-text-field formControlName="phone" type="tel" inputmode="tel" placeholder="+7(XXX)XXX-XX-XX" />
     </app-form-field>
 
     <app-form-field label="Дата рождения">
@@ -25,16 +20,13 @@
       <h2>Статистика по заказам:</h2>
 
       <div class="statistics-content">
-        <tui-ring-chart
-          [value]="value"
-          [(activeItemIndex)]="activeItemIndex"
-        >
-          <span>{{ value.reduce(sum, 0) }}</span>
+        <tui-ring-chart [value]="value()" [(activeItemIndex)]="activeItemIndex">
+          <span>{{ value().reduce(sum, 0) }}</span>
           <div>Всего</div>
         </tui-ring-chart>
 
         <div class="legend">
-          @for (label of labels; track label; let index = $index) {
+          @for (label of labels(); track label; let index = $index) {
             <tui-legend-item
               size="s"
               class="item"
@@ -43,7 +35,7 @@
               [text]="label"
               (tuiHoveredChange)="onHover(index, $event)"
             >
-              <span>{{ value[index] || 0 }}</span>
+              <span>{{ value()[index] || 0 }}</span>
             </tui-legend-item>
           }
         </div>
@@ -54,4 +46,14 @@
   <button tuiButton appearance="outline" type="button" class="save-button" [disabled]="true">
     Сохранить изменения
   </button>
+
+  <button tuiButton appearance="outline" type="button" class="logout-button" (click)="logout()">
+    Выйти из аккаунта
+  </button>
+
+  @if (canChangeRole()) {
+    <button tuiButton appearance="flat" type="button" class="change-role-button" (click)="changeRole()">
+      Сменить роль
+    </button>
+  }
 </section>
