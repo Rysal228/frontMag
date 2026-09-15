@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { TuiButton } from '@taiga-ui/core';
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
+import { TuiButton } from '@taiga-ui/core';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
@@ -32,7 +32,7 @@ export class ProfilePageComponent {
   private readonly currentRole = inject(CurrentRoleStore);
 
   protected readonly user = this.currentUser.user;
-  protected readonly activeItemIndex = null as number | null;
+  protected activeItemIndex: number | null = null;
   protected readonly value = [35, 40, 10, 15, 12, 18];
   protected readonly labels = [
     'Отказано',
@@ -75,11 +75,6 @@ export class ProfilePageComponent {
   }
 
   protected onHover(index: number, hovered: boolean): void {
-    // Keep the whole chart active when the pointer leaves the legend.
-    if (hovered) {
-      (this as { activeItemIndex: number | null }).activeItemIndex = index;
-    } else {
-      (this as { activeItemIndex: number | null }).activeItemIndex = null;
-    }
+    this.activeItemIndex = hovered ? index : null;
   }
 }
