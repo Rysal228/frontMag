@@ -1,0 +1,46 @@
+<section class="profile">
+  <h1 class="title">Ваши данные:</h1>
+
+  <div class="form">
+    <label class="field">
+      <span>ФИО</span>
+      <input [value]="fullName()" readonly placeholder="Введите полностью ваши ФИО" />
+    </label>
+
+    <label class="field">
+      <span>Номер телефона</span>
+      <input [value]="user()?.phone ?? ''" readonly placeholder="+7(XXX)XXX-XX-XX" />
+    </label>
+
+    <label class="field">
+      <span>Дата рождения</span>
+      <input [value]="birthday()" readonly placeholder="00.00.0000" />
+    </label>
+
+    <label class="field">
+      <span>Имя аккаунта</span>
+      <input [value]="user()?.username ?? ''" readonly placeholder="Введите идентификатор аккаунта" />
+    </label>
+  </div>
+
+  <section class="statistics">
+    <h2>Статистика по заказам:</h2>
+
+    <div class="statistics-content">
+      <div class="legend">
+        <div class="legend-item"><i class="status status-cancelled"></i><span>Отказано</span></div>
+        <div class="legend-item"><i class="status status-progress"></i><span>В работе</span></div>
+        <div class="legend-item"><i class="status status-review"></i><span>На рассмотрении</span></div>
+        <div class="legend-item"><i class="status status-completed"></i><span>Выполнено</span></div>
+        <div class="legend-item"><i class="status status-meeting"></i><span>Ожидают встречи</span></div>
+        <div class="legend-item"><i class="status status-payment"></i><span>Ожидают оплаты</span></div>
+      </div>
+
+      <div class="chart" aria-label="Статистика по заказам"></div>
+    </div>
+  </section>
+
+  <button tuiButton appearance="outline" type="button" class="save-button" [disabled]="true">
+    Сохранить изменения
+  </button>
+</section>
