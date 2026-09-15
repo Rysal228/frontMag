@@ -30,9 +30,7 @@ export class SelectRoleComponent {
 
   private readonly roleCatalog = inject(ROLE_CATALOG);
 
-  protected readonly roles = computed(() =>
-    this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role)),
-  );
+  protected readonly roles = computed(() => this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role)));
 
   @HostBinding('attr.data-platform')
   protected get platform(): MaxPlatform {

@@ -12,8 +12,6 @@ export class UserService {
   private readonly http = inject(HttpClient);
 
   public getProfile(): Observable<CurrentUser> {
-    return this.http.get<{ user: CurrentUser }>(API_ENDPOINTS.users.profile).pipe(
-      map(({ user }) => user),
-    );
+    return this.http.get<{ user: CurrentUser }>(API_ENDPOINTS.users.profile).pipe(map(({ user }) => user));
   }
 }

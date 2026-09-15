@@ -23,7 +23,7 @@ export class CurrentUserStore {
     return this.userService.getProfile().pipe(
       tap((user) => this._user.set(isUserRole(user.role) ? user : null)),
       catchError(() => of(null)),
-      tap(() => this._isLoading.set(false)),
+      tap(() => this._isLoading.set(false))
     );
   }
 
