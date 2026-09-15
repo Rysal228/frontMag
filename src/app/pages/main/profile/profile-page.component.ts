@@ -42,6 +42,7 @@ export class ProfilePageComponent {
     'Ожидают встречи',
     'Ожидают оплаты',
   ];
+  protected readonly sum = (total: number, value: number): number => total + value;
 
   protected readonly isMechanic = computed(() => this.currentRole.role() === UserRole.Mechanic);
 
