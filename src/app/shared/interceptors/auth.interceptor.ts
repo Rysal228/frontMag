@@ -5,12 +5,17 @@ import { catchError, switchMap, throwError } from 'rxjs';
 
 import { AuthService } from 'app/pages/auth/services/auth.service';
 
+import { API_ENDPOINTS } from '../consts/urls.const';
 import { TokenStore } from '../storage/token-store';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenStore = inject(TokenStore);
   const authService = inject(AuthService);
   const router = inject(Router);
+
+  if (req.url === API_ENDPOINTS.auth.refresh) {
+    return next(req);
+  }
 
   const accessToken = tokenStore.accessToken;
 
