@@ -22,34 +22,6 @@
   gap: 10px;
 }
 
-.field {
-  display: grid;
-  gap: 4px;
-}
-
-.field span {
-  color: var(--tui-text-secondary);
-  font-size: 12px;
-}
-
-.field input {
-  box-sizing: border-box;
-  width: 100%;
-  height: 40px;
-  padding: 0 11px;
-  border: 1px solid var(--tui-border-normal);
-  border-radius: 9px;
-  outline: none;
-  background: var(--tui-background-base);
-  color: var(--tui-text-primary);
-  font: inherit;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
-}
-
-.field input::placeholder {
-  color: var(--tui-text-tertiary);
-}
-
 .statistics {
   margin-top: 28px;
 }
@@ -64,61 +36,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 .legend {
   display: grid;
+  flex: 1;
   gap: 4px;
 }
 
-.legend-item {
-  display: grid;
-  grid-template-columns: 42px auto;
-  align-items: center;
-  gap: 8px;
-  font-size: 10px;
-  color: var(--tui-text-secondary);
-}
-
-.status {
-  display: block;
-  width: 42px;
-  height: 20px;
-}
-
-.status-cancelled { background: #ffb6bd; }
-.status-progress { background: #b8dcf8; }
-.status-review { background: #ffe7a1; }
-.status-completed { background: #b8efd9; }
-.status-meeting { background: #aaa0f2; }
-.status-payment { background: #ffd6aa; }
-
-.chart {
-  width: 112px;
-  aspect-ratio: 1;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: conic-gradient(
-    #f5c3e5 0 25%,
-    #c6e3f9 25% 57%,
-    #ffe9a7 57% 65%,
-    #b9eedb 65% 78%,
-    #aaa0f2 78% 89%,
-    #ffd8ad 89% 100%
-  );
-  position: relative;
-}
-
-.chart::after {
-  content: '';
-  position: absolute;
-  inset: 30%;
-  border-radius: 50%;
-  background: var(--tui-background-base);
+.item {
+  min-width: 0;
 }
 
 .save-button {
+  display: block;
   width: min(100%, 212px);
   margin: 42px auto 0;
 }
@@ -127,9 +59,5 @@
   .profile {
     padding-right: 16px;
     padding-left: 16px;
-  }
-
-  .chart {
-    width: 100px;
   }
 }
