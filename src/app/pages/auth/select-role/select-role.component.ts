@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostBinding, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, computed, inject } from '@angular/core';
 
 import { TuiButton } from '@taiga-ui/core';
 
@@ -28,11 +28,19 @@ export class SelectRoleComponent {
   private readonly navigation = inject(RoleNavigationService);
   private readonly maxBridge = inject(MaxBridgeService);
 
-  protected readonly roles = inject(ROLE_CATALOG).filter(({ role }) => this.roleAccess.hasAccess(role));
+  private readonly roleCatalog = inject(ROLE_CATALOG);
+
+  protected readonly roles = computed(() =>
+    this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role)),
+  );
 
   @HostBinding('attr.data-platform')
   protected get platform(): MaxPlatform {
     return this.maxBridge.platform;
+  }
+
+  constructor() {
+    this.currentUser.load().subscribe();
   }
 
   protected selectRole(definition: RoleDefinition): void {
