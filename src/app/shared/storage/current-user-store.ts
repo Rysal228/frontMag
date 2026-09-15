@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 
 import { CurrentUser } from '../models/user.model';
 import { UserService } from '../services/user.service';
@@ -21,8 +21,7 @@ export class CurrentUserStore {
     this._isLoading.set(true);
 
     return this.userService.getProfile().pipe(
-      map(({ user }) => (isUserRole(user.role) ? user : null)),
-      tap((user) => this._user.set(user)),
+      tap((user) => this._user.set(isUserRole(user.role) ? user : null)),
       catchError(() => of(null)),
       tap(() => this._isLoading.set(false)),
     );
