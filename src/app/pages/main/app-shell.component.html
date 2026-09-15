@@ -1,0 +1,53 @@
+<main class="content">
+  <router-outlet />
+</main>
+
+<nav class="navigation" aria-label="Основная навигация">
+  <a
+    tuiButton
+    appearance="flat"
+    type="button"
+    routerLink="/user"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    [iconStart]="'@tui.house'"
+  >
+    Главная
+  </a>
+
+  <a
+    tuiButton
+    appearance="flat"
+    type="button"
+    routerLink="/cars"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    [iconStart]="'@tui.car'"
+  >
+    Мои авто
+  </a>
+
+  <a
+    tuiButton
+    appearance="flat"
+    type="button"
+    routerLink="/appointments"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    [iconStart]="'@tui.calendar'"
+  >
+    Записи
+  </a>
+
+  <a
+    tuiButton
+    appearance="flat"
+    type="button"
+    routerLink="/profile"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    [iconStart]="'@tui.user'"
+  >
+    Профиль
+  </a>
+</nav>
