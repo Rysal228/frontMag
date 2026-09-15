@@ -19,6 +19,7 @@
     "@angular/platform-browser": "^20.3.29",
     "@angular/platform-browser-dynamic": "^20.3.29",
     "@angular/router": "^20.3.29",
+    "@taiga-ui/addon-charts": "^4.70.0",
     "@taiga-ui/cdk": "^4.70.0",
     "@taiga-ui/core": "^4.70.0",
     "@taiga-ui/icons": "^4.70.0",
