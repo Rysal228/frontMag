@@ -1,17 +1,32 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { map } from 'rxjs';
 
+import { RoleAccessService } from '../services/role-access.service';
 import { CurrentRoleStore } from '../storage/current-role-store';
+import { CurrentUserStore } from '../storage/current-user-store';
 import { UserRole } from '../types/roles.types';
 
 export const roleGuard: CanActivateFn = (route) => {
   const currentRole = inject(CurrentRoleStore);
+  const currentUser = inject(CurrentUserStore);
+  const roleAccess = inject(RoleAccessService);
   const router = inject(Router);
 
   const requiredRole = route.data['requiredRole'] as UserRole | undefined;
-  const role = currentRole.role();
 
-  const isAllowed = role !== null && (!requiredRole || role === requiredRole);
+  if (!requiredRole) {
+    return true;
+  }
 
-  return isAllowed ? true : router.parseUrl('/roles');
+  const checkAccess = (): boolean =>
+    currentRole.role() === requiredRole && roleAccess.hasAccess(requiredRole);
+
+  if (currentUser.user()) {
+    return checkAccess() ? true : router.parseUrl('/roles');
+  }
+
+  return currentUser.load().pipe(
+    map(() => (checkAccess() ? true : router.parseUrl('/roles'))),
+  );
 };
