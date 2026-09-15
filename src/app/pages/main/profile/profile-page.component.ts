@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@a
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
+import { TuiHovered } from '@taiga-ui/cdk';
 import { TuiButton } from '@taiga-ui/core';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
@@ -22,6 +23,7 @@ import { UserRole } from 'app/shared/types/roles.types';
     TuiButton,
     TuiLegendItem,
     TuiRingChart,
+    TuiHovered,
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
@@ -32,7 +34,7 @@ export class ProfilePageComponent {
   private readonly currentRole = inject(CurrentRoleStore);
 
   protected readonly user = this.currentUser.user;
-  protected activeItemIndex: number | null = null;
+  protected activeItemIndex = NaN;
   protected readonly value = [35, 40, 10, 15, 12, 18];
   protected readonly labels = [
     'Отказано',
@@ -66,16 +68,16 @@ export class ProfilePageComponent {
           phone: user.phone,
           birthday: user.birthday ?? '',
         },
-        { emitEvent: false },
+        { emitEvent: false }
       );
     });
   }
 
   protected isItemActive(index: number): boolean {
-    return this.activeItemIndex === null || this.activeItemIndex === index;
+    return Number.isNaN(this.activeItemIndex) || this.activeItemIndex === index;
   }
 
   protected onHover(index: number, hovered: boolean): void {
-    this.activeItemIndex = hovered ? index : null;
+    this.activeItemIndex = hovered ? index : NaN;
   }
 }

@@ -10,4 +10,7 @@ export const API_ENDPOINTS = {
   users: {
     profile: `/api/${version}/users/profile/`,
   },
+  orders: {
+    statuses: `/api/${version}/orders/order-status/`,
+  },
 } as const;
