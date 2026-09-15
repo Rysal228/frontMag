@@ -7,4 +7,7 @@ export const API_ENDPOINTS = {
     max: `/api/${version}/users/auth/max/`,
     refresh: `/api/${version}/users/auth/token/refresh/`,
   },
+  users: {
+    profile: `/api/${version}/users/profile/`,
+  },
 } as const;
