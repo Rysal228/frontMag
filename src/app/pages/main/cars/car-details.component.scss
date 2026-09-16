@@ -1,0 +1,132 @@
+:host {
+  display: block;
+}
+
+.car-details-page {
+  box-sizing: border-box;
+  max-width: 720px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 18px 20px 32px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--tui-text-action);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--tui-text-secondary);
+  font-size: 14px;
+}
+
+.photo,
+.photo-placeholder {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+}
+
+.photo {
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px dashed var(--tui-border-normal);
+  color: var(--tui-text-secondary);
+  background: var(--tui-background-neutral-1);
+  font-size: 14px;
+}
+
+.details {
+  display: grid;
+  gap: 0;
+  margin: 20px 0;
+  border-radius: 16px;
+  background: var(--tui-background-neutral-1);
+}
+
+.details > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tui-border-normal);
+}
+
+.details > div:last-child {
+  border-bottom: 0;
+}
+
+.details dt {
+  color: var(--tui-text-secondary);
+}
+
+.details dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.state {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 48px 20px;
+  border-radius: 18px;
+  background: var(--tui-background-neutral-1);
+  text-align: center;
+}
+
+.state_error {
+  color: var(--tui-text-negative);
+}
+
+@media (max-width: 520px) {
+  .car-details-page {
+    padding: 16px 16px 28px;
+  }
+
+  .header {
+    display: grid;
+  }
+
+  .title {
+    font-size: 25px;
+  }
+
+  .header > * {
+    width: 100%;
+  }
+
+  .details > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .details dd {
+    text-align: left;
+  }
+}
