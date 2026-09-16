@@ -1,0 +1,54 @@
+<section class="cars-page">
+  <header class="header">
+    <div>
+      <h1 class="title">Мои автомобили</h1>
+      <p class="subtitle">Автомобили, привязанные к вашему аккаунту</p>
+    </div>
+
+    <a tuiButton appearance="primary" type="button" routerLink="/cars/new">
+      Добавить авто
+    </a>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state">Загрузка автомобилей...</div>
+  } @else if (hasError()) {
+    <div class="state state_error">
+      <p>Не удалось загрузить список автомобилей.</p>
+      <button tuiButton appearance="outline" type="button" (click)="reload()">Повторить</button>
+    </div>
+  } @else if (!cars().length) {
+    <div class="empty">
+      <div class="empty-title">У вас пока нет автомобилей</div>
+      <p>Добавьте автомобиль, чтобы записываться на обслуживание быстрее.</p>
+      <a tuiButton appearance="outline" type="button" routerLink="/cars/new">
+        Добавить первый автомобиль
+      </a>
+    </div>
+  } @else {
+    <div class="list">
+      @for (car of cars(); track car.id) {
+        <article class="car-card">
+          <div class="car-heading">
+            <h2>{{ car.brandName }} {{ car.modelName }}</h2>
+            @if (car.year) {
+              <span>{{ car.year }}</span>
+            }
+          </div>
+
+          @if (car.photo) {
+            <img class="car-image" [src]="car.photo" [alt]="car.brandName + ' ' + car.modelName" />
+          } @else {
+            <div class="car-placeholder">
+              <span>Фото автомобиля отсутствует</span>
+            </div>
+          }
+
+          <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">
+            Подробнее
+          </a>
+        </article>
+      }
+    </div>
+  }
+</section>
