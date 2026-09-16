@@ -39,17 +39,15 @@ export class AuthService {
       return throwError(() => new Error('Refresh token is not available'));
     }
 
-    this.refreshRequest$ = this.http
-      .post<AuthTokens>(API_ENDPOINTS.auth.refresh, { refreshToken } satisfies RefreshTokenRequest)
-      .pipe(
-        tap((tokens) => {
-          this.tokenStore.set(tokens);
-        }),
-        finalize(() => {
-          this.refreshRequest$ = null;
-        }),
-        shareReplay(1)
-      );
+    this.refreshRequest$ = this.http.post<AuthTokens>(API_ENDPOINTS.auth.refresh, { refresh: refreshToken }).pipe(
+      tap((tokens) => {
+        this.tokenStore.set(tokens);
+      }),
+      finalize(() => {
+        this.refreshRequest$ = null;
+      }),
+      shareReplay(1)
+    );
 
     return this.refreshRequest$;
   }
