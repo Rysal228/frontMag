@@ -10,6 +10,11 @@ export const API_ENDPOINTS = {
   users: {
     profile: `/api/${version}/users/profile/`,
   },
+  cars: {
+    list: `/api/${version}/cars/`,
+    brands: `/api/${version}/cars/brands/`,
+    models: `/api/${version}/cars/models/`,
+  },
   orders: {
     statuses: `/api/${version}/orders/order-status/`,
   },
