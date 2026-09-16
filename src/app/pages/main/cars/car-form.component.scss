@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.car-form-page {
+  box-sizing: border-box;
+  max-width: 720px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 18px 20px 32px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--tui-text-action);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.select {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 12px;
+  outline: none;
+  color: var(--tui-text-primary);
+  background: var(--tui-background-base);
+  font: inherit;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: var(--tui-background-accent-1);
+}
+
+.select:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.photo-field {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.preview {
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--tui-background-neutral-1);
+}
+
+.preview img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+}
+
+.upload-area {
+  display: grid;
+  min-height: 150px;
+  box-sizing: border-box;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px;
+  border: 1px dashed var(--tui-border-normal);
+  border-radius: 14px;
+  color: var(--tui-text-secondary);
+  background: var(--tui-background-base);
+  text-align: center;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: var(--tui-text-action);
+}
+
+.upload-area input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.upload-area span {
+  color: var(--tui-text-action);
+}
+
+.upload-area small {
+  font-size: 11px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.state {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 48px 20px;
+  border-radius: 18px;
+  background: var(--tui-background-neutral-1);
+  text-align: center;
+}
+
+.state_error {
+  color: var(--tui-text-negative);
+}
+
+@media (max-width: 520px) {
+  .car-form-page {
+    padding: 16px 16px 28px;
+  }
+
+  .title {
+    font-size: 25px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
+}
