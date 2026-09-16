@@ -35,7 +35,7 @@
       <app-form-field [label]="'Год выпуска (' + minYear + '–' + maxYear + ')'">
         <app-text-field
           formControlName="year"
-          type="number"
+          inputmode="numeric"
           [placeholder]="'Например, ' + (maxYear - 5)"
         />
       </app-form-field>
