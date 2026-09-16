@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { AppShellComponent } from './pages/main/app-shell.component';
+import { CarsPageComponent } from './pages/main/cars/cars-page.component';
 import { SectionPlaceholderComponent } from './pages/main/section-placeholder.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
 import { authGuard } from './shared/guards/auth.guard';
@@ -53,7 +54,28 @@ export const routes: Routes = [
       },
       {
         path: 'cars',
-        component: SectionPlaceholderComponent,
+        children: [
+          {
+            path: '',
+            component: CarsPageComponent,
+            pathMatch: 'full',
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./pages/main/cars/car-form.component').then((c) => c.CarFormComponent),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./pages/main/cars/car-form.component').then((c) => c.CarFormComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/main/cars/car-details.component').then((c) => c.CarDetailsComponent),
+          },
+        ],
         data: {
           title: 'Мои авто',
         },
