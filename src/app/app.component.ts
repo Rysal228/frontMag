@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { TuiRoot } from '@taiga-ui/core';
 
 import { AppInitializationService } from './shared/services/max/app-initialization.service';
+import { ThemeService } from './shared/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,9 @@ import { AppInitializationService } from './shared/services/max/app-initializati
 })
 export class AppComponent implements OnInit {
   protected readonly initialization = inject(AppInitializationService);
-  private http = inject(HttpClient);
+  private readonly themeService = inject(ThemeService);
+
+  protected readonly theme = this.themeService.theme;
 
   ngOnInit(): void {
     console.log('this.initData:', window.WebApp?.initData);

@@ -1,4 +1,4 @@
-<tui-root>
+<tui-root [attr.tuiTheme]="theme()">
   @switch (initialization.state()) {
     @case ('initializing') {
       <div class="app-state">Загрузка приложения...</div>

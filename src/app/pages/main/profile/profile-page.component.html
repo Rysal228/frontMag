@@ -57,3 +57,29 @@
     </button>
   }
 </section>
+
+<section class="theme">
+  <h2>Тема интерфейса</h2>
+
+  <div class="theme-buttons">
+    <button
+      tuiButton
+      type="button"
+      size="s"
+      [appearance]="theme() === 'light' ? 'primary' : 'outline'"
+      (click)="setTheme('light')"
+    >
+      Светлая
+    </button>
+
+    <button
+      tuiButton
+      type="button"
+      size="s"
+      [appearance]="theme() === 'dark' ? 'primary' : 'outline'"
+      (click)="setTheme('dark')"
+    >
+      Тёмная
+    </button>
+  </div>
+</section>
