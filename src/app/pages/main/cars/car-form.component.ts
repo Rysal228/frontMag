@@ -11,6 +11,9 @@ import { TextFieldComponent } from 'app/shared/components/text-field/text-field.
 import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
 
+const MIN_CAR_YEAR = 1886;
+const MAX_CAR_YEAR_OFFSET = 1;
+
 @Component({
   selector: 'app-car-form',
   standalone: true,
@@ -35,21 +38,24 @@ export class CarFormComponent {
   protected readonly loadError = signal(false);
   protected readonly selectedPhoto = signal<File | null>(null);
   protected readonly photoPreview = signal<string | null>(null);
+  protected readonly minYear = MIN_CAR_YEAR;
+  protected readonly maxYear = new Date().getFullYear() + MAX_CAR_YEAR_OFFSET;
 
   protected readonly form = new FormGroup({
     brand: new FormControl('', { nonNullable: true, validators: Validators.required }),
     model: new FormControl('', { nonNullable: true, validators: Validators.required }),
     year: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/^\d{4}$/)],
+      validators: [
+        Validators.required,
+        Validators.pattern(/^\d{4}$/),
+        Validators.min(this.minYear),
+        Validators.max(this.maxYear),
+      ],
     }),
     plateNumber: new FormControl('', { nonNullable: true, validators: Validators.required }),
     vin: new FormControl('', { nonNullable: true, validators: Validators.maxLength(64) }),
   });
-
-  private readonly currentYear = new Date().getFullYear();
-  protected readonly minYear = 1886;
-  protected readonly maxYear = this.currentYear + 1;
 
   constructor() {
     this.form.controls.brand.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((brandId) => {
