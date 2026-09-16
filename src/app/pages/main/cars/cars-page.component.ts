@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
 
 import { TuiButton } from '@taiga-ui/core';
@@ -33,10 +34,12 @@ export class CarsPageComponent {
     this.isLoading.set(true);
     this.hasError.set(false);
 
-    this.carService.getAll().subscribe({
-      next: (cars) => this.cars.set(cars),
-      error: () => this.hasError.set(true),
-      complete: () => this.isLoading.set(false),
-    });
+    this.carService
+      .getAll()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (cars) => this.cars.set(cars),
+        error: () => this.hasError.set(true),
+      });
   }
 }
