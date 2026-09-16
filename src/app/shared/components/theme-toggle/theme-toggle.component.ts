@@ -17,7 +17,7 @@ export class ThemeToggleComponent {
 
   protected readonly theme = this.themeService.theme;
 
-  protected setTheme(dark: boolean): void {
-    this.themeService.setTheme(dark ? 'dark' : 'light');
+  protected toggle(): void {
+    this.themeService.toggle();
   }
 }
