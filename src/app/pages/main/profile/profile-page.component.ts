@@ -10,6 +10,7 @@ import { AuthService } from 'app/pages/auth/services/auth.service';
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { OrderStatus } from 'app/shared/models/order-status.model';
 import { OrderStatusService } from 'app/shared/services/order-status.service';
 import { RoleAccessService } from 'app/shared/services/role-access.service';
@@ -31,6 +32,7 @@ import { UserRole } from 'app/shared/types/roles.types';
     TuiLegendItem,
     TuiRingChart,
     TuiHovered,
+    ThemeToggleComponent,
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
@@ -44,7 +46,6 @@ export class ProfilePageComponent {
   private readonly router = inject(Router);
   private readonly roleAccess = inject(RoleAccessService);
   private readonly roleCatalog = inject(ROLE_CATALOG);
-  private readonly themeService = inject(ThemeService);
 
   protected readonly user = this.currentUser.user;
   protected activeItemIndex = NaN;
@@ -60,8 +61,6 @@ export class ProfilePageComponent {
   protected readonly sum = (total: number, value: number): number => total + value;
 
   protected readonly isMechanic = computed(() => this.currentRole.role() === UserRole.Mechanic);
-
-  protected readonly theme = this.themeService.theme;
 
   protected readonly form = new FormGroup({
     fullName: new FormControl('', { nonNullable: true }),
@@ -118,10 +117,6 @@ export class ProfilePageComponent {
     }
 
     void this.router.navigateByUrl('/roles');
-  }
-
-  protected setTheme(theme: AppTheme): void {
-    this.themeService.setTheme(theme);
   }
 
   protected logout(): void {

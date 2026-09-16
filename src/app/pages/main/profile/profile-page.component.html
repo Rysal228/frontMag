@@ -58,28 +58,8 @@
   }
 </section>
 
-<section class="theme">
-  <h2>Тема интерфейса</h2>
+<section class="settings">
+  <h2>Настройки</h2>
 
-  <div class="theme-buttons">
-    <button
-      tuiButton
-      type="button"
-      size="s"
-      [appearance]="theme() === 'light' ? 'primary' : 'outline'"
-      (click)="setTheme('light')"
-    >
-      Светлая
-    </button>
-
-    <button
-      tuiButton
-      type="button"
-      size="s"
-      [appearance]="theme() === 'dark' ? 'primary' : 'outline'"
-      (click)="setTheme('dark')"
-    >
-      Тёмная
-    </button>
-  </div>
+  <app-theme-toggle />
 </section>

@@ -1,0 +1,5 @@
+<label class="theme-toggle">
+  <span>Тёмная тема</span>
+
+  <input tuiSwitch type="checkbox" [checked]="theme() === 'dark'" (change)="setTheme($any($event.target).checked)" />
+</label>
