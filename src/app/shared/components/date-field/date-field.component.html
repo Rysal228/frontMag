@@ -1,3 +1,7 @@
 <tui-textfield>
-  <input tuiTextfield type="date" [value]="value" [disabled]="disabled" (input)="onInput($event)" (blur)="onBlur()" />
+  <label tuiLabel>{{ label }}</label>
+
+  <input tuiInputDate [disabled]="disabled" [ngModel]="value" (ngModelChange)="onValueChange($event)" />
+
+  <tui-calendar *tuiTextfieldDropdown />
 </tui-textfield>
