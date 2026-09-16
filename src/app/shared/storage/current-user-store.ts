@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
 
-import { CurrentUser } from '../models/user.model';
+import { CurrentUser, UpdateProfileRequest } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { isUserRole } from '../types/roles.types';
 
@@ -25,6 +25,10 @@ export class CurrentUserStore {
       catchError(() => of(null)),
       tap(() => this._isLoading.set(false))
     );
+  }
+
+  public update(profile: UpdateProfileRequest): Observable<CurrentUser> {
+    return this.userService.updateProfile(profile).pipe(tap((user) => this._user.set(user)));
   }
 
   public clear(): void {

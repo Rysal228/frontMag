@@ -9,3 +9,10 @@ export type CurrentUser = {
   birthday: string | null;
   role: UserRole;
 };
+
+export type UpdateProfileRequest = {
+  firstName: string;
+  lastName: string;
+  patronymic: string;
+  birthday: string | null;
+};

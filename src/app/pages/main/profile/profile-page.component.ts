@@ -14,7 +14,6 @@ import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-t
 import { OrderStatus } from 'app/shared/models/order-status.model';
 import { OrderStatusService } from 'app/shared/services/order-status.service';
 import { RoleAccessService } from 'app/shared/services/role-access.service';
-import { AppTheme, ThemeService } from 'app/shared/services/theme.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
@@ -117,6 +116,16 @@ export class ProfilePageComponent {
     }
 
     void this.router.navigateByUrl('/roles');
+  }
+
+  protected isSaving = signal(false);
+
+  protected save(): void {
+    if (this.form.invalid || this.isSaving()) {
+      return;
+    }
+
+    const { fullName, phone, birthday } = this.form.getRawValue();
   }
 
   protected logout(): void {
