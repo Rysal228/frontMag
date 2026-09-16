@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
 
