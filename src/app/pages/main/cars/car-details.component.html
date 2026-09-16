@@ -1,0 +1,62 @@
+<section class="car-details-page">
+  <a class="back-link" routerLink="/cars">← Мои автомобили</a>
+
+  @if (isLoading()) {
+    <div class="state">Загрузка автомобиля...</div>
+  } @else if (hasError() || !car()) {
+    <div class="state state_error">
+      <p>Не удалось найти автомобиль.</p>
+      <a tuiButton appearance="outline" type="button" routerLink="/cars">Вернуться к автомобилям</a>
+    </div>
+  } @else {
+    <header class="header">
+      <div>
+        <h1 class="title">{{ car()!.brandName }} {{ car()!.modelName }}</h1>
+        <p class="subtitle">{{ car()!.year }} год выпуска</p>
+      </div>
+
+      <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car()!.id, 'edit']">
+        Редактировать
+      </a>
+    </header>
+
+    @if (car()!.photo) {
+      <img class="photo" [src]="car()!.photo" [alt]="car()!.brandName + ' ' + car()!.modelName" />
+    } @else {
+      <div class="photo-placeholder">Фото автомобиля отсутствует</div>
+    }
+
+    <dl class="details">
+      <div>
+        <dt>Марка</dt>
+        <dd>{{ car()!.brandName }}</dd>
+      </div>
+      <div>
+        <dt>Модель</dt>
+        <dd>{{ car()!.modelName }}</dd>
+      </div>
+      <div>
+        <dt>Год выпуска</dt>
+        <dd>{{ car()!.year }}</dd>
+      </div>
+      <div>
+        <dt>Гос. номер</dt>
+        <dd>{{ car()!.plateNumber || 'Не указан' }}</dd>
+      </div>
+      <div>
+        <dt>VIN</dt>
+        <dd>{{ car()!.vin || 'Не указан' }}</dd>
+      </div>
+    </dl>
+
+    <button
+      tuiButton
+      appearance="secondary-destructive"
+      type="button"
+      [disabled]="isDeleting()"
+      (click)="deleteCar()"
+    >
+      {{ isDeleting() ? 'Удаление...' : 'Удалить автомобиль' }}
+    </button>
+  }
+</section>
