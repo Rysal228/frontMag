@@ -1,0 +1,76 @@
+<section class="car-form-page">
+  <a class="back-link" routerLink="/cars">← Мои автомобили</a>
+
+  @if (isLoading()) {
+    <div class="state">Загрузка автомобиля...</div>
+  } @else if (loadError()) {
+    <div class="state state_error">
+      Не удалось загрузить данные автомобиля.
+      <a tuiButton appearance="outline" type="button" routerLink="/cars">Вернуться к автомобилям</a>
+    </div>
+  } @else {
+    <h1 class="title">{{ isEdit ? 'Редактирование автомобиля' : 'Добавление автомобиля' }}</h1>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="save()">
+      <app-form-field label="Марка">
+        <select formControlName="brand" class="select">
+          <option value="">Выберите марку автомобиля</option>
+          @for (brand of brands(); track brand.id) {
+            <option [value]="brand.id">{{ brand.name }}</option>
+          }
+        </select>
+      </app-form-field>
+
+      <app-form-field label="Модель">
+        <select formControlName="model" class="select" [disabled]="!form.controls.brand.value || isModelsLoading()">
+          <option value="">
+            {{ isModelsLoading() ? 'Загрузка моделей...' : 'Выберите модель автомобиля' }}
+          </option>
+          @for (model of models(); track model.id) {
+            <option [value]="model.id">{{ model.name }}</option>
+          }
+        </select>
+      </app-form-field>
+
+      <app-form-field [label]="'Год выпуска (' + minYear + '–' + maxYear + ')'">
+        <app-text-field
+          formControlName="year"
+          type="number"
+          [placeholder]="'Например, ' + (maxYear - 5)"
+        />
+      </app-form-field>
+
+      <app-form-field label="Гос. номер">
+        <app-text-field formControlName="plateNumber" placeholder="А123ВС 124" />
+      </app-form-field>
+
+      <app-form-field label="VIN">
+        <app-text-field formControlName="vin" placeholder="Необязательно" />
+      </app-form-field>
+
+      <div class="photo-field">
+        <span class="field-label">Фото автомобиля</span>
+
+        @if (photoPreview()) {
+          <div class="preview">
+            <img [src]="photoPreview()" alt="Предпросмотр автомобиля" />
+          </div>
+        }
+
+        <label class="upload-area">
+          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" />
+          <span>{{ selectedPhoto() ? 'Выбрать другое фото' : 'Выберите файл или перетащите его сюда' }}</span>
+          <small>JPG, PNG или другой формат изображения</small>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button tuiButton appearance="primary" type="submit" [disabled]="form.invalid || isSaving()">
+          {{ isSaving() ? 'Сохранение...' : isEdit ? 'Сохранить изменения' : 'Сохранить' }}
+        </button>
+
+        <a tuiButton appearance="flat" type="button" routerLink="/cars">Отмена</a>
+      </div>
+    </form>
+  }
+</section>
