@@ -2,12 +2,20 @@
   <h1 class="title">Ваши данные:</h1>
 
   <form class="form" [formGroup]="form">
-    <app-form-field label="ФИО">
-      <app-text-field formControlName="fullName" placeholder="Введите полностью ваши ФИО" />
+    <app-form-field label="Фамилия">
+      <app-text-field formControlName="lastName" placeholder="Введите фамилию" />
+    </app-form-field>
+
+    <app-form-field label="Имя">
+      <app-text-field formControlName="firstName" placeholder="Введите имя" />
+    </app-form-field>
+
+    <app-form-field label="Отчество">
+      <app-text-field formControlName="patronymic" placeholder="Введите отчество" />
     </app-form-field>
 
     <app-form-field label="Номер телефона">
-      <app-text-field formControlName="phone" type="tel" inputmode="tel" placeholder="+7(XXX)XXX-XX-XX" />
+      <app-text-field formControlName="phone" type="tel" placeholder="+7(XXX)XXX-XX-XX" />
     </app-form-field>
 
     <app-form-field label="Дата рождения">
@@ -43,8 +51,15 @@
     </section>
   }
 
-  <button tuiButton appearance="outline" type="button" class="save-button" [disabled]="true">
-    Сохранить изменения
+  <button
+    tuiButton
+    appearance="outline"
+    type="button"
+    class="save-button"
+    [disabled]="form.invalid || isSaving()"
+    (click)="save()"
+  >
+    {{ isSaving() ? 'Сохранение...' : 'Сохранить изменения' }}
   </button>
 
   <button tuiButton appearance="outline" type="button" class="logout-button" (click)="logout()">

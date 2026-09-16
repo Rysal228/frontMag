@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
 import { TuiHovered } from '@taiga-ui/cdk';
@@ -62,12 +63,16 @@ export class ProfilePageComponent {
   protected readonly isMechanic = computed(() => this.currentRole.role() === UserRole.Mechanic);
 
   protected readonly form = new FormGroup({
-    fullName: new FormControl('', { nonNullable: true }),
+    lastName: new FormControl('', { nonNullable: true }),
+    firstName: new FormControl('', { nonNullable: true }),
+    patronymic: new FormControl('', { nonNullable: true }),
     phone: new FormControl('', { nonNullable: true }),
     birthday: new FormControl('', { nonNullable: true }),
   });
 
   constructor() {
+    this.form.controls.phone.disable();
+
     effect(() => {
       const user = this.user();
 
@@ -77,7 +82,9 @@ export class ProfilePageComponent {
 
       this.form.patchValue(
         {
-          fullName: [user.lastName, user.firstName, user.patronymic].filter(Boolean).join(' '),
+          lastName: user.lastName,
+          firstName: user.firstName,
+          patronymic: user.patronymic,
           phone: user.phone,
           birthday: user.birthday ?? '',
         },
@@ -125,7 +132,19 @@ export class ProfilePageComponent {
       return;
     }
 
-    const { fullName, phone, birthday } = this.form.getRawValue();
+    const { lastName, firstName, patronymic, birthday } = this.form.getRawValue();
+
+    this.isSaving.set(true);
+
+    this.currentUser
+      .update({
+        lastName,
+        firstName,
+        patronymic,
+        birthday: birthday || null,
+      })
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe();
   }
 
   protected logout(): void {

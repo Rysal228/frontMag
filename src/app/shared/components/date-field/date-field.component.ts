@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { TuiDay } from '@taiga-ui/cdk';
@@ -21,8 +21,6 @@ import { TuiInputDate } from '@taiga-ui/kit';
   ],
 })
 export class DateFieldComponent implements ControlValueAccessor {
-  public readonly label = input('');
-
   protected value: TuiDay | null = null;
   protected disabled = false;
 

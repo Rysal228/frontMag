@@ -1,7 +1,13 @@
 <tui-textfield>
-  <label tuiLabel>{{ label() }}</label>
+  <!-- <label tuiLabel>Выберите дату</label> -->
 
-  <input tuiInputDate [disabled]="disabled" [ngModel]="value" (ngModelChange)="onValueChange($event)" />
+  <input
+    tuiInputDate
+    [disabled]="disabled"
+    [ngModel]="value"
+    (ngModelChange)="onValueChange($event)"
+    placeholder="Выберите дату"
+  />
 
   <tui-calendar *tuiTextfieldDropdown />
 </tui-textfield>
