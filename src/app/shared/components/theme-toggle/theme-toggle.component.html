@@ -1,5 +1,5 @@
 <label class="theme-toggle">
   <span>Тёмная тема</span>
 
-  <input tuiSwitch type="checkbox" [checked]="theme() === 'dark'" (change)="toggle()" />
+  <input tuiSwitch type="checkbox" [ngModel]="theme() === 'dark'" (ngModelChange)="setTheme($event)" />
 </label>

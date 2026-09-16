@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { TuiSwitch } from '@taiga-ui/kit';
 
@@ -7,7 +8,7 @@ import { ThemeService } from 'app/shared/services/theme.service';
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
-  imports: [TuiSwitch],
+  imports: [FormsModule, TuiSwitch],
   templateUrl: './theme-toggle.component.html',
   styleUrl: './theme-toggle.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,7 +18,7 @@ export class ThemeToggleComponent {
 
   protected readonly theme = this.themeService.theme;
 
-  protected toggle(): void {
-    this.themeService.toggle();
+  protected setTheme(dark: boolean): void {
+    this.themeService.setTheme(dark ? 'dark' : 'light');
   }
 }

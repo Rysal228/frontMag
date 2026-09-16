@@ -45,7 +45,16 @@ export class DateFieldComponent implements ControlValueAccessor {
 
   protected onValueChange(value: TuiDay | null): void {
     this.value = value;
-    this.onChange(value?.toString() ?? '');
+
+    if (!value) {
+      this.onChange(null);
+    } else {
+      const month = String(value.month).padStart(2, '0');
+      const day = String(value.day).padStart(2, '0');
+
+      this.onChange(`${value.year}-${month}-${day}`);
+    }
+
     this.onTouched();
   }
 }
