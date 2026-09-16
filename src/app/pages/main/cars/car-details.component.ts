@@ -34,11 +34,13 @@ export class CarDetailsComponent {
       return;
     }
 
-    this.carService.getById(this.carId).subscribe({
-      next: (car) => this.car.set(car),
-      error: () => this.hasError.set(true),
-      complete: () => this.isLoading.set(false),
-    });
+    this.carService
+      .getById(this.carId)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (car) => this.car.set(car),
+        error: () => this.hasError.set(true),
+      });
   }
 
   protected deleteCar(): void {
