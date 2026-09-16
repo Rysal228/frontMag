@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiCalendar, TuiTextfield } from '@taiga-ui/core';
@@ -8,7 +8,7 @@ import { TuiInputDate } from '@taiga-ui/kit';
 @Component({
   selector: 'app-date-field',
   standalone: true,
-  imports: [TuiCalendar, TuiInputDate, TuiTextfield],
+  imports: [TuiCalendar, TuiInputDate, TuiTextfield, FormsModule],
   templateUrl: './date-field.component.html',
   styleUrl: './date-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,10 +21,12 @@ import { TuiInputDate } from '@taiga-ui/kit';
   ],
 })
 export class DateFieldComponent implements ControlValueAccessor {
+  public readonly label = input('');
+
   protected value: TuiDay | null = null;
   protected disabled = false;
 
-  private onChange: (value: string) => void = () => {};
+  private onChange: (value: string | null) => void = () => {};
   private onTouched: () => void = () => {};
 
   public writeValue(value: string | null): void {
@@ -32,7 +34,7 @@ export class DateFieldComponent implements ControlValueAccessor {
   }
 
   public registerOnChange(fn: (value: string | null) => void): void {
-    this.onChange = (value) => fn(value);
+    this.onChange = fn;
   }
 
   public registerOnTouched(fn: () => void): void {
@@ -45,6 +47,7 @@ export class DateFieldComponent implements ControlValueAccessor {
 
   protected onValueChange(value: TuiDay | null): void {
     this.value = value;
-    this.onChange(value ? value.toString() : '');
+    this.onChange(value?.toString() ?? '');
+    this.onTouched();
   }
 }

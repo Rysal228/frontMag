@@ -1,5 +1,5 @@
 <tui-textfield>
-  <label tuiLabel>{{ label }}</label>
+  <label tuiLabel>{{ label() }}</label>
 
   <input tuiInputDate [disabled]="disabled" [ngModel]="value" (ngModelChange)="onValueChange($event)" />
 
