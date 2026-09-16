@@ -7,7 +7,12 @@
 
   <div class="fields">
     <app-form-field label="Номер телефона" controlName="phone">
-      <app-text-field formControlName="phone" type="tel" [maskitoOptions]="phoneMaskitoOptions" />
+      <app-text-field
+        formControlName="phone"
+        type="tel"
+        placeholder="+7 (___) ___-__-__"
+        [maskitoOptions]="phoneMaskitoOptions"
+      />
     </app-form-field>
 
     <div class="method">
@@ -38,13 +43,19 @@
 
     @if (loginMethod() === 'password') {
       <app-form-field label="Пароль" controlName="password">
-        <app-password-field formControlName="password" autocomplete="current-password" />
+        <app-password-field formControlName="password" placeholder="Введите пароль" autocomplete="current-password" />
       </app-form-field>
     }
 
     @if (loginMethod() === 'code') {
       <app-form-field label="Код из MAX" controlName="code">
-        <app-text-field formControlName="code" type="text" inputmode="numeric" autocomplete="one-time-code" />
+        <app-text-field
+          formControlName="code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          placeholder="Введите код"
+        />
       </app-form-field>
 
       <p class="hint">Код будет отправлен через MAX.</p>

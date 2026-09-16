@@ -6,24 +6,29 @@
   </div>
 
   <div class="fields">
-    <app-form-field label="Номер телефона">
-      <app-text-field formControlName="phone" type="tel" [maskitoOptions]="phoneMaskitoOptions" />
+    <app-form-field label="Номер телефона" controlName="phone">
+      <app-text-field
+        formControlName="phone"
+        type="tel"
+        placeholder="+7 (___) ___-__-__"
+        [maskitoOptions]="phoneMaskitoOptions"
+      />
     </app-form-field>
 
-    <app-form-field label="Пароль">
-      <app-password-field formControlName="password" />
+    <app-form-field label="Пароль" controlName="password">
+      <app-password-field formControlName="password" placeholder="Введите пароль" autocomplete="current-password" />
     </app-form-field>
 
     <app-form-field label="Фамилия">
-      <app-text-field formControlName="lastName" />
+      <app-text-field formControlName="lastName" placeholder="Введите фамилию" />
     </app-form-field>
 
     <app-form-field label="Имя">
-      <app-text-field formControlName="firstName" />
+      <app-text-field formControlName="firstName" placeholder="Введите имя" />
     </app-form-field>
 
     <app-form-field label="Отчество">
-      <app-text-field formControlName="patronymic" />
+      <app-text-field formControlName="patronymic" placeholder="Введите отчество" />
     </app-form-field>
 
     <app-form-field label="Дата рождения">

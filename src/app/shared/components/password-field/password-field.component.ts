@@ -20,6 +20,7 @@ import { TuiTextfield } from '@taiga-ui/core';
 })
 export class PasswordFieldComponent implements ControlValueAccessor {
   public readonly autocomplete = input<string | null>('current-password');
+  public readonly placeholder = input('');
 
   protected value = '';
   protected disabled = false;
