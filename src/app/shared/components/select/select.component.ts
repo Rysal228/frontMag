@@ -12,7 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
-import { TuiTextfield } from '@taiga-ui/core';
+import { TuiDropdown, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
 
 export type SelectOption = {
@@ -23,7 +23,7 @@ export type SelectOption = {
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [ReactiveFormsModule, TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextfield],
+  imports: [ReactiveFormsModule, TuiChevron, TuiDataListWrapper, TuiDropdown, TuiSelect, TuiTextfield],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
