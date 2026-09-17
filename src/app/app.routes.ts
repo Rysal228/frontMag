@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { AppShellComponent } from './pages/main/app-shell.component';
+import { AppointmentsPageComponent } from './pages/main/appointments/appointments-page.component';
 import { CarsPageComponent } from './pages/main/cars/cars-page.component';
 import { SectionPlaceholderComponent } from './pages/main/section-placeholder.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
@@ -82,7 +83,7 @@ export const routes: Routes = [
       },
       {
         path: 'appointments',
-        component: SectionPlaceholderComponent,
+        component: AppointmentsPageComponent,
         data: {
           title: 'Записи',
         },
