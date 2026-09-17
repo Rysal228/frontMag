@@ -14,6 +14,7 @@ export type AppointmentApiResponse = {
   work_type: number;
   workTypeName: string;
   statusName: string;
+  workStatusName: string | null;
   appointmentAt: string;
   description: string;
   price: string;
