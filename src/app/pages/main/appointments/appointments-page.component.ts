@@ -2,17 +2,18 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { finalize, forkJoin } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
+import { TuiTooltip } from '@taiga-ui/kit';
 
 import { AppointmentCreateComponent } from 'app/pages/main/appointments/appointment-create.component';
-import { Car } from 'app/shared/models/car.model';
 import { Appointment, WorkType } from 'app/shared/models/appointment.model';
+import { Car } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CarService } from 'app/shared/services/car.service';
 
 @Component({
   selector: 'app-appointments-page',
   standalone: true,
-  imports: [AppointmentCreateComponent, TuiButton],
+  imports: [AppointmentCreateComponent, TuiButton, TuiTooltip],
   templateUrl: './appointments-page.component.html',
   styleUrl: './appointments-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,38 +50,12 @@ export class AppointmentsPageComponent {
     this.loadData();
   }
 
-  protected statusClass(status: string): string {
-    if (['Оплачен', 'Выполнено', 'Принят'].includes(status)) {
-      return 'status_positive';
-    }
-
-    if (['На рассмотрении', 'В работе'].includes(status)) {
-      return 'status_warning';
-    }
-
-    if (['Не оплачен', 'Отказано', 'Ожидание оплаты'].includes(status)) {
-      return 'status_negative';
-    }
-
-    return '';
-  }
-
   protected formatDate(value: string): string {
-    return new Intl.DateTimeFormat('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    }).format(new Date(value));
+    return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(value));
   }
 
   protected formatAppointmentDate(value: string): string {
-    return new Intl.DateTimeFormat('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(value));
+    return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(value));
   }
 
   private loadData(): void {
