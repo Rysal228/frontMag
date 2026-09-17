@@ -1,15 +1,4 @@
-<tui-textfield
-  tuiChevron
-  class="select"
-  [stringify]="stringify"
-  [tuiTextfieldCleaner]="false"
->
-  <input
-    tuiSelect
-    [formControl]="selectControl"
-    [placeholder]="placeholder()"
-    (blur)="onTouched()"
-  />
-
-  <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="optionValues()" />
+<tui-textfield tuiChevron class="select" [stringify]="stringify" [tuiTextfieldCleaner]="false">
+  <input tuiSelect [formControl]="selectControl" [placeholder]="placeholder()" (blur)="onTouched()" />
+  <tui-data-list-wrapper *tuiDropdown new [items]="optionValues()" />
 </tui-textfield>
