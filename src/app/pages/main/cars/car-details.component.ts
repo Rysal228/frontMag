@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TuiButton } from '@taiga-ui/core';
+import { TUI_CONFIRM } from '@taiga-ui/kit';
+import { TuiButton, TuiDialogService } from '@taiga-ui/core';
 
 import { Car } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
@@ -19,6 +20,7 @@ export class CarDetailsComponent {
   private readonly carService = inject(CarService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly dialogs = inject(TuiDialogService);
 
   protected readonly car = signal<Car | null>(null);
   protected readonly isLoading = signal(true);
@@ -48,7 +50,23 @@ export class CarDetailsComponent {
       return;
     }
 
-    if (!window.confirm('Удалить этот автомобиль?')) {
+    this.dialogs
+      .open<boolean>(TUI_CONFIRM, {
+        label: 'Удаление автомобиля',
+        data: {
+          content: 'Вы действительно хотите удалить этот автомобиль? Это действие нельзя отменить.',
+          yes: 'Удалить',
+          no: 'Отмена',
+          appearance: 'negative',
+        },
+      })
+      .subscribe({
+        next: () => this.deleteConfirmed(),
+      });
+  }
+
+  private deleteConfirmed(): void {
+    if (!this.carId || this.isDeleting()) {
       return;
     }
 
