@@ -4,6 +4,7 @@ export type AppointmentStatus = {
   id: number;
   name: string;
   appearance: StatusAppearance;
+  requiresPayment?: boolean;
 };
 
 export type WorkType = {
@@ -18,6 +19,7 @@ export type Appointment = {
   carName: string;
   carPlateNumber: string | null;
   workType: number;
+  workTypeName: string;
   status: AppointmentStatus;
   workStatus: AppointmentStatus | null;
   appointmentAt: string;
