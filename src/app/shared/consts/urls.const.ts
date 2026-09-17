@@ -16,6 +16,8 @@ export const API_ENDPOINTS = {
     models: `/api/${version}/cars/models/`,
   },
   orders: {
+    list: `/api/${version}/orders/`,
     statuses: `/api/${version}/orders/order-status/`,
+    workTypes: `/api/${version}/orders/work-type/`,
   },
 } as const;
