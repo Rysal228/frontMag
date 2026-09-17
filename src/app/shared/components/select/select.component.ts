@@ -23,9 +23,10 @@ export type SelectOption = {
 export class SelectComponent implements ControlValueAccessor {
   public readonly options = input<readonly SelectOption[]>([]);
   public readonly placeholder = input('');
+  public readonly disabled = input(false);
 
   protected value = '';
-  protected disabled = false;
+  protected controlDisabled = false;
 
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
@@ -43,7 +44,7 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   public setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this.controlDisabled = isDisabled;
   }
 
   protected onValueChange(event: Event): void {
