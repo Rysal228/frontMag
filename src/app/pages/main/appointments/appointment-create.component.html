@@ -1,0 +1,40 @@
+<div class="backdrop" (click)="closed.emit()">
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" (click)="$event.stopPropagation()">
+    <header class="dialog-header">
+      <h2 id="dialog-title">Окно создания заявки</h2>
+      <button tuiButton appearance="flat" type="button" iconStart="@tui.x" aria-label="Закрыть" (click)="closed.emit()"></button>
+    </header>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="save()">
+      <app-form-field label="Выберите дату посещения">
+        <app-date-field formControlName="date" />
+      </app-form-field>
+
+      <app-form-field label="Время посещения">
+        <tui-textfield>
+          <input tuiTextfield type="time" formControlName="time" />
+        </tui-textfield>
+      </app-form-field>
+
+      <app-form-field label="Автомобиль">
+        <app-select formControlName="car" placeholder="Выберите автомобиль" [options]="carOptions()" />
+      </app-form-field>
+
+      <app-form-field label="Тип работ">
+        <app-select formControlName="workType" placeholder="Выберите тип работ" [options]="workTypeOptions()" />
+      </app-form-field>
+
+      <app-form-field label="Краткое описание">
+        <textarea tuiTextarea formControlName="description" placeholder="Опишите, что необходимо сделать"></textarea>
+      </app-form-field>
+
+      @if (hasError()) {
+        <p class="error">Не удалось создать запись. Попробуйте ещё раз.</p>
+      }
+
+      <button tuiButton appearance="primary" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Сохранение...' : 'Сохранить' }}
+      </button>
+    </form>
+  </section>
+</div>
