@@ -73,15 +73,15 @@
   font-weight: 800;
 }
 
-.status_positive {
+.status[data-appearance='positive'] {
   color: var(--tui-text-positive);
 }
 
-.status_warning {
+.status[data-appearance='warning'] {
   color: var(--tui-text-warning);
 }
 
-.status_negative {
+.status[data-appearance='negative'] {
   color: var(--tui-text-negative);
 }
 
