@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.appointments-page {
+  box-sizing: border-box;
+  max-width: 720px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 18px 10px 32px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 400;
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.appointment-card {
+  display: grid;
+  gap: 0;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--tui-background-neutral-1);
+}
+
+.card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-header h2 {
+  margin: 0 0 4px;
+  color: var(--tui-text-secondary);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.card-header span {
+  flex: 0 0 auto;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.details {
+  display: grid;
+  gap: 0;
+}
+
+.details p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.status_positive {
+  color: var(--tui-text-positive);
+}
+
+.status_warning {
+  color: var(--tui-text-warning);
+}
+
+.status_negative {
+  color: var(--tui-text-negative);
+}
+
+.payment-button {
+  justify-self: center;
+  min-width: 243px;
+  margin-top: 8px;
+}
+
+.empty,
+.state {
+  display: grid;
+  place-items: center;
+  min-height: 230px;
+  box-sizing: border-box;
+  padding: 32px 16px;
+  border-radius: 12px;
+  background: var(--tui-background-neutral-1);
+  text-align: center;
+}
+
+.empty p,
+.state p {
+  max-width: 384px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.state_error {
+  gap: 12px;
+  color: var(--tui-text-negative);
+}
+
+@media (max-width: 520px) {
+  .appointments-page {
+    padding: 18px 10px 28px;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  .header h1 {
+    font-size: 25px;
+  }
+
+  .header > button {
+    flex: 0 0 auto;
+  }
+}
