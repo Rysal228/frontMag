@@ -32,12 +32,8 @@
         </select>
       </app-form-field>
 
-      <app-form-field [label]="'Год выпуска (' + minYear + '–' + maxYear + ')'">
-        <app-text-field
-          formControlName="year"
-          inputmode="numeric"
-          [placeholder]="'Например, ' + (maxYear - 5)"
-        />
+      <app-form-field label="Год выпуска">
+        <app-year-select formControlName="year" />
       </app-form-field>
 
       <app-form-field label="Гос. номер">
