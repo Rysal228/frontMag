@@ -1,13 +1,13 @@
 <tui-textfield
   tuiChevron
   class="select"
+  [stringify]="stringify"
   [tuiTextfieldCleaner]="false"
 >
   <input
     tuiSelect
     [formControl]="selectControl"
     [placeholder]="placeholder()"
-    [stringify]="stringify"
     (blur)="onTouched()"
   />
 
