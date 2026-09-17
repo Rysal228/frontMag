@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TUI_CONFIRM } from '@taiga-ui/kit';
 import { TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { TUI_CONFIRM } from '@taiga-ui/kit';
 
 import { Car } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
@@ -61,7 +61,11 @@ export class CarDetailsComponent {
         },
       })
       .subscribe({
-        next: () => this.deleteConfirmed(),
+        next: (confirmed) => {
+          if (confirmed) {
+            this.deleteConfirmed();
+          }
+        },
       });
   }
 
