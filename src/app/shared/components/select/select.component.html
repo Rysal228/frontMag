@@ -1,15 +1,15 @@
-<select
+<tui-textfield
+  tuiChevron
   class="select"
-  [value]="value"
-  [disabled]="disabled() || controlDisabled"
-  (change)="onValueChange($event)"
-  (blur)="onTouched()"
+  [tuiTextfieldCleaner]="false"
 >
-  @if (placeholder()) {
-    <option value="" disabled>{{ placeholder() }}</option>
-  }
+  <input
+    tuiSelect
+    [formControl]="selectControl"
+    [placeholder]="placeholder()"
+    [stringify]="stringify"
+    (blur)="onTouched()"
+  />
 
-  @for (option of options(); track option.value) {
-    <option [value]="option.value">{{ option.label }}</option>
-  }
-</select>
+  <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="optionValues()" />
+</tui-textfield>
