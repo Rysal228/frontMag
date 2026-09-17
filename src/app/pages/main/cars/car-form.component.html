@@ -13,27 +13,28 @@
 
     <form class="form" [formGroup]="form" (ngSubmit)="save()">
       <app-form-field label="Марка">
-        <select formControlName="brand" class="select">
-          <option value="">Выберите марку автомобиля</option>
-          @for (brand of brands(); track brand.id) {
-            <option [value]="brand.id">{{ brand.name }}</option>
-          }
-        </select>
+        <app-select
+          formControlName="brand"
+          [options]="brandOptions()"
+          placeholder="Выберите марку автомобиля"
+        />
       </app-form-field>
 
       <app-form-field label="Модель">
-        <select formControlName="model" class="select" [disabled]="!form.controls.brand.value || isModelsLoading()">
-          <option value="">
-            {{ isModelsLoading() ? 'Загрузка моделей...' : 'Выберите модель автомобиля' }}
-          </option>
-          @for (model of models(); track model.id) {
-            <option [value]="model.id">{{ model.name }}</option>
-          }
-        </select>
+        <app-select
+          formControlName="model"
+          [options]="modelOptions()"
+          [disabled]="!form.controls.brand.value || isModelsLoading()"
+          [placeholder]="isModelsLoading() ? 'Загрузка моделей...' : 'Выберите модель автомобиля'"
+        />
       </app-form-field>
 
       <app-form-field label="Год выпуска">
-        <app-year-select formControlName="year" />
+        <app-select
+          formControlName="year"
+          [options]="yearOptions"
+          placeholder="Выберите год выпуска"
+        />
       </app-form-field>
 
       <app-form-field label="Гос. номер">
