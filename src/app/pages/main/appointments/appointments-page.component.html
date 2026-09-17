@@ -2,16 +2,20 @@
   <header class="header">
     <h1>Информация о записях:</h1>
 
-    <button
-      tuiButton
-      appearance="outline"
-      type="button"
-      [iconStart]="'@tui.calendar-plus'"
-      [disabled]="isLoading() || !cars().length"
-      (click)="openCreate()"
+    <span
+      [tuiTooltip]="!cars().length ? 'Чтобы записаться, сначала добавьте автомобиль в разделе «Мои авто».' : null"
     >
-      Записаться
-    </button>
+      <button
+        tuiButton
+        appearance="outline"
+        type="button"
+        [iconStart]="'@tui.calendar-plus'"
+        [disabled]="isLoading() || !cars().length"
+        (click)="openCreate()"
+      >
+        Записаться
+      </button>
+    </span>
   </header>
 
   @if (isLoading()) {
@@ -33,7 +37,9 @@
         <article class="appointment-card">
           <header class="card-header">
             <h2>Заказ № {{ appointment.orderNumber }}</h2>
-            <span [class]="statusClass(appointment.statusName)">{{ appointment.statusName }}</span>
+            <span class="status" [attr.data-appearance]="appointment.status.appearance">
+              {{ appointment.status.name }}
+            </span>
           </header>
 
           <div class="details">
@@ -43,11 +49,11 @@
               <p>Дата и время записи: {{ formatAppointmentDate(appointment.appointmentAt) }}</p>
             }
 
-            <p>Тип работ: {{ appointment.workTypeName }}</p>
+            <p>Тип работ: {{ appointment.workType }}</p>
             <p>
               Статус работ:
-              <span [class]="statusClass(appointment.workStatusName || '')">
-                {{ appointment.workStatusName || '-' }}
+              <span class="status" [attr.data-appearance]="appointment.workStatus?.appearance">
+                {{ appointment.workStatus?.name || '-' }}
               </span>
             </p>
             <p>Стоимость работ: {{ appointment.price ? appointment.price + ' руб' : '-' }}</p>
@@ -59,7 +65,7 @@
             }
           </div>
 
-          @if (appointment.statusName === 'Не оплачен') {
+          @if (appointment.status.requiresPayment) {
             <button tuiButton appearance="outline" type="button" class="payment-button">
               Оплатить
             </button>
