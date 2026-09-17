@@ -27,7 +27,7 @@ export type SelectOption = {
 })
 export class SelectComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly selectControl = new FormControl<string | null>(null);
+  protected readonly selectControl = new FormControl<string | null>(null);
 
   public readonly options = input<readonly SelectOption[]>([]);
   public readonly placeholder = input('');
