@@ -1,10 +1,16 @@
 export type StatusAppearance = 'positive' | 'warning' | 'negative';
 
-export type AppointmentStatus = {
+export type OrderStatus = {
   id: number;
   name: string;
   appearance: StatusAppearance;
-  requiresPayment?: boolean;
+  requiresPayment: boolean;
+};
+
+export type WorkStatus = {
+  id: number;
+  name: string;
+  appearance: StatusAppearance;
 };
 
 export type WorkType = {
@@ -20,8 +26,8 @@ export type Appointment = {
   carPlateNumber: string | null;
   workType: number;
   workTypeName: string;
-  status: AppointmentStatus;
-  workStatus: AppointmentStatus | null;
+  status: OrderStatus;
+  workStatus: WorkStatus | null;
   appointmentAt: string;
   description: string;
   price: number;
