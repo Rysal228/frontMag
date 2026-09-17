@@ -1,0 +1,13 @@
+<select
+  class="select"
+  [value]="value"
+  [disabled]="disabled"
+  (change)="onValueChange($event)"
+  (blur)="onTouched()"
+>
+  <option value="" disabled>{{ placeholder() }}</option>
+
+  @for (year of years(); track year) {
+    <option [value]="year">{{ year }}</option>
+  }
+</select>
