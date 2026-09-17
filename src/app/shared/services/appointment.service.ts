@@ -30,6 +30,7 @@ export class AppointmentService {
       workType: appointment.work_type,
       workTypeName: appointment.workTypeName,
       statusName: appointment.statusName,
+      workStatusName: appointment.workStatusName,
       appointmentAt: appointment.appointmentAt,
       description: appointment.description,
       price: Number(appointment.price),
