@@ -25,6 +25,7 @@ export class CarFormComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly currentYear = new Date().getFullYear();
 
   protected readonly carId = this.route.snapshot.paramMap.get('id');
   protected readonly isEdit = Boolean(this.carId);
@@ -52,9 +53,9 @@ export class CarFormComponent {
   );
 
   protected readonly yearOptions: SelectOption[] = Array.from(
-    { length: new Date().getFullYear() + 2 - 1900 },
+    { length: this.currentYear + 2 - 1900 },
     (_, index) => {
-      const year = new Date().getFullYear() + 1 - index;
+      const year = this.currentYear + 1 - index;
 
       return {
         value: String(year),
