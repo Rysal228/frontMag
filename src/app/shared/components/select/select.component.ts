@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, forwardRef, inject, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+
+import { TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
 
 export type SelectOption = {
   value: string;
@@ -9,6 +13,7 @@ export type SelectOption = {
 @Component({
   selector: 'app-select',
   standalone: true,
+  imports: [ReactiveFormsModule, TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextfield],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,18 +26,39 @@ export type SelectOption = {
   ],
 })
 export class SelectComponent implements ControlValueAccessor {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly selectControl = new FormControl<string | null>(null);
+
   public readonly options = input<readonly SelectOption[]>([]);
   public readonly placeholder = input('');
   public readonly disabled = input(false);
 
-  protected value = '';
-  protected controlDisabled = false;
+  protected readonly optionValues = computed(() => this.options().map((option) => option.value));
+  protected readonly controlDisabled = signal(false);
+  protected readonly isDisabled = computed(() => this.disabled() || this.controlDisabled());
+
+  protected readonly stringify = (value: string): string =>
+    this.options().find((option) => option.value === value)?.label ?? '';
 
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
+  constructor() {
+    this.selectControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.onChange(value ?? '');
+    });
+
+    effect(() => {
+      if (this.isDisabled()) {
+        this.selectControl.disable({ emitEvent: false });
+      } else {
+        this.selectControl.enable({ emitEvent: false });
+      }
+    });
+  }
+
   public writeValue(value: string | null): void {
-    this.value = value ?? '';
+    this.selectControl.setValue(value || null, { emitEvent: false });
   }
 
   public registerOnChange(fn: (value: string) => void): void {
@@ -44,14 +70,6 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   public setDisabledState(isDisabled: boolean): void {
-    this.controlDisabled = isDisabled;
-  }
-
-  protected onValueChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-
-    this.value = select.value;
-    this.onChange(this.value);
-    this.onTouched();
+    this.controlDisabled.set(isDisabled);
   }
 }
