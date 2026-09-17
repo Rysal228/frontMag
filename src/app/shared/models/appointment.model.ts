@@ -12,6 +12,7 @@ export type Appointment = {
   workType: number;
   workTypeName: string;
   statusName: string;
+  workStatusName: string | null;
   appointmentAt: string;
   description: string;
   price: number;
