@@ -2,9 +2,15 @@
   <header class="header">
     <h1>Информация о записях:</h1>
 
-    <button tuiButton appearance="outline" type="button" [disabled]="isLoading() || !cars().length" (click)="openCreate()">
+    <button
+      tuiButton
+      appearance="outline"
+      type="button"
+      [iconStart]="'@tui.calendar-plus'"
+      [disabled]="isLoading() || !cars().length"
+      (click)="openCreate()"
+    >
       Записаться
-      <span tuiIcon="@tui.calendar-plus"></span>
     </button>
   </header>
 
@@ -41,7 +47,7 @@
             <p>Статус работ: <span [class]="statusClass(appointment.statusName)">{{ appointment.statusName }}</span></p>
             <p>Стоимость работ: {{ appointment.price ? appointment.price + ' руб' : '-' }}</p>
             <p>Авто: {{ appointment.carName }}</p>
-            <p>Гос. номер: —</p>
+            <p>Гос. номер: {{ appointment.carPlateNumber || '-' }}</p>
 
             @if (appointment.description) {
               <p>Кр. описание: {{ appointment.description }}</p>
