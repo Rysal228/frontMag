@@ -8,6 +8,7 @@ export type Appointment = {
   orderNumber: string;
   car: string;
   carName: string;
+  carPlateNumber: string | null;
   workType: number;
   workTypeName: string;
   statusName: string;
