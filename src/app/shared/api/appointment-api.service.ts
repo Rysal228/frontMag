@@ -3,13 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { Appointment, CreateAppointmentRequest, WorkType } from 'app/shared/models/appointment.model';
+import { CreateAppointmentRequest, WorkType } from 'app/shared/models/appointment.model';
 
 export type AppointmentApiResponse = {
   id: string;
   orderNumber: string;
   car: string;
   carName: string;
+  carPlateNumber: string | null;
   work_type: number;
   workTypeName: string;
   statusName: string;
