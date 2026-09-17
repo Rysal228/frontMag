@@ -1,3 +1,11 @@
+export type StatusAppearance = 'positive' | 'warning' | 'negative';
+
+export type AppointmentStatus = {
+  id: number;
+  name: string;
+  appearance: StatusAppearance;
+};
+
 export type WorkType = {
   id: number;
   name: string;
@@ -10,9 +18,8 @@ export type Appointment = {
   carName: string;
   carPlateNumber: string | null;
   workType: number;
-  workTypeName: string;
-  statusName: string;
-  workStatusName: string | null;
+  status: AppointmentStatus;
+  workStatus: AppointmentStatus | null;
   appointmentAt: string;
   description: string;
   price: number;
