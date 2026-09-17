@@ -44,7 +44,12 @@
             }
 
             <p>Тип работ: {{ appointment.workTypeName }}</p>
-            <p>Статус работ: <span [class]="statusClass(appointment.statusName)">{{ appointment.statusName }}</span></p>
+            <p>
+              Статус работ:
+              <span [class]="statusClass(appointment.workStatusName || '')">
+                {{ appointment.workStatusName || '-' }}
+              </span>
+            </p>
             <p>Стоимость работ: {{ appointment.price ? appointment.price + ' руб' : '-' }}</p>
             <p>Авто: {{ appointment.carName }}</p>
             <p>Гос. номер: {{ appointment.carPlateNumber || '-' }}</p>
@@ -54,7 +59,7 @@
             }
           </div>
 
-          @if (appointment.statusName === 'Ожидание оплаты') {
+          @if (appointment.statusName === 'Не оплачен') {
             <button tuiButton appearance="outline" type="button" class="payment-button">
               Оплатить
             </button>
