@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
   orders: {
     list: `/api/${version}/orders/`,
     statuses: `/api/${version}/orders/order-status/`,
+    workStatuses: `/api/${version}/orders/work-status/`,
     workTypes: `/api/${version}/orders/work-type/`,
   },
 } as const;
