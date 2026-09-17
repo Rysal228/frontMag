@@ -1,0 +1,69 @@
+<section class="appointments-page">
+  <header class="header">
+    <h1>Информация о записях:</h1>
+
+    <button tuiButton appearance="outline" type="button" [disabled]="isLoading() || !cars().length" (click)="openCreate()">
+      Записаться
+      <span tuiIcon="@tui.calendar-plus"></span>
+    </button>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state">
+      <p>Загрузка записей...</p>
+    </div>
+  } @else if (hasError()) {
+    <div class="state state_error">
+      <p>Не удалось загрузить записи.</p>
+      <button tuiButton appearance="outline" type="button" (click)="reload()">Повторить</button>
+    </div>
+  } @else if (!appointments().length) {
+    <div class="empty">
+      <p>Текущих или прошлых записей нет. Запишитесь, чтобы видеть историю ваших обращений в сервис.</p>
+    </div>
+  } @else {
+    <div class="list">
+      @for (appointment of appointments(); track appointment.id) {
+        <article class="appointment-card">
+          <header class="card-header">
+            <h2>Заказ № {{ appointment.orderNumber }}</h2>
+            <span [class]="statusClass(appointment.statusName)">{{ appointment.statusName }}</span>
+          </header>
+
+          <div class="details">
+            <p>Дата создания: {{ formatDate(appointment.createdAt) }}</p>
+
+            @if (appointment.appointmentAt) {
+              <p>Дата и время записи: {{ formatAppointmentDate(appointment.appointmentAt) }}</p>
+            }
+
+            <p>Тип работ: {{ appointment.workTypeName }}</p>
+            <p>Статус работ: <span [class]="statusClass(appointment.statusName)">{{ appointment.statusName }}</span></p>
+            <p>Стоимость работ: {{ appointment.price ? appointment.price + ' руб' : '-' }}</p>
+            <p>Авто: {{ appointment.carName }}</p>
+            <p>Гос. номер: —</p>
+
+            @if (appointment.description) {
+              <p>Кр. описание: {{ appointment.description }}</p>
+            }
+          </div>
+
+          @if (appointment.statusName === 'Ожидание оплаты') {
+            <button tuiButton appearance="outline" type="button" class="payment-button">
+              Оплатить
+            </button>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (isCreateOpen()) {
+  <app-appointment-create
+    [cars]="cars()"
+    [workTypes]="workTypes()"
+    (closed)="closeCreate()"
+    (created)="onCreated()"
+  />
+}
