@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -7,15 +7,15 @@ import { finalize } from 'rxjs';
 import { TuiButton } from '@taiga-ui/core';
 
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
+import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
-import { YearSelectComponent } from 'app/shared/components/year-select/year-select.component';
 import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
 
 @Component({
   selector: 'app-car-form',
   standalone: true,
-  imports: [FormFieldComponent, ReactiveFormsModule, RouterLink, TextFieldComponent, TuiButton, YearSelectComponent],
+  imports: [FormFieldComponent, ReactiveFormsModule, RouterLink, SelectComponent, TextFieldComponent, TuiButton],
   templateUrl: './car-form.component.html',
   styleUrl: './car-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +36,32 @@ export class CarFormComponent {
   protected readonly loadError = signal(false);
   protected readonly selectedPhoto = signal<File | null>(null);
   protected readonly photoPreview = signal<string | null>(null);
+
+  protected readonly brandOptions = computed<SelectOption[]>(() =>
+    this.brands().map((brand) => ({
+      value: String(brand.id),
+      label: brand.name,
+    }))
+  );
+
+  protected readonly modelOptions = computed<SelectOption[]>(() =>
+    this.models().map((model) => ({
+      value: String(model.id),
+      label: model.name,
+    }))
+  );
+
+  protected readonly yearOptions: SelectOption[] = Array.from(
+    { length: new Date().getFullYear() + 2 - 1900 },
+    (_, index) => {
+      const year = new Date().getFullYear() + 1 - index;
+
+      return {
+        value: String(year),
+        label: String(year),
+      };
+    }
+  );
 
   protected readonly form = new FormGroup({
     brand: new FormControl('', { nonNullable: true, validators: Validators.required }),
