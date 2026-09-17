@@ -26,6 +26,7 @@ export class AppointmentService {
       orderNumber: appointment.orderNumber,
       car: appointment.car,
       carName: appointment.carName,
+      carPlateNumber: appointment.carPlateNumber,
       workType: appointment.work_type,
       workTypeName: appointment.workTypeName,
       statusName: appointment.statusName,
