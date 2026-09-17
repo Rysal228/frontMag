@@ -1,0 +1,22 @@
+.select {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 12px;
+  outline: none;
+  color: var(--tui-text-primary);
+  background: var(--tui-background-base);
+  font: inherit;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: var(--tui-text-action);
+}
+
+.select:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
