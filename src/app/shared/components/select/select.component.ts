@@ -1,3 +1,4 @@
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
-import { TuiTextfield, TuiTextfieldDropdown } from '@taiga-ui/core';
+import { TuiDataList, TuiScrollable, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
 
 export type SelectOption = {
@@ -23,7 +24,16 @@ export type SelectOption = {
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [ReactiveFormsModule, TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextfield, TuiTextfieldDropdown],
+  imports: [
+    ReactiveFormsModule,
+    TuiChevron,
+    TuiDataListWrapper,
+    TuiSelect,
+    TuiTextfield,
+    TuiDataList,
+    ScrollingModule,
+    TuiScrollable,
+  ],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

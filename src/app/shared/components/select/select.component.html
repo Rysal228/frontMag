@@ -1,10 +1,11 @@
-<tui-textfield
-  tuiChevron
-  class="select"
-  [stringify]="stringify"
-  [tuiTextfieldCleaner]="false"
->
-  <input tuiSelect [formControl]="selectControl" [placeholder]="placeholder()" (blur)="onTouched()" />
+<tui-textfield tuiChevron class="select">
+  <input [placeholder]="placeholder()" tuiSelect (blur)="onTouched()" [formControl]="selectControl" />
 
-  <tui-data-list-wrapper *tuiTextfieldDropdown [items]="optionValues()" />
+  <cdk-virtual-scroll-viewport *tuiTextfieldDropdown tuiScrollable class="scroll" [itemSize]="100">
+    <tui-data-list>
+      <button *cdkVirtualFor="let item of optionValues()" new tuiOption type="button" [value]="item">
+        {{ item }}
+      </button>
+    </tui-data-list>
+  </cdk-virtual-scroll-viewport>
 </tui-textfield>
