@@ -1,4 +1,13 @@
-<tui-textfield tuiChevron class="select" [stringify]="stringify" [tuiTextfieldCleaner]="false">
+<tui-textfield
+  tuiChevron
+  class="select"
+  [stringify]="stringify"
+  [tuiTextfieldCleaner]="false"
+  [tuiDropdown]="dropdown"
+>
   <input tuiSelect [formControl]="selectControl" [placeholder]="placeholder()" (blur)="onTouched()" />
-  <tui-data-list-wrapper *tuiDropdown [items]="optionValues()" />
 </tui-textfield>
+
+<ng-template #dropdown>
+  <tui-data-list-wrapper [items]="optionValues()" />
+</ng-template>
