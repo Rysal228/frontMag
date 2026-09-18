@@ -2,7 +2,11 @@
   <header class="header">
     <h1>Информация о записях:</h1>
 
-    <span [tuiTooltip]="!cars().length ? 'Чтобы записаться, сначала добавьте автомобиль в разделе «Мои авто».' : ''">
+    <span
+      tuiHintAppearance="dark"
+      tuiHintDirection="top"
+      [tuiHint]="!cars().length ? 'Чтобы записаться, сначала добавьте автомобиль в разделе «Мои авто».' : null"
+    >
       <button
         tuiButton
         appearance="outline"
