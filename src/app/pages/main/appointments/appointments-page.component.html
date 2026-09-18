@@ -68,9 +68,7 @@
           </div>
 
           @if (appointment.status.requiresPayment) {
-            <button tuiButton appearance="outline" type="button" class="payment-button">
-              Оплатить
-            </button>
+            <button tuiButton appearance="outline" type="button" class="payment-button">Оплатить</button>
           }
         </article>
       }
@@ -79,10 +77,5 @@
 </section>
 
 @if (isCreateOpen()) {
-  <app-appointment-create
-    [cars]="cars()"
-    [workTypes]="workTypes()"
-    (closed)="closeCreate()"
-    (created)="onCreated()"
-  />
+  <app-appointment-form [cars]="cars()" [workTypes]="workTypes()" (closed)="closeCreate()" (created)="onCreated()" />
 }

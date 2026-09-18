@@ -12,14 +12,22 @@ import { Car } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 
 @Component({
-  selector: 'app-appointment-create',
+  selector: 'app-appointment-form',
   standalone: true,
-  imports: [DateFieldComponent, FormFieldComponent, ReactiveFormsModule, SelectComponent, TuiButton, TuiTextfield, TuiTextarea],
-  templateUrl: './appointment-create.component.html',
-  styleUrl: './appointment-create.component.scss',
+  imports: [
+    DateFieldComponent,
+    FormFieldComponent,
+    ReactiveFormsModule,
+    SelectComponent,
+    TuiButton,
+    TuiTextfield,
+    TuiTextarea,
+  ],
+  templateUrl: './appointment-form.component.html',
+  styleUrl: './appointment-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppointmentCreateComponent {
+export class AppointmentFormComponent {
   private readonly appointmentService = inject(AppointmentService);
 
   public readonly cars = input<readonly Car[]>([]);
@@ -39,11 +47,11 @@ export class AppointmentCreateComponent {
   });
 
   protected readonly carOptions = computed<SelectOption[]>(() =>
-    this.cars().map((car) => ({ value: car.id, label: `${car.brandName} ${car.modelName}` })),
+    this.cars().map((car) => ({ value: car.id, label: `${car.brandName} ${car.modelName}` }))
   );
 
   protected readonly workTypeOptions = computed<SelectOption[]>(() =>
-    this.workTypes().map((workType) => ({ value: String(workType.id), label: workType.name })),
+    this.workTypes().map((workType) => ({ value: String(workType.id), label: workType.name }))
   );
 
   protected save(): void {

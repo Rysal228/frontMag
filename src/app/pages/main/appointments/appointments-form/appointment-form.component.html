@@ -1,8 +1,21 @@
 <div class="backdrop" (click)="closed.emit()">
-  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" (click)="$event.stopPropagation()">
+  <section
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dialog-title"
+    (click)="$event.stopPropagation()"
+  >
     <header class="dialog-header">
       <h2 id="dialog-title">Окно создания заявки</h2>
-      <button tuiButton appearance="flat" type="button" iconStart="@tui.x" aria-label="Закрыть" (click)="closed.emit()"></button>
+      <button
+        tuiButton
+        appearance="flat"
+        type="button"
+        iconStart="@tui.x"
+        aria-label="Закрыть"
+        (click)="closed.emit()"
+      ></button>
     </header>
 
     <form class="form" [formGroup]="form" (ngSubmit)="save()">

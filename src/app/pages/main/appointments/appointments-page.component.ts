@@ -3,7 +3,7 @@ import { finalize, forkJoin } from 'rxjs';
 
 import { TuiButton, TuiHint } from '@taiga-ui/core';
 
-import { AppointmentCreateComponent } from 'app/pages/main/appointments/appointment-create.component';
+import { AppointmentFormComponent } from 'app/pages/main/appointments/appointments-form/appointment-form.component';
 import { Appointment, WorkType } from 'app/shared/models/appointment.model';
 import { Car } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
@@ -12,7 +12,7 @@ import { CarService } from 'app/shared/services/car.service';
 @Component({
   selector: 'app-appointments-page',
   standalone: true,
-  imports: [AppointmentCreateComponent, TuiButton, TuiHint],
+  imports: [AppointmentFormComponent, TuiButton, TuiHint],
   templateUrl: './appointments-page.component.html',
   styleUrl: './appointments-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,11 +50,19 @@ export class AppointmentsPageComponent {
   }
 
   protected formatDate(value: string): string {
-    return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(value));
+    return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
+      new Date(value)
+    );
   }
 
   protected formatAppointmentDate(value: string): string {
-    return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+    return new Intl.DateTimeFormat('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
   }
 
   private loadData(): void {
