@@ -38,7 +38,9 @@
       </app-form-field>
 
       <app-form-field label="Краткое описание">
-        <textarea tuiTextarea formControlName="description" placeholder="Опишите, что необходимо сделать"></textarea>
+        <tui-textfield>
+          <textarea tuiTextarea formControlName="description" placeholder="Опишите, что необходимо сделать"></textarea>
+        </tui-textfield>
       </app-form-field>
 
       @if (hasError()) {
