@@ -52,17 +52,14 @@ export class CarFormComponent {
     }))
   );
 
-  protected readonly yearOptions: SelectOption[] = Array.from(
-    { length: this.currentYear + 2 - 1900 },
-    (_, index) => {
-      const year = this.currentYear + 1 - index;
+  protected readonly yearOptions: SelectOption[] = Array.from({ length: this.currentYear + 2 - 1980 }, (_, index) => {
+    const year = this.currentYear + 1 - index;
 
-      return {
-        value: String(year),
-        label: String(year),
-      };
-    }
-  );
+    return {
+      value: String(year),
+      label: String(year),
+    };
+  });
 
   protected readonly form = new FormGroup({
     brand: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -124,9 +121,7 @@ export class CarFormComponent {
 
     this.isSaving.set(true);
 
-    const request$ = this.carId
-      ? this.carService.update(this.carId, request)
-      : this.carService.create(request);
+    const request$ = this.carId ? this.carService.update(this.carId, request) : this.carService.create(request);
 
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: (car) => void this.router.navigate(['/cars', car.id]),
