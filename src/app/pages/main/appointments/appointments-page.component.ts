@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { finalize, forkJoin } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { TuiButton, TuiHint } from '@taiga-ui/core';
 
@@ -70,7 +70,12 @@ export class AppointmentsPageComponent {
     this.hasError.set(false);
 
     forkJoin({
-      appointments: this.appointmentService.getAll(),
+      appointments: this.appointmentService.getAll().pipe(
+        catchError(() => {
+          this.hasError.set(true);
+          return of([]);
+        })
+      ),
       cars: this.carService.getAll(),
       workTypes: this.appointmentService.getWorkTypes(),
     })
