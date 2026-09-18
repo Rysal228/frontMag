@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { finalize, forkJoin } from 'rxjs';
 
-import { TuiButton } from '@taiga-ui/core';
-import { TuiTooltip } from '@taiga-ui/kit';
+import { TuiButton, TuiHint } from '@taiga-ui/core';
 
 import { AppointmentCreateComponent } from 'app/pages/main/appointments/appointment-create.component';
 import { Appointment, WorkType } from 'app/shared/models/appointment.model';
@@ -13,7 +12,7 @@ import { CarService } from 'app/shared/services/car.service';
 @Component({
   selector: 'app-appointments-page',
   standalone: true,
-  imports: [AppointmentCreateComponent, TuiButton, TuiTooltip],
+  imports: [AppointmentCreateComponent, TuiButton, TuiHint],
   templateUrl: './appointments-page.component.html',
   styleUrl: './appointments-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
