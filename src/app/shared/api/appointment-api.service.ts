@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -27,6 +27,8 @@ export class AppointmentApiService {
   }
 
   public getAvailability(date: string): Observable<AppointmentAvailability> {
-    return this.http.get<AppointmentAvailability>(`${API_ENDPOINTS.orders.availability}?date=${date}`);
+    const params = new HttpParams().set('date', date);
+
+    return this.http.get<AppointmentAvailability>(API_ENDPOINTS.orders.availability, { params });
   }
 }
