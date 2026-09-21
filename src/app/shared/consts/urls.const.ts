@@ -20,5 +20,6 @@ export const API_ENDPOINTS = {
     statuses: `/api/${version}/orders/order-status/`,
     workStatuses: `/api/${version}/orders/work-status/`,
     workTypes: `/api/${version}/orders/work-type/`,
+    availability: `/api/${version}/orders/availability/`,
   },
 } as const;
