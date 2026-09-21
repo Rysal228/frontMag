@@ -52,6 +52,7 @@ export class AppointmentFormComponent {
   protected readonly hasError = signal(false);
   protected readonly hasAvailabilityError = signal(false);
   protected readonly timeOptions = signal<SelectOption[]>([]);
+  protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
 
   protected readonly form = new FormGroup({
     date: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -76,6 +77,7 @@ export class AppointmentFormComponent {
         tap(() => {
           this.form.controls.time.setValue('', { emitEvent: false });
           this.timeOptions.set([]);
+          this.dayType.set(null);
           this.hasAvailabilityError.set(false);
         }),
         switchMap((date) => {
@@ -86,6 +88,7 @@ export class AppointmentFormComponent {
           this.isLoadingSlots.set(true);
 
           return this.appointmentService.getAvailability(date).pipe(
+            tap((availability) => this.dayType.set(availability.dayType)),
             map((availability) =>
               availability.availableSlots.map((time) => ({ value: time, label: time }))
             ),
