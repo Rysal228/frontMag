@@ -8,9 +8,9 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, distinctUntilChanged, finalize, of, switchMap, tap } from 'rxjs';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiTextarea } from '@taiga-ui/kit';
@@ -88,12 +88,10 @@ export class AppointmentFormComponent {
           this.isLoadingSlots.set(true);
 
           return this.appointmentService.getAvailability(date).pipe(
-            switchMap((availability) =>
-              of(
-                this.appointmentAvailabilityService
-                  .getAvailableSlots(availability)
-                  .map((time) => ({ value: time, label: time }))
-              )
+            map((availability) =>
+              this.appointmentAvailabilityService
+                .getAvailableSlots(availability)
+                .map((time) => ({ value: time, label: time }))
             ),
             catchError(() => {
               this.hasAvailabilityError.set(true);
