@@ -30,6 +30,14 @@
           [options]="timeOptions()"
           [disabled]="isLoadingSlots() || !form.controls.date.value"
         />
+
+        @if (hasAvailabilityError()) {
+          <p class="error">Не удалось загрузить доступное время. Попробуйте выбрать дату ещё раз.</p>
+        } @else if (isLoadingSlots()) {
+          <p class="hint">Загрузка доступного времени...</p>
+        } @else if (form.controls.date.value && !timeOptions().length) {
+          <p class="hint">На выбранную дату свободного времени нет.</p>
+        }
       </app-form-field>
 
       <app-form-field label="Автомобиль">
