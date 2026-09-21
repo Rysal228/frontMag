@@ -1,5 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, distinctUntilChanged, finalize, of, switchMap, tap } from 'rxjs';
 
 import { TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiTextarea } from '@taiga-ui/kit';
@@ -9,6 +20,7 @@ import { FormFieldComponent } from 'app/shared/components/form-field/form-field.
 import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
 import { WorkType } from 'app/shared/models/appointment.model';
 import { Car } from 'app/shared/models/car.model';
+import { AppointmentAvailabilityService } from 'app/shared/services/appointment-availability.service';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 
 @Component({
@@ -29,6 +41,8 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 })
 export class AppointmentFormComponent {
   private readonly appointmentService = inject(AppointmentService);
+  private readonly appointmentAvailabilityService = inject(AppointmentAvailabilityService);
+  private readonly destroyRef = inject(DestroyRef);
 
   public readonly cars = input<readonly Car[]>([]);
   public readonly workTypes = input<readonly WorkType[]>([]);
@@ -36,7 +50,10 @@ export class AppointmentFormComponent {
   public readonly created = output<void>();
 
   protected readonly saving = signal(false);
+  protected readonly isLoadingSlots = signal(false);
   protected readonly hasError = signal(false);
+  protected readonly hasAvailabilityError = signal(false);
+  protected readonly timeOptions = signal<SelectOption[]>([]);
 
   protected readonly form = new FormGroup({
     date: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -53,6 +70,42 @@ export class AppointmentFormComponent {
   protected readonly workTypeOptions = computed<SelectOption[]>(() =>
     this.workTypes().map((workType) => ({ value: String(workType.id), label: workType.name }))
   );
+
+  constructor() {
+    this.form.controls.date.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        tap(() => {
+          this.form.controls.time.setValue('', { emitEvent: false });
+          this.timeOptions.set([]);
+          this.hasAvailabilityError.set(false);
+        }),
+        switchMap((date) => {
+          if (!date) {
+            return of([] as SelectOption[]);
+          }
+
+          this.isLoadingSlots.set(true);
+
+          return this.appointmentService.getAvailability(date).pipe(
+            switchMap((availability) =>
+              of(
+                this.appointmentAvailabilityService
+                  .getAvailableSlots(availability)
+                  .map((time) => ({ value: time, label: time }))
+              )
+            ),
+            catchError(() => {
+              this.hasAvailabilityError.set(true);
+              return of([] as SelectOption[]);
+            }),
+            finalize(() => this.isLoadingSlots.set(false))
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((options) => this.timeOptions.set(options));
+  }
 
   protected save(): void {
     if (this.form.invalid) {
