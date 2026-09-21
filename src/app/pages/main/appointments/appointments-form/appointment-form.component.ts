@@ -20,7 +20,6 @@ import { FormFieldComponent } from 'app/shared/components/form-field/form-field.
 import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
 import { WorkType } from 'app/shared/models/appointment.model';
 import { Car } from 'app/shared/models/car.model';
-import { AppointmentAvailabilityService } from 'app/shared/services/appointment-availability.service';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 
 @Component({
@@ -41,7 +40,6 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 })
 export class AppointmentFormComponent {
   private readonly appointmentService = inject(AppointmentService);
-  private readonly appointmentAvailabilityService = inject(AppointmentAvailabilityService);
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly cars = input<readonly Car[]>([]);
@@ -89,9 +87,7 @@ export class AppointmentFormComponent {
 
           return this.appointmentService.getAvailability(date).pipe(
             map((availability) =>
-              this.appointmentAvailabilityService
-                .getAvailableSlots(availability)
-                .map((time) => ({ value: time, label: time }))
+              availability.availableSlots.map((time) => ({ value: time, label: time }))
             ),
             catchError(() => {
               this.hasAvailabilityError.set(true);
