@@ -40,3 +40,8 @@ export type CreateAppointmentRequest = {
   appointmentAt: string;
   description: string;
 };
+
+export type AppointmentAvailability = {
+  date: string;
+  slots: string[];
+};

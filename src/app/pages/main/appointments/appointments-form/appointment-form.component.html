@@ -24,9 +24,12 @@
       </app-form-field>
 
       <app-form-field label="Время посещения">
-        <tui-textfield>
-          <input tuiTextfield type="time" formControlName="time" />
-        </tui-textfield>
+        <app-select
+          formControlName="time"
+          placeholder="Выберите время"
+          [options]="timeOptions()"
+          [disabled]="isLoadingSlots() || !form.controls.date.value"
+        />
       </app-form-field>
 
       <app-form-field label="Автомобиль">

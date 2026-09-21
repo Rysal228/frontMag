@@ -3,7 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { Appointment, CreateAppointmentRequest, WorkType } from 'app/shared/models/appointment.model';
+import {
+  Appointment,
+  AppointmentAvailability,
+  CreateAppointmentRequest,
+  WorkType,
+} from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
@@ -19,5 +24,9 @@ export class AppointmentApiService {
 
   public create(request: CreateAppointmentRequest): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.list, request);
+  }
+
+  public getAvailability(date: string): Observable<AppointmentAvailability> {
+    return this.http.get<AppointmentAvailability>(`${API_ENDPOINTS.orders.availability}?date=${date}`);
   }
 }
