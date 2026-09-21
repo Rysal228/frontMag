@@ -41,7 +41,23 @@ export type CreateAppointmentRequest = {
   description: string;
 };
 
+export type TimeInterval = {
+  from: string;
+  to: string;
+};
+
+export type AppointmentWorkingHours = {
+  from: string;
+  to: string;
+};
+
 export type AppointmentAvailability = {
   date: string;
-  slots: string[];
+  workingHours: AppointmentWorkingHours | null;
+  appointmentDuration: number;
+  slotInterval: number;
+  firstSlot: string | null;
+  lastSlot: string | null;
+  busySlots: TimeInterval[];
+  blockedSlots: TimeInterval[];
 };
