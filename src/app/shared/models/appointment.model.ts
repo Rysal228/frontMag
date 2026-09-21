@@ -56,8 +56,8 @@ export type AppointmentAvailability = {
   workingHours: AppointmentWorkingHours | null;
   appointmentDuration: number;
   slotInterval: number;
-  firstSlot: string | null;
-  lastSlot: string | null;
+  dayType: 'working' | 'nonWorking';
+  availableSlots: string[];
   busySlots: TimeInterval[];
   blockedSlots: TimeInterval[];
 };
