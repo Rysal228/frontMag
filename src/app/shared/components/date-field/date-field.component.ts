@@ -23,6 +23,7 @@ import { TuiInputDate } from '@taiga-ui/kit';
 export class DateFieldComponent implements ControlValueAccessor {
   protected value: TuiDay | null = null;
   protected disabled = false;
+  protected readonly minDate = TuiDay.currentLocal();
 
   private onChange: (value: string | null) => void = () => {};
   private onTouched: () => void = () => {};
@@ -49,7 +50,7 @@ export class DateFieldComponent implements ControlValueAccessor {
     if (!value) {
       this.onChange(null);
     } else {
-      const month = String(value.month).padStart(2, '0');
+      const month = String(value.month + 1).padStart(2, '0');
       const day = String(value.day).padStart(2, '0');
 
       this.onChange(`${value.year}-${month}-${day}`);
