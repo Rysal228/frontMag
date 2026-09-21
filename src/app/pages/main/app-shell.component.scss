@@ -39,10 +39,3 @@
 .navigation a.active {
   color: var(--tui-text-action);
 }
-
-@media (min-width: 768px) {
-  .navigation {
-    max-width: 640px;
-    margin: 0 auto;
-  }
-}

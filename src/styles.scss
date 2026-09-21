@@ -83,34 +83,40 @@
 }
 
 @mixin dark-theme-vars {
-  --tui-background-base: #2a2a2a;
+  --tui-background-base: #181a20;
+  --tui-background-base-alt: #121212;
+  --tui-background-neutral-1-hover: #434343;
+
   --tui-text-primary: white;
   --tui-text-action: white;
+
   --tui-service-autofill-background: none;
 }
 
 @mixin light-theme-vars {
-  --tui-background-base: white;
+  --tui-background-base: #f6f7f9;
+  --tui-background-base-alt: #ffffff;
+
   --tui-text-primary: blue;
   --tui-service-autofill-background: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    @include light-theme-vars;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
+  :root:not([data-theme]) tui-root {
     @include dark-theme-vars;
   }
 }
 
-[data-theme="dark"] {
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) tui-root {
+    @include light-theme-vars;
+  }
+}
+
+[data-theme="dark"] tui-root {
   @include dark-theme-vars;
 }
 
-[data-theme="light"] {
+[data-theme="light"] tui-root {
   @include light-theme-vars;
 }
