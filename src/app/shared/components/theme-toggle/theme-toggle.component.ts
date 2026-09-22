@@ -16,7 +16,7 @@ import { ThemeService } from 'app/shared/services/theme.service';
 export class ThemeToggleComponent {
   private readonly themeService = inject(ThemeService);
 
-  protected readonly theme = this.themeService.theme;
+  protected readonly theme = this.themeService.effectiveTheme;
 
   protected setTheme(dark: boolean): void {
     this.themeService.setTheme(dark ? 'dark' : 'light');
