@@ -7,7 +7,6 @@ import { CarsPageComponent } from './pages/main/cars/cars-page.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { roleGuard } from './shared/guards/role.guard';
-import { UserRole } from './shared/types/roles.types';
 
 export const routes: Routes = [
   {
@@ -27,30 +26,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
-        path: 'user',
+        path: 'main',
         component: HomePageComponent,
         canActivate: [roleGuard],
         data: {
-          requiredRole: UserRole.User,
           title: 'Главная',
-        },
-      },
-      {
-        path: 'mechanic',
-        component: HomePageComponent,
-        canActivate: [roleGuard],
-        data: {
-          requiredRole: UserRole.Mechanic,
-          title: 'Главная механика',
-        },
-      },
-      {
-        path: 'admin',
-        component: HomePageComponent,
-        canActivate: [roleGuard],
-        data: {
-          requiredRole: UserRole.Admin,
-          title: 'Главная администратора',
         },
       },
       {
