@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
@@ -8,14 +8,14 @@ import { News } from 'app/shared/models/news.model';
 import { NewsService } from 'app/shared/services/news.service';
 
 @Component({
-  selector: 'app-news-page',
+  selector: 'app-home-page',
   standalone: true,
   imports: [DatePipe, TuiButton],
-  templateUrl: './news-page.component.html',
-  styleUrl: './news-page.component.scss',
+  templateUrl: './home-page.component.html',
+  styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewsPageComponent {
+export class HomePageComponent {
   private readonly newsService = inject(NewsService);
 
   protected readonly news = signal<News[]>([]);

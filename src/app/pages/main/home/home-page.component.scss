@@ -2,12 +2,12 @@
   display: block;
 }
 
-.news-page {
+.home-page {
   padding: 32px;
 }
 
 .header {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .title {
@@ -21,10 +21,19 @@
   color: var(--tui-text-secondary);
 }
 
+.news {
+  max-width: 900px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
 .list {
   display: grid;
   gap: 20px;
-  max-width: 900px;
 }
 
 .news-card {
@@ -85,7 +94,7 @@
 }
 
 @media (max-width: 700px) {
-  .news-page {
+  .home-page {
     padding: 20px;
   }
 
