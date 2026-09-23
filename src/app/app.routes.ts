@@ -5,7 +5,6 @@ import { HomePageComponent } from './pages/main/home/home-page.component';
 import { AppointmentsPageComponent } from './pages/main/appointments/appointments-page.component';
 import { CarsPageComponent } from './pages/main/cars/cars-page.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
-import { SectionPlaceholderComponent } from './pages/main/section-placeholder.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { roleGuard } from './shared/guards/role.guard';
 import { UserRole } from './shared/types/roles.types';
@@ -38,7 +37,7 @@ export const routes: Routes = [
       },
       {
         path: 'mechanic',
-        component: SectionPlaceholderComponent,
+        component: HomePageComponent,
         canActivate: [roleGuard],
         data: {
           requiredRole: UserRole.Mechanic,
@@ -47,7 +46,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin',
-        component: SectionPlaceholderComponent,
+        component: HomePageComponent,
         canActivate: [roleGuard],
         data: {
           requiredRole: UserRole.Admin,
