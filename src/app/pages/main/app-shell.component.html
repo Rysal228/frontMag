@@ -17,7 +17,10 @@
     <div class="carousel">
       <div class="carousel-track" [style.transform]="'translateX(-' + navigationPageIndex() * 100 + '%)'">
         @for (page of navigationPages(); track $index) {
-          <div class="navigation-page">
+          <div
+            class="navigation-page"
+            [style.grid-template-columns]="'repeat(' + page.length + ', minmax(0, 1fr))'"
+          >
             @for (item of page; track item.route) {
               <a
                 tuiButton
