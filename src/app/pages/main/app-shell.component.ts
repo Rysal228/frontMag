@@ -8,9 +8,9 @@ import { TuiCarousel } from '@taiga-ui/kit';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
-import { RoleDefinition } from 'app/shared/types/roles.types';
-
-type NavigationItem = RoleDefinition & {
+type NavigationItem = {
+  readonly label: string;
+  readonly icon: string;
   readonly route: string;
 };
 
@@ -33,35 +33,23 @@ export class AppShellComponent {
 
   protected readonly navigationItems = computed<NavigationItem[]>(() => [
     {
-      role: this.currentRole.role(),
       label: 'Главная',
       icon: '@tui.house',
-      appearance: 'secondary',
-      homeRoute: this.homeRoute(),
       route: this.homeRoute(),
     },
     {
-      role: this.currentRole.role(),
       label: 'Мои авто',
       icon: '@tui.car',
-      appearance: 'secondary',
-      homeRoute: this.homeRoute(),
       route: '/cars',
     },
     {
-      role: this.currentRole.role(),
       label: 'Записи',
       icon: '@tui.calendar',
-      appearance: 'secondary',
-      homeRoute: this.homeRoute(),
       route: '/appointments',
     },
     {
-      role: this.currentRole.role(),
       label: 'Профиль',
       icon: '@tui.user',
-      appearance: 'secondary',
-      homeRoute: this.homeRoute(),
       route: '/profile',
     },
   ]);
