@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { TuiItem } from '@taiga-ui/cdk';
 import { TuiButton, TuiIconButton } from '@taiga-ui/core';
@@ -24,6 +26,7 @@ type NavigationItem = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent {
+  private readonly router = inject(Router);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly currentUser = inject(CurrentUserStore);
   private readonly roleCatalog = inject(ROLE_CATALOG);
@@ -55,6 +58,8 @@ export class AppShellComponent {
     },
   ]);
 
+  protected readonly navigationPageIndex = signal(0);
+
   protected readonly navigationPages = computed(() => {
     const items = this.navigationItems();
 
@@ -62,8 +67,26 @@ export class AppShellComponent {
   });
 
   constructor() {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.updateNavigationPage());
+
+    this.updateNavigationPage();
+
     if (!this.currentUser.user()) {
       this.currentUser.load().subscribe();
     }
+  }
+
+  private updateNavigationPage(): void {
+    const currentUrl = this.router.url.split('?')[0];
+    const itemIndex = this.navigationItems().findIndex(({route}) =>
+      route === currentUrl || (route !== this.homeRoute() && currentUrl.startsWith(`${route}/`)),
+    );
+
+    this.navigationPageIndex.set(itemIndex >= 0 ? Math.floor(itemIndex / 3) : 0);
   }
 }
