@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { News } from 'app/shared/models/news.model';
+import { NewsPage } from 'app/shared/models/news.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,11 +11,11 @@ import { News } from 'app/shared/models/news.model';
 export class NewsApiService {
   private readonly http = inject(HttpClient);
 
-  public getAll(): Observable<News[]> {
-    return this.http.get<News[]>(API_ENDPOINTS.news.list);
-  }
+  public getAll(offset = 0, limit = 10): Observable<NewsPage> {
+    const params = new HttpParams()
+      .set('offset', offset)
+      .set('limit', limit);
 
-  public getById(id: number): Observable<News> {
-    return this.http.get<News>(API_ENDPOINTS.news.list + id + '/');
+    return this.http.get<NewsPage>(API_ENDPOINTS.news.list, {params});
   }
 }
