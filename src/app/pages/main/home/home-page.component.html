@@ -41,6 +41,12 @@
           </article>
         }
       </div>
+
+      @if (isLoadingMore()) {
+        <div class="load-more">Загрузка новостей...</div>
+      }
+
+      <div #loadMoreTrigger class="load-more-trigger" aria-hidden="true"></div>
     }
   </section>
 </section>
