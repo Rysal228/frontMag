@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -13,8 +12,8 @@ import { finalize } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
 
-import { NewsService } from 'app/shared/services/news.service';
 import { News } from 'app/shared/models/news.model';
+import { NewsService } from 'app/shared/services/news.service';
 
 @Component({
   selector: 'app-home-page',
@@ -24,12 +23,20 @@ import { News } from 'app/shared/models/news.model';
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements AfterViewInit, OnDestroy {
+export class HomePageComponent implements OnDestroy {
   private static readonly NEWS_LIMIT = 10;
   private readonly newsService = inject(NewsService);
 
+  private observer?: IntersectionObserver;
+
   @ViewChild('loadMoreTrigger')
-  private loadMoreTrigger?: ElementRef<HTMLElement>;
+  private set loadMoreTrigger(element: ElementRef<HTMLElement> | undefined) {
+    if (!element) {
+      return;
+    }
+
+    this.createObserver(element.nativeElement);
+  }
 
   protected readonly news = signal<News[]>([]);
   protected readonly isLoading = signal(true);
@@ -38,14 +45,9 @@ export class HomePageComponent implements AfterViewInit, OnDestroy {
   protected readonly hasMore = signal(true);
 
   private offset = 0;
-  private observer?: IntersectionObserver;
 
   constructor() {
     this.loadNews();
-  }
-
-  public ngAfterViewInit(): void {
-    this.createObserver();
   }
 
   public ngOnDestroy(): void {
@@ -53,16 +55,15 @@ export class HomePageComponent implements AfterViewInit, OnDestroy {
   }
 
   protected reload(): void {
+    this.observer?.disconnect();
     this.offset = 0;
     this.news.set([]);
     this.hasMore.set(true);
     this.loadNews();
   }
 
-  private createObserver(): void {
-    if (!this.loadMoreTrigger?.nativeElement) {
-      return;
-    }
+  private createObserver(element: HTMLElement): void {
+    this.observer?.disconnect();
 
     this.observer = new IntersectionObserver(
       ([entry]) => {
@@ -71,11 +72,11 @@ export class HomePageComponent implements AfterViewInit, OnDestroy {
         }
       },
       {
-        rootMargin: '0px 0px 400px',
+        rootMargin: '0px 0px 300px',
       },
     );
 
-    this.observer.observe(this.loadMoreTrigger.nativeElement);
+    this.observer.observe(element);
   }
 
   private loadNews(): void {
