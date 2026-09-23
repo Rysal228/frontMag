@@ -6,20 +6,20 @@ export const DEFAULT_ROLE_CATALOG: readonly RoleDefinition[] = [
     label: 'Механик',
     icon: '@tui.wrench',
     appearance: 'outline',
-    homeRoute: '/mechanic',
+    homeRoute: '/main',
   },
   {
     role: UserRole.User,
     label: 'Пользователь',
     icon: '@tui.user',
     appearance: 'secondary',
-    homeRoute: '/user',
+    homeRoute: '/main',
   },
   {
     role: UserRole.Admin,
     label: 'Администратор',
     icon: '@tui.user-cog',
     appearance: 'outline',
-    homeRoute: '/admin',
+    homeRoute: '/main',
   },
 ];

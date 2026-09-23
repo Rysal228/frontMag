@@ -23,6 +23,29 @@
   box-shadow: 0 -1px 8px rgb(0 0 0 / 8%);
 }
 
+.navigation-list {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.navigation-list a {
+  min-width: 120px;
+  height: 52px;
+  padding: 4px 16px;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.navigation-list a.active,
+.navigation-page a.active {
+  color: var(--tui-text-action);
+}
+
 .navigation-carousel {
   display: flex;
   align-items: center;
@@ -59,15 +82,11 @@
   line-height: 1.1;
 }
 
-.navigation-page a.active {
-  color: var(--tui-text-action);
-}
-
 .navigation-carousel > button {
   flex: 0 0 40px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 767px) {
   .navigation-carousel {
     gap: 0;
   }

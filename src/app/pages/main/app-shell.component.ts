@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -24,7 +24,11 @@ type NavigationItem = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent {
+  private static readonly NAVIGATION_PAGE_SIZE = 3;
+  private static readonly MOBILE_BREAKPOINT = '(max-width: 767px)';
+
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly currentUser = inject(CurrentUserStore);
   private readonly roleCatalog = inject(ROLE_CATALOG);
@@ -56,15 +60,36 @@ export class AppShellComponent {
     },
   ]);
 
+  private readonly mobileMediaQuery =
+    typeof window !== 'undefined' ? window.matchMedia(AppShellComponent.MOBILE_BREAKPOINT) : null;
+
+  protected readonly isMobile = signal(this.mobileMediaQuery?.matches ?? false);
   protected readonly navigationPageIndex = signal(0);
+
+  protected readonly isCarouselMode = computed(
+    () => this.isMobile() || this.navigationItems().length > 5,
+  );
 
   protected readonly navigationPages = computed(() => {
     const items = this.navigationItems();
+    const pageSize = AppShellComponent.NAVIGATION_PAGE_SIZE;
 
-    return [items.slice(0, 3), items.slice(3)];
+    return Array.from(
+      { length: Math.ceil(items.length / pageSize) },
+      (_, index) => items.slice(index * pageSize, (index + 1) * pageSize),
+    );
   });
 
   constructor() {
+    if (this.mobileMediaQuery) {
+      const updateMobileState = (event: MediaQueryListEvent): void => this.isMobile.set(event.matches);
+
+      this.mobileMediaQuery.addEventListener('change', updateMobileState);
+      this.destroyRef.onDestroy(() =>
+        this.mobileMediaQuery?.removeEventListener('change', updateMobileState),
+      );
+    }
+
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
@@ -87,7 +112,7 @@ export class AppShellComponent {
     );
 
     if (itemIndex >= 0) {
-      this.navigationPageIndex.set(Math.floor(itemIndex / 3));
+      this.navigationPageIndex.set(Math.floor(itemIndex / AppShellComponent.NAVIGATION_PAGE_SIZE));
     }
   }
 
