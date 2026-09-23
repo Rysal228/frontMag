@@ -7,3 +7,10 @@ export type News = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type NewsPage = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: News[];
+};
