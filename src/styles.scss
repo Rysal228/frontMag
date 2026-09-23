@@ -1,5 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/grid';
+
 :root {
+  --layout-max-width: 1734px;
+  --layout-page-padding: 32px;
+  --layout-page-padding-tablet: 24px;
+  --layout-page-padding-mobile: 16px;
+  --layout-grid-gap: 24px;
+  --layout-grid-gap-tablet: 16px;
+  --layout-grid-gap-mobile: 12px;
+
+
   --tui-background-base: #fff;
   --tui-background-base-alt: #f6f6f6;
   --tui-background-neutral-1: rgba(0, 0, 0, 0.04);
