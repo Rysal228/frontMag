@@ -3,63 +3,47 @@
 </main>
 
 <nav class="navigation" aria-label="Основная навигация">
-  <a
-    tuiButton
-    appearance="flat"
-    type="button"
-    [routerLink]="homeRoute()"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    [iconStart]="'@tui.house'"
-  >
-    Главная
-  </a>
+  <div class="navigation-carousel">
+    <button
+      tuiIconButton
+      appearance="flat"
+      type="button"
+      iconStart="@tui.chevron-left"
+      aria-label="Предыдущие разделы"
+      (click)="carousel.prev()"
+    >
+      Предыдущие разделы
+    </button>
 
-  <a
-    tuiButton
-    appearance="flat"
-    type="button"
-    routerLink="/news"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    [iconStart]="'@tui.newspaper'"
-  >
-    Новости
-  </a>
+    <tui-carousel #carousel class="carousel">
+      <ng-template *tuiItem="let index">
+        <div class="navigation-page">
+          @for (item of navigationPages()[index]; track item.route) {
+            <a
+              tuiButton
+              appearance="flat"
+              type="button"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [iconStart]="item.icon"
+            >
+              {{ item.label }}
+            </a>
+          }
+        </div>
+      </ng-template>
+    </tui-carousel>
 
-  <a
-    tuiButton
-    appearance="flat"
-    type="button"
-    routerLink="/cars"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    [iconStart]="'@tui.car'"
-  >
-    Мои авто
-  </a>
-
-  <a
-    tuiButton
-    appearance="flat"
-    type="button"
-    routerLink="/appointments"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    [iconStart]="'@tui.calendar'"
-  >
-    Записи
-  </a>
-
-  <a
-    tuiButton
-    appearance="flat"
-    type="button"
-    routerLink="/profile"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    [iconStart]="'@tui.user'"
-  >
-    Профиль
-  </a>
+    <button
+      tuiIconButton
+      appearance="flat"
+      type="button"
+      iconStart="@tui.chevron-right"
+      aria-label="Следующие разделы"
+      (click)="carousel.next()"
+    >
+      Следующие разделы
+    </button>
+  </div>
 </nav>
