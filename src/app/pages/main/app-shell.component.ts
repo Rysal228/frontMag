@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { TuiItem } from '@taiga-ui/cdk';
-import { TuiButton, TuiIconButton } from '@taiga-ui/core';
-import { TuiCarousel } from '@taiga-ui/kit';
+import { TuiButton } from '@taiga-ui/core';
 
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
@@ -20,7 +18,7 @@ type NavigationItem = {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, TuiIconButton, TuiCarousel, TuiItem],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,7 +68,7 @@ export class AppShellComponent {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe(() => this.updateNavigationPage());
 
@@ -83,10 +81,21 @@ export class AppShellComponent {
 
   private updateNavigationPage(): void {
     const currentUrl = this.router.url.split('?')[0];
-    const itemIndex = this.navigationItems().findIndex(({route}) =>
-      route === currentUrl || (route !== this.homeRoute() && currentUrl.startsWith(`${route}/`)),
+
+    const itemIndex = this.navigationItems().findIndex(
+      ({ route }) => route === currentUrl || (route !== this.homeRoute() && currentUrl.startsWith(`${route}/`))
     );
 
-    this.navigationPageIndex.set(itemIndex >= 0 ? Math.floor(itemIndex / 3) : 0);
+    if (itemIndex >= 0) {
+      this.navigationPageIndex.set(Math.floor(itemIndex / 3));
+    }
+  }
+
+  protected previousNavigationPage(): void {
+    this.navigationPageIndex.update((index) => Math.max(index - 1, 0));
+  }
+
+  protected nextNavigationPage(): void {
+    this.navigationPageIndex.update((index) => Math.min(index + 1, this.navigationPages().length - 1));
   }
 }

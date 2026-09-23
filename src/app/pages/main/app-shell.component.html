@@ -10,37 +10,31 @@
       type="button"
       iconStart="@tui.chevron-left"
       aria-label="Предыдущие разделы"
-      (click)="carousel.prev()"
-    >
-      Предыдущие разделы
-    </button>
+      [disabled]="navigationPageIndex() === 0"
+      (click)="previousNavigationPage()"
+    ></button>
 
-    <tui-carousel
-      #carousel
-      class="carousel"
-      [min]="0"
-      [max]="navigationPages().length - 1"
-      [index]="navigationPageIndex()"
-      (indexChange)="navigationPageIndex.set($event)"
-    >
-      <ng-template *tuiItem="let index">
-        <div class="navigation-page">
-          @for (item of navigationPages()[index]; track item.route) {
-            <a
-              tuiButton
-              appearance="flat"
-              type="button"
-              [routerLink]="item.route"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              [iconStart]="item.icon"
-            >
-              {{ item.label }}
-            </a>
-          }
-        </div>
-      </ng-template>
-    </tui-carousel>
+    <div class="carousel">
+      <div class="carousel-track" [style.transform]="'translateX(-' + navigationPageIndex() * 100 + '%)'">
+        @for (page of navigationPages(); track $index) {
+          <div class="navigation-page">
+            @for (item of page; track item.route) {
+              <a
+                tuiButton
+                appearance="flat"
+                type="button"
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                [iconStart]="item.icon"
+              >
+                {{ item.label }}
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </div>
 
     <button
       tuiIconButton
@@ -48,9 +42,8 @@
       type="button"
       iconStart="@tui.chevron-right"
       aria-label="Следующие разделы"
-      (click)="carousel.next()"
-    >
-      Следующие разделы
-    </button>
+      [disabled]="navigationPageIndex() === navigationPages().length - 1"
+      (click)="nextNavigationPage()"
+    ></button>
   </div>
 </nav>
