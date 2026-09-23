@@ -19,6 +19,18 @@
     tuiButton
     appearance="flat"
     type="button"
+    routerLink="/news"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    [iconStart]="'@tui.newspaper'"
+  >
+    Новости
+  </a>
+
+  <a
+    tuiButton
+    appearance="flat"
+    type="button"
     routerLink="/cars"
     routerLinkActive="active"
     [routerLinkActiveOptions]="{ exact: true }"
