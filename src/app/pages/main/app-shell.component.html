@@ -15,7 +15,14 @@
       Предыдущие разделы
     </button>
 
-    <tui-carousel #carousel class="carousel" [min]="0" [max]="navigationPages().length - 1">
+    <tui-carousel
+      #carousel
+      class="carousel"
+      [min]="0"
+      [max]="navigationPages().length - 1"
+      [index]="navigationPageIndex()"
+      (indexChange)="navigationPageIndex.set($event)"
+    >
       <ng-template *tuiItem="let index">
         <div class="navigation-page">
           @for (item of navigationPages()[index]; track item.route) {
