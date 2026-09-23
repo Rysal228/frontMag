@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { TuiButton, TuiIconButton } from '@taiga-ui/core';
+import { TuiItem } from '@taiga-ui/cdk';
 import { TuiCarousel } from '@taiga-ui/kit';
 
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
@@ -16,7 +17,7 @@ type NavigationItem = RoleDefinition & {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, TuiIconButton, TuiCarousel],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, TuiIconButton, TuiCarousel, TuiItem],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
