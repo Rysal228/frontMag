@@ -4,6 +4,7 @@ import { AppShellComponent } from './pages/main/app-shell.component';
 import { AppointmentsPageComponent } from './pages/main/appointments/appointments-page.component';
 import { CarsPageComponent } from './pages/main/cars/cars-page.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
+import { NewsPageComponent } from './pages/main/news/news-page.component';
 import { SectionPlaceholderComponent } from './pages/main/section-placeholder.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { roleGuard } from './shared/guards/role.guard';
@@ -51,6 +52,13 @@ export const routes: Routes = [
         data: {
           requiredRole: UserRole.Admin,
           title: 'Главная администратора',
+        },
+      },
+      {
+        path: 'news',
+        component: NewsPageComponent,
+        data: {
+          title: 'Новости',
         },
       },
       {
