@@ -33,9 +33,16 @@
   gap: var(--layout-grid-gap);
 }
 
-.fields > * {
-  grid-column: 1 / -1;
+.field {
   min-width: 0;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field--half {
+  grid-column: span 6;
 }
 
 .error {
@@ -43,14 +50,12 @@
   color: var(--tui-text-negative);
 }
 
-@media (max-width: 1023px) {
-  .fields {
-    gap: var(--layout-grid-gap-tablet);
-  }
-}
-
 @media (max-width: 767px) {
   .fields {
     gap: var(--layout-grid-gap-mobile);
+  }
+
+  .field--half {
+    grid-column: 1 / -1;
   }
 }
