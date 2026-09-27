@@ -6,34 +6,46 @@
   </div>
 
   <div class="fields">
-    <app-form-field label="Номер телефона" controlName="phone">
-      <app-text-field
-        formControlName="phone"
-        type="tel"
-        placeholder="+7 (___) ___-__-__"
-        [maskitoOptions]="phoneMaskitoOptions"
-      />
-    </app-form-field>
+    <div class="field field--full">
+      <app-form-field label="Номер телефона" controlName="phone">
+        <app-text-field
+          formControlName="phone"
+          type="tel"
+          placeholder="+7 (___) ___-__-__"
+          [maskitoOptions]="phoneMaskitoOptions"
+        />
+      </app-form-field>
+    </div>
 
-    <app-form-field label="Пароль" controlName="password">
-      <app-password-field formControlName="password" placeholder="Введите пароль" autocomplete="current-password" />
-    </app-form-field>
+    <div class="field field--full">
+      <app-form-field label="Пароль" controlName="password">
+        <app-password-field formControlName="password" placeholder="Введите пароль" autocomplete="current-password" />
+      </app-form-field>
+    </div>
 
-    <app-form-field label="Фамилия">
-      <app-text-field formControlName="lastName" placeholder="Введите фамилию" />
-    </app-form-field>
+    <div class="field field--half">
+      <app-form-field label="Фамилия">
+        <app-text-field formControlName="lastName" placeholder="Введите фамилию" />
+      </app-form-field>
+    </div>
 
-    <app-form-field label="Имя">
-      <app-text-field formControlName="firstName" placeholder="Введите имя" />
-    </app-form-field>
+    <div class="field field--half">
+      <app-form-field label="Имя">
+        <app-text-field formControlName="firstName" placeholder="Введите имя" />
+      </app-form-field>
+    </div>
 
-    <app-form-field label="Отчество">
-      <app-text-field formControlName="patronymic" placeholder="Введите отчество" />
-    </app-form-field>
+    <div class="field field--half">
+      <app-form-field label="Отчество">
+        <app-text-field formControlName="patronymic" placeholder="Введите отчество" />
+      </app-form-field>
+    </div>
 
-    <app-form-field label="Дата рождения">
-      <app-date-field formControlName="birthday" />
-    </app-form-field>
+    <div class="field field--half">
+      <app-form-field label="Дата рождения">
+        <app-date-field formControlName="birthday" />
+      </app-form-field>
+    </div>
   </div>
 
   @if (errorMessage(); as error) {
