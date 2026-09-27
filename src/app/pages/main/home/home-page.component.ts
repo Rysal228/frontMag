@@ -1,13 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  OnDestroy,
-  ViewChild,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
@@ -73,7 +65,7 @@ export class HomePageComponent implements OnDestroy {
       },
       {
         rootMargin: '0px 0px 300px',
-      },
+      }
     );
 
     this.observer.observe(element);

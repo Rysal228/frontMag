@@ -66,17 +66,14 @@ export class AppShellComponent {
   protected readonly isMobile = signal(this.mobileMediaQuery?.matches ?? false);
   protected readonly navigationPageIndex = signal(0);
 
-  protected readonly isCarouselMode = computed(
-    () => this.isMobile() || this.navigationItems().length > 5,
-  );
+  protected readonly isCarouselMode = computed(() => this.isMobile() || this.navigationItems().length > 5);
 
   protected readonly navigationPages = computed(() => {
     const items = this.navigationItems();
     const pageSize = AppShellComponent.NAVIGATION_PAGE_SIZE;
 
-    return Array.from(
-      { length: Math.ceil(items.length / pageSize) },
-      (_, index) => items.slice(index * pageSize, (index + 1) * pageSize),
+    return Array.from({ length: Math.ceil(items.length / pageSize) }, (_, index) =>
+      items.slice(index * pageSize, (index + 1) * pageSize)
     );
   });
 
@@ -85,9 +82,7 @@ export class AppShellComponent {
       const updateMobileState = (event: MediaQueryListEvent): void => this.isMobile.set(event.matches);
 
       this.mobileMediaQuery.addEventListener('change', updateMobileState);
-      this.destroyRef.onDestroy(() =>
-        this.mobileMediaQuery?.removeEventListener('change', updateMobileState),
-      );
+      this.destroyRef.onDestroy(() => this.mobileMediaQuery?.removeEventListener('change', updateMobileState));
     }
 
     this.router.events

@@ -1,4 +1,4 @@
-@use './styles/grid';
+@use "./styles/grid";
 
 :root {
   --layout-max-width: 1734px;
@@ -8,7 +8,6 @@
   --layout-grid-gap: 24px;
   --layout-grid-gap-tablet: 16px;
   --layout-grid-gap-mobile: 12px;
-
 
   --tui-background-base: #fff;
   --tui-background-base-alt: #f6f6f6;

@@ -7,10 +7,13 @@
 }
 
 .header {
+  display: grid;
+  justify-content: center;
   margin-bottom: 28px;
 }
 
 .title {
+  text-align: center;
   margin: 0;
   font-size: 32px;
   line-height: 1.2;
