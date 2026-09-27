@@ -1,4 +1,4 @@
-<div class="screen">
+<div class="container screen">
   <div class="card">
     <h1 class="title">Войти как:</h1>
 
@@ -7,9 +7,7 @@
         *ngFor="let definition of roles()"
         tuiButton
         type="button"
-        size="l"
         class="role-btn"
-        [appearance]="definition.appearance"
         [iconStart]="definition.icon"
         (click)="selectRole(definition)"
       >
