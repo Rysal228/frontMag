@@ -14,6 +14,9 @@ export type RegisterRequest = {
 
 export type MaxAuthRequest = {
   initData: string;
+  phone: string;
+  phoneAuthDate: string;
+  phoneHash: string;
 };
 
 export type RefreshTokenRequest = {
