@@ -20,8 +20,8 @@ export class AuthService {
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
 
-  public authenticateWithMax(initData: string): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.max, { initData } satisfies MaxAuthRequest).pipe(
+  public authenticateWithMax(request: MaxAuthRequest): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.max, request).pipe(
       tap((tokens) => {
         this.tokenStore.set(tokens);
       })
