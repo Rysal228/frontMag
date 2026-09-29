@@ -1,6 +1,4 @@
-import { firstValueFrom } from 'rxjs';
-
-import { inject } from '@angular/core';
+import { inject from '@angular/core';
 
 import { AuthService } from 'app/pages/auth/services/auth.service';
 
@@ -9,6 +7,7 @@ import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.servic
 import { MaxBridgeService } from '../services/max/max-bridge.service';
 import { PlatformService } from '../services/max/platform.service';
 import { TokenStore } from '../storage/token-store';
+import { firstValueFrom } from 'rxjs';
 
 export async function initializeApplication(): Promise<void> {
   const bridgeLoader = inject(MaxBridgeLoaderService);
