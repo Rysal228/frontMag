@@ -1,3 +1,5 @@
+import { firstValueFrom } from 'rxjs';
+
 import { inject } from '@angular/core';
 
 import { AuthService } from 'app/pages/auth/services/auth.service';
@@ -35,10 +37,19 @@ export async function initializeApplication(): Promise<void> {
   }
 
   try {
-    await authService.authenticateWithMax(initData);
+    const contact = await maxBridge.requestContact();
+
+    await firstValueFrom(
+      authService.authenticateWithMax({
+        initData,
+        phone: contact.phone,
+        phoneAuthDate: contact.authDate,
+        phoneHash: contact.hash,
+      }),
+    );
 
     initialization.setState('authenticated');
   } catch {
-    initialization.setState('error');
+    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
   }
 }
