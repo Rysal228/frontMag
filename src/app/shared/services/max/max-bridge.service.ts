@@ -22,6 +22,18 @@ export class MaxBridgeService {
     return window.WebApp?.initDataUnsafe ?? null;
   }
 
+  public requestContact(): Promise<{
+    phone: string;
+    authDate: string;
+    hash: string;
+  }> {
+    if (!window.WebApp) {
+      return Promise.reject(new Error('MAX WebApp is unavailable'));
+    }
+
+    return window.WebApp.requestContact();
+  }
+
   public showBackButton(onClick: () => void): void {
     const backButton = window.WebApp?.BackButton;
 
