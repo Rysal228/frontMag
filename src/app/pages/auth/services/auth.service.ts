@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, finalize, shareReplay, tap, throwError } from 'rxjs';
 
@@ -8,6 +8,8 @@ import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
+
+import { SKIP_API_ERROR_ALERT } from 'app/shared/interceptors/api-error-context';
 
 @Injectable({
   providedIn: 'root',
@@ -39,15 +41,23 @@ export class AuthService {
       return throwError(() => new Error('Refresh token is not available'));
     }
 
-    this.refreshRequest$ = this.http.post<AuthTokens>(API_ENDPOINTS.auth.refresh, { refresh: refreshToken }).pipe(
-      tap((tokens) => {
-        this.tokenStore.set(tokens);
-      }),
-      finalize(() => {
-        this.refreshRequest$ = null;
-      }),
-      shareReplay(1)
-    );
+    this.refreshRequest$ = this.http
+      .post<AuthTokens>(
+        API_ENDPOINTS.auth.refresh,
+        { refresh: refreshToken },
+        {
+          context: new HttpContext().set(SKIP_API_ERROR_ALERT, true),
+        }
+      )
+      .pipe(
+        tap((tokens) => {
+          this.tokenStore.set(tokens);
+        }),
+        finalize(() => {
+          this.refreshRequest$ = null;
+        }),
+        shareReplay(1)
+      );
 
     return this.refreshRequest$;
   }
