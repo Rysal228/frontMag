@@ -48,7 +48,8 @@ export async function initializeApplication(): Promise<void> {
     );
 
     initialization.setState('authenticated');
-  } catch {
+  } catch (error) {
+    console.error('[MAX AUTH] Authentication failed', error);
     initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
   }
 }
