@@ -35,6 +35,15 @@ export async function initializeApplication(): Promise<void> {
     return;
   }
 
+  console.log('[MAX AUTH] initData:', initData);
+
+  if (initData) {
+    const authDate = new URLSearchParams(initData).get('auth_date');
+
+    console.log('[MAX AUTH] auth_date:', authDate);
+    console.log('[MAX AUTH] age:', authDate ? Math.floor(Date.now() / 1000) - Number(authDate) : 'unknown');
+  }
+
   try {
     const contact = await maxBridge.requestContact();
 
