@@ -35,40 +35,14 @@ export async function initializeApplication(): Promise<void> {
     return;
   }
 
-  console.log('[MAX AUTH] initData:', initData);
-
-  if (initData) {
-    const authDate = new URLSearchParams(initData).get('auth_date');
-
-    console.log('[MAX AUTH] auth_date:', authDate);
-    console.log('[MAX AUTH] age:', authDate ? Math.floor(Date.now() / 1000) - Number(authDate) : 'unknown');
-  }
-
   try {
     const contact = await maxBridge.requestContact();
-
-    localStorage.setItem(
-      'max-auth-debug',
-      JSON.stringify({
-        browserNow: Math.floor(Date.now() / 1000),
-        browserNowIso: new Date().toISOString(),
-
-        initAuthDate: new URLSearchParams(initData).get('auth_date'),
-
-        phoneAuthDate: contact.authDate,
-        phoneAuthDateNumber: Number(contact.authDate),
-
-        initAge: Math.floor(Date.now() / 1000) - Number(new URLSearchParams(initData).get('auth_date')),
-
-        phoneAge: Math.floor(Date.now() / 1000) - Number(contact.authDate),
-      })
-    );
 
     await firstValueFrom(
       authService.authenticateWithMax({
         initData,
         phone: contact.phone,
-        phoneAuthDate: contact.authDate,
+        phoneAuthDate: String(Math.floor(Number(contact.authDate) / 1000)),
         phoneHash: contact.hash,
       })
     );

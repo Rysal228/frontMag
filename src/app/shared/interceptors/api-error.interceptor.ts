@@ -6,6 +6,7 @@ import { TuiAlertService } from '@taiga-ui/core';
 
 import { SilentApiError } from '../errors/silent-api-error';
 import { ApiError } from '../models/api-error.model';
+
 import { SKIP_API_ERROR_ALERT } from './api-error-context';
 
 function getApiError(error: HttpErrorResponse): ApiError {
@@ -23,10 +24,7 @@ function getApiError(error: HttpErrorResponse): ApiError {
 
   return {
     code: 'network_error',
-    message:
-      error.status === 0
-        ? 'Не удалось связаться с сервером.'
-        : 'Произошла ошибка при выполнении запроса.',
+    message: error.status === 0 ? 'Не удалось связаться с сервером.' : 'Произошла ошибка при выполнении запроса.',
     details: null,
   };
 }
@@ -37,7 +35,7 @@ export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: unknown) => {
       if (error instanceof SilentApiError) {
-        return throwError(() => error.originalError);
+        return throwError(() => error);
       }
 
       if (req.context.get(SKIP_API_ERROR_ALERT)) {
