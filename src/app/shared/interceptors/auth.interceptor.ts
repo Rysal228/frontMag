@@ -6,6 +6,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from 'app/pages/auth/services/auth.service';
 
 import { API_ENDPOINTS } from '../consts/urls.const';
+import { SilentApiError } from '../errors/silent-api-error';
 import { TokenStore } from '../storage/token-store';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -39,9 +40,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (!tokenStore.refreshToken) {
         authService.logout();
-
         void router.navigate(['/auth']);
-
         return throwError(() => error);
       }
 
@@ -51,10 +50,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
           if (!newAccessToken) {
             authService.logout();
-
             void router.navigate(['/auth']);
 
-            return throwError(() => new Error('Access token is not available after refresh'));
+            return throwError(
+              () =>
+                new SilentApiError(
+                  new Error('Access token is not available after refresh')
+                )
+            );
           }
 
           return next(
@@ -67,10 +70,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }),
         catchError((refreshError) => {
           authService.logout();
-
           void router.navigate(['/auth']);
 
-          return throwError(() => refreshError);
+          return throwError(() => new SilentApiError(refreshError));
         })
       );
     })
