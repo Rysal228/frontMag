@@ -13,7 +13,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (req.url === API_ENDPOINTS.auth.refresh) {
+  const isAuthEndpoint = Object.values(API_ENDPOINTS.auth).includes(req.url);
+
+  if (isAuthEndpoint) {
     return next(req);
   }
 
