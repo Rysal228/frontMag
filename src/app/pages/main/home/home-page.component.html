@@ -25,10 +25,6 @@
           <div class="list">
             @for (item of news(); track item.id) {
               <article class="news-card">
-                @if (item.image) {
-                  <img class="news-image" [src]="item.image" [alt]="item.title" />
-                }
-
                 <div class="news-body">
                   <time class="news-date" [attr.datetime]="item.createdAt">
                     {{ item.createdAt | date: 'dd.MM.yyyy HH:mm' }}
@@ -40,6 +36,10 @@
                     <p class="news-content">{{ item.content }}</p>
                   }
                 </div>
+
+                @if (item.image) {
+                  <img class="news-image" [src]="item.image" [alt]="item.title" />
+                }
               </article>
             }
           </div>

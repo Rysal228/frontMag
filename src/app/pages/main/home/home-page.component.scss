@@ -7,13 +7,11 @@
 }
 
 .home-grid {
-  min-height: 100%;
-  align-content: start;
-  padding-block: 32px;
+  padding-block: 16px;
 }
 
 .home-content {
-  grid-column: 4 / span 6;
+  grid-column: 3 / span 8;
 
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -25,6 +23,11 @@
 .news {
   grid-column: 1 / -1;
   min-width: 0;
+}
+
+.news {
+  padding: 16px;
+  background: white;
 }
 
 .header {
