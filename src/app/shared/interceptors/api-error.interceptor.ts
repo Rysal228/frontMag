@@ -4,7 +4,9 @@ import { catchError, throwError } from 'rxjs';
 
 import { TuiAlertService } from '@taiga-ui/core';
 
+import { SilentApiError } from '../errors/silent-api-error';
 import { ApiError } from '../models/api-error.model';
+import { SKIP_API_ERROR_ALERT } from './api-error-context';
 
 function getApiError(error: HttpErrorResponse): ApiError {
   if (error.error && typeof error.error === 'object') {
@@ -33,7 +35,19 @@ export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const alerts = inject(TuiAlertService);
 
   return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
+    catchError((error: unknown) => {
+      if (error instanceof SilentApiError) {
+        return throwError(() => error.originalError);
+      }
+
+      if (req.context.get(SKIP_API_ERROR_ALERT)) {
+        return throwError(() => error);
+      }
+
+      if (!(error instanceof HttpErrorResponse)) {
+        return throwError(() => error);
+      }
+
       const apiError = getApiError(error);
 
       alerts
