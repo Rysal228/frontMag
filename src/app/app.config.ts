@@ -11,6 +11,7 @@ import { TUI_LANGUAGE, TUI_RUSSIAN_LANGUAGE } from '@taiga-ui/i18n';
 
 import { routes } from './app.routes';
 import { initializeApplication } from './shared/initializers/app.initializer';
+import { apiErrorInterceptor } from './shared/interceptors/api-error.interceptor';
 import { authInterceptor } from './shared/interceptors/auth.interceptor';
 
 registerLocaleData(ru);
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, apiErrorInterceptor])),
     provideAnimations(),
     provideEventPlugins(),
     provideAppInitializer(initializeApplication),
