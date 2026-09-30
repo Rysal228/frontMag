@@ -20,7 +20,6 @@ export class AppComponent implements OnInit {
   protected readonly theme = this.themeService.preference;
 
   ngOnInit(): void {
-    console.log('this.initData:', window.WebApp?.initData);
     eruda.init();
     // const mockData = {
     //   initData:
