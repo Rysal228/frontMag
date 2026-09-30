@@ -4,7 +4,6 @@ import { catchError, throwError } from 'rxjs';
 
 import { TuiAlertService } from '@taiga-ui/core';
 
-import { API_ENDPOINTS } from '../consts/urls.const';
 import { ApiError } from '../models/api-error.model';
 
 function getApiError(error: HttpErrorResponse): ApiError {
@@ -35,10 +34,6 @@ export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (req.url === API_ENDPOINTS.auth.refresh) {
-        return throwError(() => error);
-      }
-
       const apiError = getApiError(error);
 
       alerts
