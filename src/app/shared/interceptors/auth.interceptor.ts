@@ -13,9 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const isAuthEndpoint = Object.values(API_ENDPOINTS.auth).includes(req.url);
-
-  if (isAuthEndpoint) {
+  if (req.url === API_ENDPOINTS.auth.refresh) {
     return next(req);
   }
 
@@ -32,6 +30,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authRequest).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status !== 401) {
+        return throwError(() => error);
+      }
+
+      // Login, registration and MAX authentication can legitimately return
+      // 401 without an access token. Let the global error interceptor show
+      // the backend error instead of redirecting to /auth.
+      if (!accessToken) {
         return throwError(() => error);
       }
 
