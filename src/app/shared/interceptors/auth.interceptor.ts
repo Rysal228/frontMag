@@ -33,9 +33,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      // Login, registration and MAX authentication can legitimately return
-      // 401 without an access token. Let the global error interceptor show
-      // the backend error instead of redirecting to /auth.
       if (!accessToken) {
         return throwError(() => error);
       }
