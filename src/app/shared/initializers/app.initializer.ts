@@ -38,8 +38,6 @@ export async function initializeApplication(): Promise<void> {
   const initData = maxBridgeService.initData;
 
   if (!initData) {
-    console.warn('[MAX AUTH] initData is unavailable.');
-
     authService.logout();
     initialization.setState('authentication-required');
 
@@ -49,8 +47,6 @@ export async function initializeApplication(): Promise<void> {
   }
 
   if (!hasInitDataHash(initData)) {
-    console.warn('[MAX AUTH] initData does not contain a hash.');
-
     authService.logout();
     initialization.setState('authentication-required');
 
@@ -76,8 +72,6 @@ export async function initializeApplication(): Promise<void> {
 
     await router.navigateByUrl('/roles');
   } catch (error) {
-    console.error('[MAX AUTH] Authentication failed', error);
-
     authService.logout();
     initialization.setState('authentication-required');
 
