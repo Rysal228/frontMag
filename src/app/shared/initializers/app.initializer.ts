@@ -38,21 +38,11 @@ export async function initializeApplication(): Promise<void> {
   try {
     const contact = await maxBridgeService.requestContact();
 
-    localStorage.setItem(
-      'MAX CONTACT',
-      JSON.stringify({
-        phone: contact.phone,
-        authDate: contact.authDate,
-        hash: contact.hash,
-        userId: maxBridgeService.initDataUnsafe?.user,
-      })
-    );
-
     await firstValueFrom(
       authService.authenticateWithMax({
         initData,
         phone: contact.phone,
-        phoneAuthDate: String(Math.floor(Number(contact.authDate) / 1000)),
+        phoneAuthDate: contact.authDate,
         phoneHash: contact.hash,
       })
     );
