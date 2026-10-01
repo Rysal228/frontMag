@@ -1,4 +1,5 @@
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from 'app/pages/auth/services/auth.service';
@@ -7,7 +8,12 @@ import { AppInitializationService } from '../services/max/app-initialization.ser
 import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.service';
 import { MaxBridgeService } from '../services/max/max-bridge.service';
 import { PlatformService } from '../services/max/platform.service';
+import { CurrentRoleStore } from '../storage/current-role-store';
 import { TokenStore } from '../storage/token-store';
+
+function hasInitDataHash(initData: string): boolean {
+  return new URLSearchParams(initData).has('hash');
+}
 
 export async function initializeApplication(): Promise<void> {
   const bridgeLoader = inject(MaxBridgeLoaderService);
@@ -15,6 +21,8 @@ export async function initializeApplication(): Promise<void> {
   const platform = inject(PlatformService);
   const authService = inject(AuthService);
   const tokenStore = inject(TokenStore);
+  const currentRole = inject(CurrentRoleStore);
+  const router = inject(Router);
   const initialization = inject(AppInitializationService);
 
   initialization.setState('initializing');
@@ -35,6 +43,14 @@ export async function initializeApplication(): Promise<void> {
     return;
   }
 
+  if (!hasInitDataHash(initData)) {
+    console.warn('[MAX AUTH] initData does not contain a hash. Skipping MAX authentication.');
+
+    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
+
+    return;
+  }
+
   try {
     const contact = await maxBridgeService.requestContact();
 
@@ -47,9 +63,16 @@ export async function initializeApplication(): Promise<void> {
       })
     );
 
+    currentRole.clear();
     initialization.setState('authenticated');
+
+    await router.navigateByUrl('/roles');
   } catch (error) {
     console.error('[MAX AUTH] Authentication failed', error);
-    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
+
+    authService.logout();
+    initialization.setState('authentication-required');
+
+    await router.navigateByUrl('/auth');
   }
 }
