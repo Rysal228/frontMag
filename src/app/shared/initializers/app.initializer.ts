@@ -37,23 +37,24 @@ export async function initializeApplication(): Promise<void> {
 
   const initData = maxBridgeService.initData;
 
-  localStorage.setItem(
-    'initData',
-    JSON.stringify({
-      initData,
-    })
-  );
-
   if (!initData) {
-    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
+    console.warn('[MAX AUTH] initData is unavailable.');
+
+    authService.logout();
+    initialization.setState('authentication-required');
+
+    await router.navigateByUrl('/auth');
 
     return;
   }
 
   if (!hasInitDataHash(initData)) {
-    console.warn('[MAX AUTH] initData does not contain a hash. Skipping MAX authentication.');
+    console.warn('[MAX AUTH] initData does not contain a hash.');
 
-    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
+    authService.logout();
+    initialization.setState('authentication-required');
+
+    await router.navigateByUrl('/auth');
 
     return;
   }
