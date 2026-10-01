@@ -11,7 +11,7 @@ import { TokenStore } from '../storage/token-store';
 
 export async function initializeApplication(): Promise<void> {
   const bridgeLoader = inject(MaxBridgeLoaderService);
-  const maxBridge = inject(MaxBridgeService);
+  const maxBridgeService = inject(MaxBridgeService);
   const platform = inject(PlatformService);
   const authService = inject(AuthService);
   const tokenStore = inject(TokenStore);
@@ -27,7 +27,7 @@ export async function initializeApplication(): Promise<void> {
     return;
   }
 
-  const initData = maxBridge.initData;
+  const initData = maxBridgeService.initData;
 
   if (!initData) {
     initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
@@ -36,7 +36,17 @@ export async function initializeApplication(): Promise<void> {
   }
 
   try {
-    const contact = await maxBridge.requestContact();
+    const contact = await maxBridgeService.requestContact();
+
+    localStorage.setItem(
+      'MAX CONTACT',
+      JSON.stringify({
+        phone: contact.phone,
+        authDate: contact.authDate,
+        hash: contact.hash,
+        userId: maxBridgeService.initDataUnsafe?.user,
+      })
+    );
 
     await firstValueFrom(
       authService.authenticateWithMax({
