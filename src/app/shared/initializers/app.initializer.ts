@@ -37,6 +37,13 @@ export async function initializeApplication(): Promise<void> {
 
   const initData = maxBridgeService.initData;
 
+  localStorage.setItem(
+    'initData',
+    JSON.stringify({
+      initData,
+    })
+  );
+
   if (!initData) {
     initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
 
