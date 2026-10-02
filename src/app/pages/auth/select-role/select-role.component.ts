@@ -38,7 +38,17 @@ export class SelectRoleComponent {
   }
 
   constructor() {
-    this.currentUser.load().subscribe();
+    this.currentUser.load().subscribe((user) => {
+      if (!user) {
+        return;
+      }
+
+      const availableRoles = this.roles();
+
+      if (availableRoles.length === 1) {
+        this.selectRole(availableRoles[0]);
+      }
+    });
   }
 
   protected selectRole(definition: RoleDefinition): void {
