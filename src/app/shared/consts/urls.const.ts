@@ -5,6 +5,8 @@ export const API_ENDPOINTS = {
     login: `/api/${version}/users/auth/login/`,
     register: `/api/${version}/users/auth/register/`,
     max: `/api/${version}/users/auth/max/`,
+    maxCodeRequest: `/api/${version}/users/auth/max/code/request/`,
+    maxCodeVerify: `/api/${version}/users/auth/max/code/verify/`,
     refresh: `/api/${version}/users/auth/token/refresh/`,
   },
   users: {
