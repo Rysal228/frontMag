@@ -19,6 +19,15 @@ export type MaxAuthRequest = {
   phoneHash: string;
 };
 
+export type MaxCodeRequest = {
+  phone: string;
+};
+
+export type MaxCodeVerifyRequest = {
+  phone: string;
+  code: string;
+};
+
 export type RefreshTokenRequest = {
   refreshToken: string;
 };
