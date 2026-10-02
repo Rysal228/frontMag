@@ -22,25 +22,33 @@ export function applyApiFormErrors(error: HttpErrorResponse, form: FormGroup): s
 
   let formError: string | null = null;
 
-  for (const [key, value] of Object.entries(body)) {
-    const message = getMessage(value);
+  if ('message' in body && typeof body.message === 'string') {
+    formError = body.message;
+  }
 
-    if (key === 'detail' || key === 'non_field_errors') {
-      formError = message;
-      continue;
+  const details = 'details' in body ? body.details : null;
+
+  if (details && typeof details === 'object') {
+    for (const [key, value] of Object.entries(details)) {
+      const message = getMessage(value);
+
+      if (key === 'non_field_errors') {
+        formError = message;
+        continue;
+      }
+
+      const controlName = toCamelCase(key);
+      const control: AbstractControl | null = form.get(controlName);
+
+      if (!control) {
+        continue;
+      }
+
+      control.setErrors({
+        ...control.errors,
+        server: message,
+      });
     }
-
-    const controlName = toCamelCase(key);
-    const control: AbstractControl | null = form.get(controlName);
-
-    if (!control) {
-      continue;
-    }
-
-    control.setErrors({
-      ...control.errors,
-      server: message,
-    });
   }
 
   return formError;
