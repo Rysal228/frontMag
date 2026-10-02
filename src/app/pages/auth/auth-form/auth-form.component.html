@@ -46,17 +46,25 @@
     }
 
     @if (loginMethod() === 'code') {
-      <app-form-field label="Код из MAX" controlName="code">
-        <app-text-field
-          formControlName="code"
-          type="text"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          placeholder="Введите код"
-        />
-      </app-form-field>
+      @if (codeRequested()) {
+        <p class="hint">Код отправлен в MAX. Введите его в течение 5 минут.</p>
 
-      <p class="hint">Код будет отправлен через MAX.</p>
+        <app-form-field label="Код из MAX" controlName="code">
+          <app-text-field
+            formControlName="code"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="Введите 6-значный код"
+          />
+        </app-form-field>
+
+        <button tuiButton type="button" size="m" appearance="flat" (click)="resetCodeRequest()">
+          Изменить номер
+        </button>
+      } @else {
+        <p class="hint">На указанный номер будет отправлен код в MAX.</p>
+      }
     }
   </div>
 
@@ -66,5 +74,7 @@
     </p>
   }
 
-  <button tuiButton type="submit" size="l" [disabled]="isLoading()">Войти</button>
+  <button tuiButton type="submit" size="l" [disabled]="isLoading()">
+    {{ loginMethod() === 'code' && !codeRequested() ? 'Получить код' : 'Войти' }}
+  </button>
 </form>
