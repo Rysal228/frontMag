@@ -57,7 +57,7 @@ export class AuthFormComponent {
       code.clearValidators();
     } else {
       password.clearValidators();
-      code.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6)]);
+      code.setValidators([Validators.minLength(6), Validators.maxLength(6)]);
     }
 
     password.updateValueAndValidity();
@@ -68,6 +68,8 @@ export class AuthFormComponent {
     this.codeRequested.set(false);
     this.errorMessage.set(null);
     this.form.controls.code.reset();
+    this.form.controls.code.setValidators([Validators.minLength(6), Validators.maxLength(6)]);
+    this.form.controls.code.updateValueAndValidity();
     this.form.controls.phone.enable();
   }
 
@@ -119,6 +121,12 @@ export class AuthFormComponent {
       .subscribe({
         next: () => {
           this.codeRequested.set(true);
+          this.form.controls.code.setValidators([
+            Validators.required,
+            Validators.minLength(6),
+            Validators.maxLength(6),
+          ]);
+          this.form.controls.code.updateValueAndValidity();
           this.form.controls.phone.disable();
         },
         error: (error: HttpErrorResponse) => this.handleAuthError(error),
