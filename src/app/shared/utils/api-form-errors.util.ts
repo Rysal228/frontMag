@@ -20,35 +20,27 @@ export function applyApiFormErrors(error: HttpErrorResponse, form: FormGroup): s
     return null;
   }
 
-  let formError: string | null = null;
-
-  if ('message' in body && typeof body.message === 'string') {
-    formError = body.message;
-  }
+  const formError = 'message' in body && typeof body.message === 'string' ? body.message : null;
 
   const details = 'details' in body ? body.details : null;
 
-  if (details && typeof details === 'object') {
-    for (const [key, value] of Object.entries(details)) {
-      const message = getMessage(value);
+  if (!details || typeof details !== 'object' || Array.isArray(details)) {
+    return formError;
+  }
 
-      if (key === 'non_field_errors') {
-        formError = message;
-        continue;
-      }
+  for (const [key, value] of Object.entries(details)) {
+    const message = getMessage(value);
+    const controlName = toCamelCase(key);
+    const control: AbstractControl | null = form.get(controlName);
 
-      const controlName = toCamelCase(key);
-      const control: AbstractControl | null = form.get(controlName);
-
-      if (!control) {
-        continue;
-      }
-
-      control.setErrors({
-        ...control.errors,
-        server: message,
-      });
+    if (!control) {
+      continue;
     }
+
+    control.setErrors({
+      ...control.errors,
+      server: message,
+    });
   }
 
   return formError;
