@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { LoginRequest } from 'app/shared/models/auth.model';
+import { LoginRequest, MaxCodeRequest, MaxCodeVerifyRequest } from 'app/shared/models/auth.model';
 import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
 
@@ -17,6 +17,16 @@ export class AuthFormService {
   public login(request: LoginRequest): Observable<AuthTokens> {
     return this.http
       .post<AuthTokens>(API_ENDPOINTS.auth.login, request)
+      .pipe(tap((tokens) => this.tokenStore.set(tokens)));
+  }
+
+  public requestMaxCode(request: MaxCodeRequest): Observable<void> {
+    return this.http.post<void>(API_ENDPOINTS.auth.maxCodeRequest, request);
+  }
+
+  public verifyMaxCode(request: MaxCodeVerifyRequest): Observable<AuthTokens> {
+    return this.http
+      .post<AuthTokens>(API_ENDPOINTS.auth.maxCodeVerify, request)
       .pipe(tap((tokens) => this.tokenStore.set(tokens)));
   }
 }
