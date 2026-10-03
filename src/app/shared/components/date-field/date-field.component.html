@@ -4,7 +4,8 @@
   <input
     tuiInputDate
     [disabled]="disabled"
-    [min]="minDate"
+    [min]="minDate()"
+    [max]="maxDate()"
     [ngModel]="value"
     (ngModelChange)="onValueChange($event)"
     placeholder="Выберите дату"
