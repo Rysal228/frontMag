@@ -1,19 +1,13 @@
 <section class="settings">
   <h2>Настройки</h2>
 
-  <button tuiButton appearance="outline" type="button" (click)="changePassword()">
-    Изменить пароль
-  </button>
+  <button tuiButton appearance="outline" type="button" (click)="changePassword()">Изменить пароль</button>
 
-  @if (canChangeRole) {
-    <button tuiButton appearance="flat" type="button" (click)="changeRole()">
-      Сменить роль
-    </button>
+  @if (canChangeRole()) {
+    <button tuiButton appearance="flat" type="button" (click)="changeRole()">Сменить роль</button>
   }
 
   <app-theme-toggle />
 
-  <button tuiButton appearance="outline" type="button" (click)="logout()">
-    Выйти из аккаунта
-  </button>
+  <button tuiButton appearance="outline" type="button" (click)="logout()">Выйти из аккаунта</button>
 </section>
