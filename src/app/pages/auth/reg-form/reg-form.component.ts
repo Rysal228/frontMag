@@ -8,7 +8,6 @@ import { TuiButton } from '@taiga-ui/core';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
-import { PasswordFieldComponent } from 'app/shared/components/password-field/password-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
 import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
@@ -25,7 +24,6 @@ import { RegFormService } from './services/reg-form.service';
     TuiButton,
     FormFieldComponent,
     TextFieldComponent,
-    PasswordFieldComponent,
     DateFieldComponent,
   ],
   templateUrl: './reg-form.component.html',

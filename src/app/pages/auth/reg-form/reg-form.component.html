@@ -17,7 +17,12 @@
 
     <div class="field field--full">
       <app-form-field label="Пароль" controlName="password">
-        <app-password-field formControlName="password" placeholder="Введите пароль" autocomplete="current-password" />
+        <app-text-field
+          formControlName="password"
+          type="password"
+          placeholder="Введите пароль"
+          autocomplete="new-password"
+        />
       </app-form-field>
     </div>
 

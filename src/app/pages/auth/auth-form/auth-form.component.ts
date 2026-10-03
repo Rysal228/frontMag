@@ -7,7 +7,6 @@ import { finalize } from 'rxjs';
 import { TuiButton } from '@taiga-ui/core';
 
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
-import { PasswordFieldComponent } from 'app/shared/components/password-field/password-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
 import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
@@ -21,7 +20,7 @@ type LoginMethod = 'password' | 'code';
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [ReactiveFormsModule, TuiButton, FormFieldComponent, TextFieldComponent, PasswordFieldComponent],
+  imports: [ReactiveFormsModule, TuiButton, FormFieldComponent, TextFieldComponent],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -141,7 +140,7 @@ export class AuthFormComponent {
         phone: normalizePhone(phone),
         code,
       })
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(finalize(() => this.form.controls.phone.enable()))
       .subscribe({
         next: () => this.router.navigate(['/roles']),
         error: (error: HttpErrorResponse) => this.handleAuthError(error),
@@ -152,5 +151,6 @@ export class AuthFormComponent {
     const formError = applyApiFormErrors(error, this.form);
 
     this.errorMessage.set(formError ?? 'Не удалось выполнить авторизацию. Проверьте введённые данные.');
+    this.isLoading.set(false);
   }
 }
