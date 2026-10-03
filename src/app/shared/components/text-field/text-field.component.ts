@@ -3,12 +3,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MaskitoDirective } from '@maskito/angular';
 import type { MaskitoOptions } from '@maskito/core';
 
-import { TuiTextfield } from '@taiga-ui/core';
+import { TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiPassword } from '@taiga-ui/kit';
 
 @Component({
   selector: 'app-text-field',
   standalone: true,
-  imports: [TuiTextfield, MaskitoDirective],
+  imports: [TuiTextfield, MaskitoDirective, TuiIcon, TuiPassword],
   templateUrl: './text-field.component.html',
   styleUrl: './text-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

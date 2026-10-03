@@ -11,4 +11,8 @@
     (input)="onInput($event)"
     (blur)="onBlur()"
   />
+
+  @if (type() === 'password') {
+    <tui-icon tuiPassword />
+  }
 </tui-textfield>
