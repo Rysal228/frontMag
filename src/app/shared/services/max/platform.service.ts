@@ -12,7 +12,8 @@ export class PlatformService {
 
   public get isMax(): boolean {
     const platform = this.maxBridge.platform;
-    console.log(' platform:', platform);
+
+    localStorage.setItem(platform, JSON.stringify(platform));
     return ['ios', 'android', 'desktop'].includes(platform);
   }
 
