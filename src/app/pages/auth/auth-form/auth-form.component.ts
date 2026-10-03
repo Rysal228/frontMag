@@ -46,6 +46,7 @@ export class AuthFormComponent {
     this.loginMethod.set(method);
     this.errorMessage.set(null);
     this.codeRequested.set(false);
+    this.form.controls.code.reset();
     this.form.controls.phone.enable();
 
     const password = this.form.controls.password;
@@ -61,15 +62,6 @@ export class AuthFormComponent {
 
     password.updateValueAndValidity();
     code.updateValueAndValidity();
-  }
-
-  protected resetCodeRequest(): void {
-    this.codeRequested.set(false);
-    this.errorMessage.set(null);
-    this.form.controls.code.reset();
-    this.form.controls.code.setValidators([Validators.minLength(6), Validators.maxLength(6)]);
-    this.form.controls.code.updateValueAndValidity();
-    this.form.controls.phone.enable();
   }
 
   protected submit(): void {
@@ -126,7 +118,6 @@ export class AuthFormComponent {
             Validators.maxLength(6),
           ]);
           this.form.controls.code.updateValueAndValidity();
-          this.form.controls.phone.disable();
         },
         error: (error: HttpErrorResponse) => this.handleAuthError(error),
       });
@@ -140,7 +131,7 @@ export class AuthFormComponent {
         phone: normalizePhone(phone),
         code,
       })
-      .pipe(finalize(() => this.form.controls.phone.enable()))
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/roles']),
         error: (error: HttpErrorResponse) => this.handleAuthError(error),
