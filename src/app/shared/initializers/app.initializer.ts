@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from 'app/pages/auth/services/auth.service';
 
-import { AppInitializationService } from '../services/max/app-initialization.service';
+import { AppInitializationService } from '../services/app-initialization.service';
 import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.service';
 import { MaxBridgeService } from '../services/max/max-bridge.service';
 import { PlatformService } from '../services/max/platform.service';

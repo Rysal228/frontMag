@@ -11,7 +11,6 @@ export class AppInitializationService {
   public readonly state = this._state.asReadonly();
 
   public setState(state: AppInitializationState): void {
-    console.log('state:', state);
     this._state.set(state);
   }
 }

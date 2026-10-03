@@ -4,7 +4,7 @@ import eruda from 'eruda';
 
 import { TuiRoot } from '@taiga-ui/core';
 
-import { AppInitializationService } from './shared/services/max/app-initialization.service';
+import { AppInitializationService } from './shared/services/app-initialization.service';
 import { ThemeService } from './shared/services/theme.service';
 
 @Component({

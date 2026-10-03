@@ -11,7 +11,9 @@ export class PlatformService {
   private readonly maxBridge = inject(MaxBridgeService);
 
   public get isMax(): boolean {
-    return this.maxBridge.isAvailable;
+    const platform = this.maxBridge.platform;
+
+    return ['ios', 'android', 'desktop'].includes(platform);
   }
 
   public get isBrowser(): boolean {
