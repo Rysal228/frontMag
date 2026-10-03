@@ -61,20 +61,6 @@
   >
     {{ isSaving() ? 'Сохранение...' : 'Сохранить изменения' }}
   </button>
-
-  <button tuiButton appearance="outline" type="button" class="logout-button" (click)="logout()">
-    Выйти из аккаунта
-  </button>
-
-  @if (canChangeRole()) {
-    <button tuiButton appearance="flat" type="button" class="change-role-button" (click)="changeRole()">
-      Сменить роль
-    </button>
-  }
 </section>
 
-<section class="settings">
-  <h2>Настройки</h2>
-
-  <app-theme-toggle />
-</section>
+<app-profile-settings />
