@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton } from '@taiga-ui/core';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
@@ -38,6 +39,7 @@ export class RegFormComponent {
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly phoneMaskitoOptions = PHONE_MASKITO_OPTIONS;
+  protected readonly today = TuiDay.currentLocal();
 
   protected readonly form = this.fb.nonNullable.group({
     phone: ['', [Validators.required, phoneValidator()]],
