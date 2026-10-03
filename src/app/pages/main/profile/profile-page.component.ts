@@ -1,17 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
 import { TuiHovered } from '@taiga-ui/cdk';
 import { TuiButton } from '@taiga-ui/core';
 
-import { AuthService } from 'app/pages/auth/services/auth.service';
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
-import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { OrderStatus } from 'app/shared/models/order-status.model';
 import { OrderStatusService } from 'app/shared/services/order-status.service';
 import { RoleAccessService } from 'app/shared/services/role-access.service';
@@ -19,6 +16,8 @@ import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
 import { UserRole } from 'app/shared/types/roles.types';
+
+import { SettingsComponent } from './settings/settings.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -32,7 +31,7 @@ import { UserRole } from 'app/shared/types/roles.types';
     TuiLegendItem,
     TuiRingChart,
     TuiHovered,
-    ThemeToggleComponent,
+    SettingsComponent,
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
@@ -42,8 +41,6 @@ export class ProfilePageComponent {
   private readonly currentUser = inject(CurrentUserStore);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly orderStatusService = inject(OrderStatusService);
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly roleAccess = inject(RoleAccessService);
   private readonly roleCatalog = inject(ROLE_CATALOG);
 
@@ -107,23 +104,15 @@ export class ProfilePageComponent {
     return Number.isNaN(this.activeItemIndex) || this.activeItemIndex === index;
   }
 
+  protected onHover(index: number, hovered: boolean): void {
+    this.activeItemIndex = hovered ? index : NaN;
+  }
+
   protected readonly availableRoles = computed(() =>
     this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role))
   );
 
   protected readonly canChangeRole = computed(() => this.availableRoles().length > 1);
-
-  protected onHover(index: number, hovered: boolean): void {
-    this.activeItemIndex = hovered ? index : NaN;
-  }
-
-  protected changeRole(): void {
-    if (!this.canChangeRole()) {
-      return;
-    }
-
-    void this.router.navigateByUrl('/roles');
-  }
 
   protected isSaving = signal(false);
 
@@ -145,10 +134,5 @@ export class ProfilePageComponent {
       })
       .pipe(finalize(() => this.isSaving.set(false)))
       .subscribe();
-  }
-
-  protected logout(): void {
-    this.authService.logout();
-    void this.router.navigateByUrl('/auth');
   }
 }
