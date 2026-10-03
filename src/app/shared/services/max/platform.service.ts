@@ -12,7 +12,7 @@ export class PlatformService {
 
   public get isMax(): boolean {
     const platform = this.maxBridge.platform;
-
+    console.log(' platform:', platform);
     return ['ios', 'android', 'desktop'].includes(platform);
   }
 
