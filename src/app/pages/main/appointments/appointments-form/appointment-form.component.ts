@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 
+import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiTextarea } from '@taiga-ui/kit';
 
@@ -53,6 +54,7 @@ export class AppointmentFormComponent {
   protected readonly hasAvailabilityError = signal(false);
   protected readonly timeOptions = signal<SelectOption[]>([]);
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
+  protected readonly today = TuiDay.currentLocal();
 
   protected readonly form = new FormGroup({
     date: new FormControl('', { nonNullable: true, validators: Validators.required }),
