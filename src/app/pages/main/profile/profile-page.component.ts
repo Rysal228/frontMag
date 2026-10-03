@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { TuiDay } from '@taiga-ui/cdk';
+import { TuiDay, TuiHovered } from '@taiga-ui/cdk';
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
-import { TuiHovered } from '@taiga-ui/cdk';
 import { TuiButton } from '@taiga-ui/core';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
