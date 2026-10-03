@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     maxCodeRequest: `/api/${version}/users/auth/max/code/request/`,
     maxCodeVerify: `/api/${version}/users/auth/max/code/verify/`,
     refresh: `/api/${version}/users/auth/token/refresh/`,
+    password: `/api/${version}/users/auth/password/`,
   },
   users: {
     profile: `/api/${version}/users/profile/`,
