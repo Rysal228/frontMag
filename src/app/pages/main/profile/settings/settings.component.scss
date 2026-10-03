@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.settings {
+  display: grid;
+  gap: 10px;
+  max-width: 720px;
+  margin: 24px auto 0;
+  padding: 0 20px 28px;
+}
+
+.settings h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+@media (max-width: 360px) {
+  .settings {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}
