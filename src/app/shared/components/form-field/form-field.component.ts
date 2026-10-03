@@ -37,8 +37,11 @@ export class FormFieldComponent implements AfterContentInit {
       return;
     }
 
-    control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.clearServerError(control);
+    });
+
+    control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateError();
       this.cdr.markForCheck();
     });
