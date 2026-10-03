@@ -11,10 +11,8 @@ import { FormFieldComponent } from 'app/shared/components/form-field/form-field.
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { OrderStatus } from 'app/shared/models/order-status.model';
 import { OrderStatusService } from 'app/shared/services/order-status.service';
-import { RoleAccessService } from 'app/shared/services/role-access.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
-import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
 import { UserRole } from 'app/shared/types/roles.types';
 
 import { SettingsComponent } from './settings/settings.component';
@@ -41,8 +39,6 @@ export class ProfilePageComponent {
   private readonly currentUser = inject(CurrentUserStore);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly orderStatusService = inject(OrderStatusService);
-  private readonly roleAccess = inject(RoleAccessService);
-  private readonly roleCatalog = inject(ROLE_CATALOG);
 
   protected readonly user = this.currentUser.user;
   protected activeItemIndex = NaN;
@@ -66,6 +62,8 @@ export class ProfilePageComponent {
     phone: new FormControl('', { nonNullable: true }),
     birthday: new FormControl('', { nonNullable: true }),
   });
+
+  protected readonly isSaving = signal(false);
 
   constructor() {
     this.form.controls.phone.disable();
@@ -107,14 +105,6 @@ export class ProfilePageComponent {
   protected onHover(index: number, hovered: boolean): void {
     this.activeItemIndex = hovered ? index : NaN;
   }
-
-  protected readonly availableRoles = computed(() =>
-    this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role))
-  );
-
-  protected readonly canChangeRole = computed(() => this.availableRoles().length > 1);
-
-  protected isSaving = signal(false);
 
   protected save(): void {
     if (this.form.invalid || this.isSaving()) {
