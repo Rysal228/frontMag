@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'app/pages/auth/services/auth.service';
 
 import { AppInitializationService } from '../services/app-initialization.service';
+import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.service';
 import { MaxBridgeService } from '../services/max/max-bridge.service';
 import { CurrentRoleStore } from '../storage/current-role-store';
 import { TokenStore } from '../storage/token-store';
@@ -14,6 +15,7 @@ function hasInitDataHash(initData: string): boolean {
 }
 
 export async function initializeApplication(): Promise<void> {
+  const bridgeLoader = inject(MaxBridgeLoaderService);
   const maxBridgeService = inject(MaxBridgeService);
   const authService = inject(AuthService);
   const tokenStore = inject(TokenStore);
@@ -22,6 +24,14 @@ export async function initializeApplication(): Promise<void> {
   const initialization = inject(AppInitializationService);
 
   initialization.setState('initializing');
+
+  const bridgeLoaded = await bridgeLoader.load();
+
+  if (!bridgeLoaded) {
+    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
+
+    return;
+  }
 
   const initData = maxBridgeService.initData;
 
