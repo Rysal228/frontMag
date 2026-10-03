@@ -5,9 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'app/pages/auth/services/auth.service';
 
 import { AppInitializationService } from '../services/app-initialization.service';
-import { MaxBridgeLoaderService } from '../services/max/max-bridge-loader.service';
 import { MaxBridgeService } from '../services/max/max-bridge.service';
-import { PlatformService } from '../services/max/platform.service';
 import { CurrentRoleStore } from '../storage/current-role-store';
 import { TokenStore } from '../storage/token-store';
 
@@ -16,9 +14,7 @@ function hasInitDataHash(initData: string): boolean {
 }
 
 export async function initializeApplication(): Promise<void> {
-  const bridgeLoader = inject(MaxBridgeLoaderService);
   const maxBridgeService = inject(MaxBridgeService);
-  const platform = inject(PlatformService);
   const authService = inject(AuthService);
   const tokenStore = inject(TokenStore);
   const currentRole = inject(CurrentRoleStore);
@@ -27,21 +23,10 @@ export async function initializeApplication(): Promise<void> {
 
   initialization.setState('initializing');
 
-  const bridgeLoaded = await bridgeLoader.load();
-
-  if (!bridgeLoaded || !platform.isMax) {
-    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
-
-    return;
-  }
-
   const initData = maxBridgeService.initData;
 
   if (!initData) {
-    authService.logout();
-    initialization.setState('authentication-required');
-
-    await router.navigateByUrl('/auth');
+    initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
 
     return;
   }
@@ -71,7 +56,7 @@ export async function initializeApplication(): Promise<void> {
     initialization.setState('authenticated');
 
     await router.navigateByUrl('/roles');
-  } catch (error) {
+  } catch {
     authService.logout();
     initialization.setState('authentication-required');
 

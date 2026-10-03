@@ -10,14 +10,13 @@ export type AppEnvironment = 'max' | 'browser';
 export class PlatformService {
   private readonly maxBridge = inject(MaxBridgeService);
 
-  public get isMax(): boolean {
+  public get isMaxPlatform(): boolean {
     const platform = this.maxBridge.platform;
 
-    localStorage.setItem(platform, JSON.stringify(platform));
     return ['ios', 'android', 'desktop'].includes(platform);
   }
 
   public get isBrowser(): boolean {
-    return !this.isMax;
+    return !this.isMaxPlatform;
   }
 }
