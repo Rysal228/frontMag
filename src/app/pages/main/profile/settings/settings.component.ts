@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TuiButton, TuiDialogService } from '@taiga-ui/core';
@@ -7,8 +7,8 @@ import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { AuthService } from 'app/pages/auth/services/auth.service';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { RoleAccessService } from 'app/shared/services/role-access.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
-import { UserRole } from 'app/shared/types/roles.types';
 
 import { PasswordDialogComponent } from '../password-dialog/password-dialog.component';
 
@@ -24,10 +24,15 @@ export class SettingsComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly roleAccess = inject(RoleAccessService);
+  private readonly currentRole = inject(CurrentRoleStore);
   private readonly roleCatalog = inject(ROLE_CATALOG);
   private readonly dialogs = inject(TuiDialogService);
 
-  protected readonly canChangeRole = this.roleCatalog.some(({ role }) => this.roleAccess.hasAccess(role) && role !== UserRole.User);
+  protected readonly canChangeRole = computed(() => {
+    const availableRoles = this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role));
+
+    return availableRoles.length > 1;
+  });
 
   protected changePassword(): void {
     this.dialogs
@@ -38,7 +43,7 @@ export class SettingsComponent {
   }
 
   protected changeRole(): void {
-    if (!this.canChangeRole) {
+    if (!this.canChangeRole()) {
       return;
     }
 
