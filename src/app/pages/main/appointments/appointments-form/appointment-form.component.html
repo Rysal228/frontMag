@@ -20,7 +20,7 @@
 
     <form class="form" [formGroup]="form" (ngSubmit)="save()">
       <app-form-field label="Выберите дату посещения">
-        <app-date-field formControlName="date" />
+        <app-date-field formControlName="date" [minDate]="today" />
       </app-form-field>
 
       <app-form-field label="Время посещения">
