@@ -9,7 +9,7 @@ import { API_ENDPOINTS } from '../consts/urls.const';
 import { SilentApiError } from '../errors/silent-api-error';
 import { TokenStore } from '../storage/token-store';
 
-const AUTH_ENDPOINTS = new Set([
+const AUTH_ENDPOINTS = new Set<string>([
   API_ENDPOINTS.auth.login,
   API_ENDPOINTS.auth.register,
   API_ENDPOINTS.auth.max,
@@ -65,12 +65,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             authService.logout();
             void router.navigate(['/auth']);
 
-            return throwError(
-              () =>
-                new SilentApiError(
-                  new Error('Access token is not available after refresh')
-                )
-            );
+            return throwError(() => new SilentApiError(new Error('Access token is not available after refresh')));
           }
 
           return next(
@@ -92,10 +87,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                   void router.navigate(['/auth']);
 
                   return throwError(
-                    () =>
-                      new SilentApiError(
-                        new Error('Access token is not available after MAX re-authentication')
-                      )
+                    () => new SilentApiError(new Error('Access token is not available after MAX re-authentication'))
                   );
                 }
 
