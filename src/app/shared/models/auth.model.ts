@@ -14,10 +14,17 @@ export type RegisterRequest = {
 
 export type MaxAuthRequest = {
   initData: string;
+};
+
+export type MaxContactAuthRequest = MaxAuthRequest & {
   phone: string;
   phoneAuthDate: string;
   phoneHash: string;
 };
+
+export type MaxAuthResult =
+  | { status: 'contact_required' }
+  | import('../types/auth.types').AuthTokens;
 
 export type MaxCodeRequest = {
   phone: string;
