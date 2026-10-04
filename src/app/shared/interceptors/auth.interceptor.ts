@@ -9,12 +9,25 @@ import { API_ENDPOINTS } from '../consts/urls.const';
 import { SilentApiError } from '../errors/silent-api-error';
 import { TokenStore } from '../storage/token-store';
 
+const AUTH_ENDPOINTS = new Set([
+  API_ENDPOINTS.auth.login,
+  API_ENDPOINTS.auth.register,
+  API_ENDPOINTS.auth.max,
+  API_ENDPOINTS.auth.maxCodeRequest,
+  API_ENDPOINTS.auth.maxCodeVerify,
+  API_ENDPOINTS.auth.refresh,
+]);
+
+function isMaxSessionInvalid(error: HttpErrorResponse): boolean {
+  return error.status === 401 && error.error?.code === 'max_session_invalid';
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenStore = inject(TokenStore);
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (req.url === API_ENDPOINTS.auth.refresh) {
+  if (AUTH_ENDPOINTS.has(req.url)) {
     return next(req);
   }
 
@@ -68,7 +81,41 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             })
           );
         }),
-        catchError((refreshError) => {
+        catchError((refreshError: HttpErrorResponse) => {
+          if (isMaxSessionInvalid(refreshError)) {
+            return authService.reauthenticateWithMax(true).pipe(
+              switchMap(() => {
+                const newAccessToken = tokenStore.accessToken;
+
+                if (!newAccessToken) {
+                  authService.logout();
+                  void router.navigate(['/auth']);
+
+                  return throwError(
+                    () =>
+                      new SilentApiError(
+                        new Error('Access token is not available after MAX re-authentication')
+                      )
+                  );
+                }
+
+                return next(
+                  req.clone({
+                    setHeaders: {
+                      Authorization: `Bearer ${newAccessToken}`,
+                    },
+                  })
+                );
+              }),
+              catchError((reauthError) => {
+                authService.logout();
+                void router.navigate(['/auth']);
+
+                return throwError(() => new SilentApiError(reauthError));
+              })
+            );
+          }
+
           authService.logout();
           void router.navigate(['/auth']);
 
