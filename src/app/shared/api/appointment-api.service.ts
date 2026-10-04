@@ -18,6 +18,10 @@ export class AppointmentApiService {
     return this.http.get<Appointment[]>(API_ENDPOINTS.orders.list);
   }
 
+  public getByCarId(carId: string): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(API_ENDPOINTS.cars.orders(carId));
+  }
+
   public getWorkTypes(): Observable<WorkType[]> {
     return this.http.get<WorkType[]>(API_ENDPOINTS.orders.workTypes);
   }
