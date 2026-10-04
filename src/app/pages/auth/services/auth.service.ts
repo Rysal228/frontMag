@@ -1,10 +1,11 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, finalize, shareReplay, tap, throwError } from 'rxjs';
+import { Observable, finalize, from, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import { MaxAuthRequest, MaxContactAuthRequest, MaxAuthResult, RefreshTokenRequest } from 'app/shared/models/auth.model';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { MaxBridgeService } from 'app/shared/services/max/max-bridge.service';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
@@ -18,6 +19,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly tokenStore = inject(TokenStore);
   private readonly currentRole = inject(CurrentRoleStore);
+  private readonly maxBridgeService = inject(MaxBridgeService);
   private readonly currentUser = inject(CurrentUserStore);
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
@@ -35,6 +37,36 @@ export class AuthService {
   public authenticateWithMaxContact(request: MaxContactAuthRequest): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(API_ENDPOINTS.auth.max, request).pipe(
       tap((tokens) => this.tokenStore.set(tokens))
+    );
+  }
+
+  public reauthenticateWithMax(forceContact = false): Observable<AuthTokens> {
+    const initData = this.maxBridgeService.initData;
+
+    if (!initData) {
+      return throwError(() => new Error('MAX initData is not available'));
+    }
+
+    return this.authenticateWithMax({
+      initData,
+      forceContact,
+    }).pipe(
+      switchMap((result) => {
+        if ('accessToken' in result) {
+          return of(result);
+        }
+
+        return from(this.maxBridgeService.requestContact()).pipe(
+          switchMap((contact) =>
+            this.authenticateWithMaxContact({
+              initData,
+              phone: contact.phone,
+              phoneAuthDate: contact.authDate,
+              phoneHash: contact.hash,
+            })
+          )
+        );
+      })
     );
   }
 
