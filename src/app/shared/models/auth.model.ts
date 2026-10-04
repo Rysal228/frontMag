@@ -16,6 +16,7 @@ export type RegisterRequest = {
 
 export type MaxAuthRequest = {
   initData: string;
+  forceContact?: boolean;
 };
 
 export type MaxContactAuthRequest = MaxAuthRequest & {
