@@ -29,6 +29,34 @@ function getApiError(error: HttpErrorResponse): ApiError {
   };
 }
 
+function getDetailsMessages(details: ApiError['details']): string[] {
+  if (!details) {
+    return [];
+  }
+
+  const messages: string[] = [];
+
+  const collect = (value: unknown): void => {
+    if (typeof value === 'string') {
+      messages.push(value);
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach(collect);
+      return;
+    }
+
+    if (value && typeof value === 'object') {
+      Object.values(value).forEach(collect);
+    }
+  };
+
+  collect(details);
+
+  return messages;
+}
+
 export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const alerts = inject(TuiAlertService);
 
@@ -48,8 +76,11 @@ export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
       const apiError = getApiError(error);
 
+      const detailsMessages = getDetailsMessages(apiError.details);
+      const message = detailsMessages.length > 0 ? detailsMessages.join('\n') : apiError.message;
+
       alerts
-        .open(apiError.message, {
+        .open(message, {
           label: 'Ошибка',
           appearance: 'negative',
         })
