@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, finalize, shareReplay, tap, throwError } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { MaxAuthRequest, RefreshTokenRequest } from 'app/shared/models/auth.model';
+import { MaxAuthRequest, MaxContactAuthRequest, MaxAuthResult, RefreshTokenRequest } from 'app/shared/models/auth.model';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { TokenStore } from 'app/shared/storage/token-store';
@@ -22,11 +22,19 @@ export class AuthService {
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
 
-  public authenticateWithMax(request: MaxAuthRequest): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.max, request).pipe(
-      tap((tokens) => {
-        this.tokenStore.set(tokens);
+  public authenticateWithMax(request: MaxAuthRequest): Observable<MaxAuthResult> {
+    return this.http.post<MaxAuthResult>(API_ENDPOINTS.auth.max, request).pipe(
+      tap((result) => {
+        if ('accessToken' in result) {
+          this.tokenStore.set(result);
+        }
       })
+    );
+  }
+
+  public authenticateWithMaxContact(request: MaxContactAuthRequest): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.max, request).pipe(
+      tap((tokens) => this.tokenStore.set(tokens))
     );
   }
 
