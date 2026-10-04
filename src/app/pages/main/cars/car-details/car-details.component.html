@@ -58,5 +58,7 @@
     >
       {{ isDeleting() ? 'Удаление...' : 'Удалить автомобиль' }}
     </button>
+
+    <app-car-order-history [carId]="car()!.id" />
   }
 </section>
