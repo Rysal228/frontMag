@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   },
   cars: {
     list: `/api/${version}/cars/`,
+    orders: (id: string) => `/api/${version}/cars/${id}/orders/`,
     brands: `/api/${version}/cars/brands/`,
     models: `/api/${version}/cars/models/`,
   },
