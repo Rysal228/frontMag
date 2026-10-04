@@ -1,3 +1,5 @@
+import { AuthTokens } from '../types/auth.types';
+
 export type LoginRequest = {
   phone: string;
   password: string;
@@ -24,7 +26,7 @@ export type MaxContactAuthRequest = MaxAuthRequest & {
 
 export type MaxAuthResult =
   | { status: 'contact_required' }
-  | import('../types/auth.types').AuthTokens;
+  | AuthTokens;
 
 export type MaxCodeRequest = {
   phone: string;
