@@ -17,6 +17,10 @@ export class AppointmentService {
     return this.appointmentApiService.getAll();
   }
 
+  public getByCarId(carId: string): Observable<Appointment[]> {
+    return this.appointmentApiService.getByCarId(carId);
+  }
+
   public getWorkTypes(): Observable<WorkType[]> {
     return this.appointmentApiService.getWorkTypes();
   }
