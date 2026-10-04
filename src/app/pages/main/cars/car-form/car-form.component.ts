@@ -10,8 +10,8 @@ import { FormFieldComponent } from 'app/shared/components/form-field/form-field.
 import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
-import { vinValidator } from 'app/shared/validators/vin.validator';
 import { CarService } from 'app/shared/services/car.service';
+import { vinValidator } from 'app/shared/validators/vin.validator';
 
 @Component({
   selector: 'app-car-form',
