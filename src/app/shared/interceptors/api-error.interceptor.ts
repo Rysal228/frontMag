@@ -70,6 +70,10 @@ export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
       const apiError = getApiError(error);
 
+      if (apiError.code === 'token_not_valid') {
+        return throwError(() => error);
+      }
+
       const detailsMessages = getDetailsMessages(apiError.details);
       const message = detailsMessages.length > 0 ? detailsMessages.join('\n') : apiError.message;
 
