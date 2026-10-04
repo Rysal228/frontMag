@@ -23,6 +23,7 @@ export class AuthService {
   private readonly currentUser = inject(CurrentUserStore);
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
+  private maxReauthRequest$: Observable<AuthTokens> | null = null;
 
   public authenticateWithMax(request: MaxAuthRequest): Observable<MaxAuthResult> {
     return this.http.post<MaxAuthResult>(API_ENDPOINTS.auth.max, request).pipe(
@@ -41,13 +42,17 @@ export class AuthService {
   }
 
   public reauthenticateWithMax(forceContact = false): Observable<AuthTokens> {
+    if (this.maxReauthRequest$) {
+      return this.maxReauthRequest$;
+    }
+
     const initData = this.maxBridgeService.initData;
 
     if (!initData) {
       return throwError(() => new Error('MAX initData is not available'));
     }
 
-    return this.authenticateWithMax({
+    this.maxReauthRequest$ = this.authenticateWithMax({
       initData,
       forceContact,
     }).pipe(
@@ -66,8 +71,14 @@ export class AuthService {
             })
           )
         );
-      })
+      }),
+      finalize(() => {
+        this.maxReauthRequest$ = null;
+      }),
+      shareReplay(1)
     );
+
+    return this.maxReauthRequest$;
   }
 
   public refresh(): Observable<AuthTokens> {
