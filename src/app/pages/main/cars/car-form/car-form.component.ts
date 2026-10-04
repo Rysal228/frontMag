@@ -10,6 +10,7 @@ import { FormFieldComponent } from 'app/shared/components/form-field/form-field.
 import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
+import { vinValidator } from 'app/shared/validators/vin.validator';
 import { CarService } from 'app/shared/services/car.service';
 
 @Component({
@@ -66,7 +67,7 @@ export class CarFormComponent {
     model: new FormControl('', { nonNullable: true, validators: Validators.required }),
     year: new FormControl('', { nonNullable: true, validators: Validators.required }),
     plateNumber: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    vin: new FormControl('', { nonNullable: true, validators: Validators.maxLength(64) }),
+    vin: new FormControl('', { nonNullable: true, validators: vinValidator }),
   });
 
   constructor() {
@@ -115,7 +116,7 @@ export class CarFormComponent {
       model: Number(model),
       year: Number(year),
       plateNumber: plateNumber.trim() || null,
-      vin: vin.trim() || null,
+      vin: vin.trim().toUpperCase() || null,
       photo: this.selectedPhoto(),
     };
 
