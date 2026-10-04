@@ -21,7 +21,7 @@ export class CarOrderHistoryComponent {
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
 
-  private readonly carId = input.required<string>();
+  public readonly carId = input.required<string>();
 
   constructor() {
     effect(() => {
