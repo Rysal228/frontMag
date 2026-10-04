@@ -47,7 +47,12 @@ export async function initializeApplication(): Promise<void> {
   }
 
   try {
-    const result = await firstValueFrom(authService.authenticateWithMax({ initData }));
+    const result = await firstValueFrom(
+      authService.authenticateWithMax({
+        initData,
+        forceContact: !tokenStore.isAuthenticated,
+      })
+    );
 
     if ('status' in result && result.status === 'contact_required') {
       const contact = await maxBridgeService.requestContact();
