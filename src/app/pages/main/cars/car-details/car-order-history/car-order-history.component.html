@@ -1,0 +1,56 @@
+<section class="order-history">
+  <header class="header">
+    <h2>История заказов</h2>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state">
+      <p>Загрузка истории...</p>
+    </div>
+  } @else if (hasError()) {
+    <div class="state state_error">
+      <p>Не удалось загрузить историю заказов.</p>
+      <button tuiButton appearance="outline" type="button" (click)="reload()">Повторить</button>
+    </div>
+  } @else if (!orders().length) {
+    <div class="empty">
+      <p>У этого автомобиля пока нет заказов.</p>
+    </div>
+  } @else {
+    <div class="list">
+      @for (order of orders(); track order.id) {
+        <article class="order-card">
+          <header class="card-header">
+            <h3>Заказ № {{ order.orderNumber }}</h3>
+            <span class="status" [attr.data-appearance]="order.status.appearance">
+              {{ order.status.name }}
+            </span>
+          </header>
+
+          <div class="details">
+            <p>Дата создания: {{ formatDate(order.createdAt) }}</p>
+
+            @if (order.appointmentAt) {
+              <p>Дата и время записи: {{ formatDate(order.appointmentAt) }}</p>
+            }
+
+            <p>Тип работ: {{ order.workTypeName }}</p>
+
+            <p>
+              Статус работ:
+              <span class="status" [attr.data-appearance]="order.workStatus?.appearance">
+                {{ order.workStatus?.name || '-' }}
+              </span>
+            </p>
+
+            <p>Стоимость работ: {{ order.price ? order.price + ' руб' : '-' }}</p>
+
+            @if (order.description) {
+              <p>Описание: {{ order.description }}</p>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
