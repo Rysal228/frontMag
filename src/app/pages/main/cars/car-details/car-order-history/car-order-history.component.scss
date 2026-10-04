@@ -1,0 +1,115 @@
+:host {
+  display: block;
+}
+
+.order-history {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.order-card {
+  display: grid;
+  gap: 0;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--tui-background-neutral-1);
+}
+
+.card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-header h3 {
+  margin: 0 0 4px;
+  color: var(--tui-text-secondary);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.card-header .status {
+  flex: 0 0 auto;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.details {
+  display: grid;
+  gap: 0;
+}
+
+.details p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.status[data-appearance='positive'] {
+  color: var(--tui-text-positive);
+}
+
+.status[data-appearance='warning'] {
+  color: var(--tui-text-warning);
+}
+
+.status[data-appearance='negative'] {
+  color: var(--tui-text-negative);
+}
+
+.empty,
+.state {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  box-sizing: border-box;
+  padding: 28px 16px;
+  border-radius: 12px;
+  background: var(--tui-background-neutral-1);
+  text-align: center;
+}
+
+.empty p,
+.state p {
+  max-width: 384px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.state_error {
+  gap: 12px;
+  color: var(--tui-text-negative);
+}
+
+@media (max-width: 520px) {
+  .header h2 {
+    font-size: 20px;
+  }
+
+  .card-header {
+    align-items: flex-start;
+  }
+
+  .card-header .status {
+    text-align: right;
+  }
+}
