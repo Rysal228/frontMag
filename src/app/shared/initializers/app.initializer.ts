@@ -29,7 +29,6 @@ export async function initializeApplication(): Promise<void> {
 
   if (!bridgeLoaded) {
     initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
-
     return;
   }
 
@@ -37,39 +36,38 @@ export async function initializeApplication(): Promise<void> {
 
   if (!initData) {
     initialization.setState(tokenStore.isAuthenticated ? 'authenticated' : 'authentication-required');
-
     return;
   }
 
   if (!hasInitDataHash(initData)) {
     authService.logout();
     initialization.setState('authentication-required');
-
     await router.navigateByUrl('/auth');
-
     return;
   }
 
   try {
-    const contact = await maxBridgeService.requestContact();
+    const result = await firstValueFrom(authService.authenticateWithMax({ initData }));
 
-    await firstValueFrom(
-      authService.authenticateWithMax({
-        initData,
-        phone: contact.phone,
-        phoneAuthDate: contact.authDate,
-        phoneHash: contact.hash,
-      })
-    );
+    if ('status' in result && result.status === 'contact_required') {
+      const contact = await maxBridgeService.requestContact();
+
+      await firstValueFrom(
+        authService.authenticateWithMaxContact({
+          initData,
+          phone: contact.phone,
+          phoneAuthDate: contact.authDate,
+          phoneHash: contact.hash,
+        })
+      );
+    }
 
     currentRole.clear();
     initialization.setState('authenticated');
-
     await router.navigateByUrl('/roles');
   } catch {
     authService.logout();
     initialization.setState('authentication-required');
-
     await router.navigateByUrl('/auth');
   }
 }
