@@ -9,7 +9,6 @@ import { TuiButton } from '@taiga-ui/core';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
-import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
 import { normalizePhone } from 'app/shared/utils/phone-normalize.util';
 import { phoneValidator } from 'app/shared/validators/phone.validator';
 
@@ -32,7 +31,6 @@ export class AuthFormComponent {
 
   protected readonly loginMethod = signal<LoginMethod>('password');
   protected readonly isLoading = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly codeRequested = signal(false);
   protected readonly phoneMaskitoOptions = PHONE_MASKITO_OPTIONS;
 
@@ -44,7 +42,6 @@ export class AuthFormComponent {
 
   protected setLoginMethod(method: LoginMethod): void {
     this.loginMethod.set(method);
-    this.errorMessage.set(null);
     this.codeRequested.set(false);
     this.form.controls.code.reset();
     this.form.controls.phone.enable();
@@ -71,7 +68,6 @@ export class AuthFormComponent {
     }
 
     this.isLoading.set(true);
-    this.errorMessage.set(null);
 
     if (this.loginMethod() === 'password') {
       this.loginWithPassword();
@@ -97,7 +93,6 @@ export class AuthFormComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/roles']),
-        error: (error: HttpErrorResponse) => this.handleAuthError(error),
       });
   }
 
@@ -119,7 +114,6 @@ export class AuthFormComponent {
           ]);
           this.form.controls.code.updateValueAndValidity();
         },
-        error: (error: HttpErrorResponse) => this.handleAuthError(error),
       });
   }
 
@@ -134,14 +128,6 @@ export class AuthFormComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/roles']),
-        error: (error: HttpErrorResponse) => this.handleAuthError(error),
       });
-  }
-
-  private handleAuthError(error: HttpErrorResponse): void {
-    const formError = applyApiFormErrors(error, this.form);
-
-    this.errorMessage.set(formError ?? 'Не удалось выполнить авторизацию. Проверьте введённые данные.');
-    this.isLoading.set(false);
   }
 }

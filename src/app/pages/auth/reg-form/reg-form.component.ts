@@ -11,7 +11,6 @@ import { DateFieldComponent } from 'app/shared/components/date-field/date-field.
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
-import { applyApiFormErrors } from 'app/shared/utils/api-form-errors.util';
 import { normalizePhone } from 'app/shared/utils/phone-normalize.util';
 import { phoneValidator } from 'app/shared/validators/phone.validator';
 
@@ -20,13 +19,7 @@ import { RegFormService } from './services/reg-form.service';
 @Component({
   selector: 'app-reg-form',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    TuiButton,
-    FormFieldComponent,
-    TextFieldComponent,
-    DateFieldComponent,
-  ],
+  imports: [ReactiveFormsModule, TuiButton, FormFieldComponent, TextFieldComponent, DateFieldComponent],
   templateUrl: './reg-form.component.html',
   styleUrl: './reg-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +30,6 @@ export class RegFormComponent {
   private readonly router = inject(Router);
 
   protected readonly isLoading = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly phoneMaskitoOptions = PHONE_MASKITO_OPTIONS;
   protected readonly today = TuiDay.currentLocal();
 
@@ -62,7 +54,6 @@ export class RegFormComponent {
     }
 
     this.isLoading.set(true);
-    this.errorMessage.set(null);
 
     const { phone, password, firstName, lastName, patronymic, birthday } = this.form.getRawValue();
 
@@ -79,11 +70,6 @@ export class RegFormComponent {
       .subscribe({
         next: () => {
           void this.router.navigate(['/roles']);
-        },
-        error: (error: HttpErrorResponse) => {
-          const formError = applyApiFormErrors(error, this.form);
-
-          this.errorMessage.set(formError ?? 'Не удалось выполнить регистрацию.');
         },
       });
   }

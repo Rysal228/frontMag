@@ -51,11 +51,5 @@
     </div>
   </div>
 
-  @if (errorMessage(); as error) {
-    <p class="error">
-      {{ error }}
-    </p>
-  }
-
   <button tuiButton type="submit" size="l" [disabled]="isLoading()">Зарегистрироваться</button>
 </form>

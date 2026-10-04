@@ -69,12 +69,6 @@
     }
   </div>
 
-  @if (errorMessage(); as error) {
-    <p class="error">
-      {{ error }}
-    </p>
-  }
-
   <button tuiButton type="submit" size="l" [disabled]="isLoading()">
     {{ loginMethod() === 'code' && !codeRequested() ? 'Получить код' : 'Войти' }}
   </button>
