@@ -5,13 +5,14 @@ import { finalize } from 'rxjs';
 import { TuiButton, TuiDialogService } from '@taiga-ui/core';
 import { TUI_CONFIRM } from '@taiga-ui/kit';
 
+import { CarOrderHistoryComponent } from 'app/pages/main/cars/car-details/car-order-history/car-order-history.component';
 import { Car } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
 
 @Component({
   selector: 'app-car-details',
   standalone: true,
-  imports: [RouterLink, TuiButton],
+  imports: [RouterLink, TuiButton, CarOrderHistoryComponent],
   templateUrl: './car-details.component.html',
   styleUrl: './car-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
