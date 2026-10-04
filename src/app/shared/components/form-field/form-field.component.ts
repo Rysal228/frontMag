@@ -97,6 +97,14 @@ export class FormFieldComponent implements AfterContentInit {
       return 'Введите корректный номер телефона';
     }
 
+    if (errors['vinLength']) {
+      return 'VIN должен содержать ровно 17 символов';
+    }
+
+    if (errors['vinCharacters']) {
+      return 'Используйте латинские буквы и цифры, кроме I, O и Q';
+    }
+
     return 'Некорректное значение';
   }
 }
