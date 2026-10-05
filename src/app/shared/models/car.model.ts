@@ -19,6 +19,7 @@ export type Car = {
   vin: string | null;
   plateNumber: string | null;
   photo: string | null;
+  hasOrders: boolean;
 };
 
 export type CreateCarRequest = {
