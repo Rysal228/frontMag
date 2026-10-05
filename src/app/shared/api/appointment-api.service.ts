@@ -40,11 +40,11 @@ export class AppointmentApiService {
   }
 
   public getStatuses(): Observable<OrderStatus[]> {
-    return this.http.get<import('app/shared/models/appointment.model').OrderStatus[]>(API_ENDPOINTS.orders.statuses);
+    return this.http.get<OrderStatus[]>(API_ENDPOINTS.orders.statuses);
   }
 
   public getWorkStatuses(): Observable<WorkStatus[]> {
-    return this.http.get<import('app/shared/models/appointment.model').WorkStatus[]>(API_ENDPOINTS.orders.workStatuses);
+    return this.http.get<WorkStatus[]>(API_ENDPOINTS.orders.workStatuses);
   }
 
   private buildParams(page: number, filters?: OrderFilters): HttpParams {
