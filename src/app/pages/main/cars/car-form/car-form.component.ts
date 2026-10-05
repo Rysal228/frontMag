@@ -38,6 +38,7 @@ export class CarFormComponent {
   protected readonly loadError = signal(false);
   protected readonly selectedPhoto = signal<File | null>(null);
   protected readonly photoPreview = signal<string | null>(null);
+  protected readonly hasOrders = signal(false);
 
   protected readonly brandOptions = computed<SelectOption[]>(() =>
     this.brands().map((brand) => ({
@@ -175,8 +176,27 @@ export class CarFormComponent {
       { emitEvent: false }
     );
 
+    this.hasOrders.set(car.hasOrders);
+    this.setProtectedFieldsDisabled(car.hasOrders);
     this.loadModels(car.brand, car.model);
     this.photoPreview.set(car.photo);
     this.isLoading.set(false);
+  }
+
+  private setProtectedFieldsDisabled(hasOrders: boolean): void {
+    const controls = [
+      this.form.controls.brand,
+      this.form.controls.model,
+      this.form.controls.year,
+      this.form.controls.vin,
+    ];
+
+    controls.forEach((control) => {
+      if (hasOrders) {
+        control.disable({ emitEvent: false });
+      } else {
+        control.enable({ emitEvent: false });
+      }
+    });
   }
 }
