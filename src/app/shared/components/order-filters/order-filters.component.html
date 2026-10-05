@@ -11,9 +11,11 @@
 
   <div class="actions">
     <tui-badged-content>
-      <tui-badge-notification size="s" tuiSlot="top">
-        {{ activeFilterCount() }}
-      </tui-badge-notification>
+      @if (activeFilterCount()) {
+        <tui-badge-notification size="s" tuiSlot="top">
+          {{ activeFilterCount() }}
+        </tui-badge-notification>
+      }
 
       <button
         tuiButton
