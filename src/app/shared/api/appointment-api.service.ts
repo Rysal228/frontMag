@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import {
   Appointment,
+  AppointmentPage,
   AppointmentAvailability,
   CreateAppointmentRequest,
   WorkType,
@@ -18,8 +19,10 @@ export class AppointmentApiService {
     return this.http.get<Appointment[]>(API_ENDPOINTS.orders.list);
   }
 
-  public getByCarId(carId: string): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(API_ENDPOINTS.cars.orders(carId));
+  public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
+    const params = new HttpParams().set('page', page);
+
+    return this.http.get<AppointmentPage>(API_ENDPOINTS.cars.orders(carId), { params });
   }
 
   public getWorkTypes(): Observable<WorkType[]> {
