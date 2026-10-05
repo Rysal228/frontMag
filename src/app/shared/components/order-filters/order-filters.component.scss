@@ -9,7 +9,7 @@
   align-items: end;
 }
 
-tui-textfield,
+app-form-field,
 button {
   grid-column: span 3;
   min-inline-size: 0;
@@ -20,11 +20,12 @@ button {
 }
 
 button {
-  align-self: stretch;
+  align-self: end;
+  min-block-size: 48px;
 }
 
 @media (max-width: 900px) {
-  tui-textfield,
+  app-form-field,
   button,
   .search {
     grid-column: span 6;
@@ -32,7 +33,7 @@ button {
 }
 
 @media (max-width: 520px) {
-  tui-textfield,
+  app-form-field,
   button,
   .search {
     grid-column: 1 / -1;
