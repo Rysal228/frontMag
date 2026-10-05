@@ -15,6 +15,7 @@ export type CarApiResponse = {
   vin: string | null;
   plate_number: string | null;
   photo: string | null;
+  hasOrders: boolean;
 };
 
 @Injectable({
