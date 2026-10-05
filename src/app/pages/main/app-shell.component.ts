@@ -44,7 +44,7 @@ export class AppShellComponent {
       route: this.homeRoute(),
     },
     {
-      label: 'Мои авто',
+      label: 'Авто',
       icon: '@tui.car',
       route: '/cars',
     },

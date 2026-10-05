@@ -1,5 +1,7 @@
 <section class="car-form-page">
-  <a class="back-link" routerLink="/cars">← Мои автомобили</a>
+  <a class="back-link" routerLink="/cars">
+    <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span></a
+  >
 
   @if (isLoading()) {
     <div class="state">Загрузка автомобиля...</div>
@@ -13,7 +15,8 @@
 
     @if (isEdit && hasOrders()) {
       <p class="notice">
-        У автомобиля уже есть заказы. Марку, модель, год выпуска и VIN изменить нельзя. Номерной знак и фото можно изменить.
+        У автомобиля уже есть заказы. Марку, модель, год выпуска и VIN изменить нельзя. Номерной знак и фото можно
+        изменить.
       </p>
     }
 

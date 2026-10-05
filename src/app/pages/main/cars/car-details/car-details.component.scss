@@ -11,8 +11,12 @@
 }
 
 .back-link {
-  display: inline-block;
+  display: flex;
   margin-bottom: 16px;
+  border: 1px solid var(--color-border-01);
+  align-items: center;
+  padding: 8px;
+  border-radius: 16px;
   color: var(--tui-text-action);
   font-size: 14px;
   text-decoration: none;
@@ -130,7 +134,6 @@
     text-align: left;
   }
 }
-
 
 .edit-button {
   --tui-background: var(--tui-background-neutral-1);

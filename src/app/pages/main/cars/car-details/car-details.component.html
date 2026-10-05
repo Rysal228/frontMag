@@ -1,5 +1,7 @@
 <section class="car-details-page">
-  <a class="back-link" routerLink="/cars">← Мои автомобили</a>
+  <a class="back-link" routerLink="/cars">
+    <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span></a
+  >
 
   @if (isLoading()) {
     <div class="state">Загрузка автомобиля...</div>
@@ -22,9 +24,11 @@
         appearance="outline"
         type="button"
         [routerLink]="['/cars', car()!.id, 'edit']"
-        [tuiHint]="car()!.hasOrders
-          ? 'Есть заказы: марку, модель, год и VIN изменить нельзя. Номерной знак и фото доступны для изменения.'
-          : 'Заказов ещё нет: данные автомобиля можно изменять.'"
+        [tuiHint]="
+          car()!.hasOrders
+            ? 'Есть заказы: марку, модель, год и VIN изменить нельзя. Номерной знак и фото доступны для изменения.'
+            : 'Заказов ещё нет: данные автомобиля можно изменять.'
+        "
         tuiHintDirection="bottom"
       >
         <tui-icon icon="@tui.square-pen" />
@@ -61,13 +65,7 @@
       </div>
     </dl>
 
-    <button
-      tuiButton
-      appearance="secondary-destructive"
-      type="button"
-      [disabled]="isDeleting()"
-      (click)="deleteCar()"
-    >
+    <button tuiButton appearance="secondary-destructive" type="button" [disabled]="isDeleting()" (click)="deleteCar()">
       {{ isDeleting() ? 'Удаление...' : 'Удалить автомобиль' }}
     </button>
 

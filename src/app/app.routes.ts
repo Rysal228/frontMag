@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 
 import { AppShellComponent } from './pages/main/app-shell.component';
-import { HomePageComponent } from './pages/main/home/home-page.component';
 import { AppointmentsPageComponent } from './pages/main/appointments/appointments-page.component';
 import { CarsPageComponent } from './pages/main/cars/cars-page.component';
+import { HomePageComponent } from './pages/main/home/home-page.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { roleGuard } from './shared/guards/role.guard';
@@ -58,7 +58,7 @@ export const routes: Routes = [
           },
         ],
         data: {
-          title: 'Мои авто',
+          title: 'Авто',
         },
       },
       {
