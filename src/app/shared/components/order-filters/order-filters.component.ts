@@ -4,10 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TuiButton } from '@taiga-ui/core';
 import { TuiBadgeNotification, TuiBadgedContent } from '@taiga-ui/kit';
 
-import {
-  OrderFiltersModalComponent,
-  OrderFilterContext,
-} from 'app/shared/components/order-filters/order-filters-modal/order-filters-modal.component';
+import { OrderFiltersModalComponent } from 'app/shared/components/order-filters/order-filters-modal/order-filters-modal.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import {
@@ -54,7 +51,7 @@ export class OrderFiltersComponent {
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
   public readonly permissions = input.required<OrderFilterPermissions>();
-  public readonly context = input<OrderFilterContext>('all');
+  public readonly context = input<'all' | 'car'>('all');
   public readonly brands = input<CarBrand[]>([]);
   public readonly models = input<CarModel[]>([]);
   public readonly workTypes = input<WorkType[]>([]);
