@@ -36,6 +36,34 @@ export type Appointment = {
   createdAt: string;
 };
 
+export type OrderFilterKey =
+  | 'search'
+  | 'order_number'
+  | 'vin'
+  | 'plate_number'
+  | 'brand'
+  | 'model'
+  | 'work_type'
+  | 'status'
+  | 'work_status'
+  | 'date_range';
+
+export type OrderFilterPermissions = Record<OrderFilterKey, boolean>;
+
+export type OrderFilters = {
+  search: string;
+  orderNumber: string;
+  vin: string;
+  plateNumber: string;
+  brandId: number | null;
+  modelId: number | null;
+  workTypeId: number | null;
+  statusId: number | null;
+  workStatusId: number | null;
+  dateFrom: string | null;
+  dateTo: string | null;
+};
+
 export type AppointmentPage = {
   count: number;
   next: string | null;
