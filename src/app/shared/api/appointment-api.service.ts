@@ -11,6 +11,8 @@ import {
   WorkType,
   OrderFilterPermissions,
   OrderFilters,
+  OrderStatus,
+  WorkStatus,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
@@ -37,11 +39,11 @@ export class AppointmentApiService {
     return this.http.get<WorkType[]>(API_ENDPOINTS.orders.workTypes);
   }
 
-  public getStatuses(): Observable<import('app/shared/models/appointment.model').OrderStatus[]> {
+  public getStatuses(): Observable<OrderStatus[]> {
     return this.http.get<import('app/shared/models/appointment.model').OrderStatus[]>(API_ENDPOINTS.orders.statuses);
   }
 
-  public getWorkStatuses(): Observable<import('app/shared/models/appointment.model').WorkStatus[]> {
+  public getWorkStatuses(): Observable<WorkStatus[]> {
     return this.http.get<import('app/shared/models/appointment.model').WorkStatus[]>(API_ENDPOINTS.orders.workStatuses);
   }
 
