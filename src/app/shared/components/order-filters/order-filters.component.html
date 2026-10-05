@@ -1,147 +1,167 @@
 <section class="filters">
   @if (has('search')) {
-    <label>
-      <span>Поиск</span>
+    <tui-textfield class="search">
+      <label tuiLabel>Поиск</label>
       <input
+        tuiInput
         type="search"
-        [value]="filters().search"
         placeholder="VIN, гос. номер, заказ, клиент..."
+        [value]="filters().search"
         (input)="onSearch($any($event.target).value)"
       />
-    </label>
+    </tui-textfield>
   }
 
   @if (has('order_number')) {
-    <label>
-      <span>Номер заказа</span>
+    <tui-textfield>
+      <label tuiLabel>Номер заказа</label>
       <input
-        type="text"
-        [value]="filters().orderNumber"
+        tuiInput
         placeholder="ORD-..."
+        [value]="filters().orderNumber"
         (input)="update('orderNumber', $any($event.target).value)"
       />
-    </label>
+    </tui-textfield>
   }
 
   @if (isAllContext() && has('brand')) {
-    <label>
-      <span>Марка</span>
-      <select
-        [value]="filters().brandId ?? ''"
-        (change)="onBrandChange($any($event.target).value)"
-      >
-        <option value="">Все марки</option>
-        @for (brand of brands(); track brand.id) {
-          <option [value]="brand.id">{{ brand.name }}</option>
-        }
-      </select>
-    </label>
+    <tui-textfield tuiChevron [stringify]="stringifyBrand">
+      <label tuiLabel>Марка</label>
+      <input
+        tuiSelect
+        [ngModel]="filters().brandId ?? 0"
+        (ngModelChange)="onBrandChange($event)"
+      />
+      <tui-data-list-wrapper
+        *tuiDropdown
+        [items]="brandItems()"
+        [itemContent]="stringifyBrand"
+      />
+    </tui-textfield>
   }
 
   @if (isAllContext() && has('model')) {
-    <label>
-      <span>Модель</span>
-      <select
-        [value]="filters().modelId ?? ''"
+    <tui-textfield
+      tuiChevron
+      [stringify]="stringifyModel"
+      [disabled]="!filters().brandId"
+    >
+      <label tuiLabel>Модель</label>
+      <input
+        tuiSelect
+        [ngModel]="filters().modelId ?? 0"
         [disabled]="!filters().brandId"
-        (change)="update('modelId', $any($event.target).value ? +$any($event.target).value : null)"
-      >
-        <option value="">Все модели</option>
-        @for (model of models(); track model.id) {
-          <option [value]="model.id">{{ model.name }}</option>
-        }
-      </select>
-    </label>
+        (ngModelChange)="onModelChange($event)"
+      />
+      <tui-data-list-wrapper
+        *tuiDropdown
+        [items]="modelItems()"
+        [itemContent]="stringifyModel"
+      />
+    </tui-textfield>
   }
 
   @if (isAllContext() && has('vin')) {
-    <label>
-      <span>VIN</span>
+    <tui-textfield>
+      <label tuiLabel>VIN</label>
       <input
-        type="text"
-        [value]="filters().vin"
+        tuiInput
         placeholder="VIN"
+        [value]="filters().vin"
         (input)="update('vin', $any($event.target).value)"
       />
-    </label>
+    </tui-textfield>
   }
 
   @if (isAllContext() && has('plate_number')) {
-    <label>
-      <span>Гос. номер</span>
+    <tui-textfield>
+      <label tuiLabel>Гос. номер</label>
       <input
-        type="text"
-        [value]="filters().plateNumber"
+        tuiInput
         placeholder="Гос. номер"
+        [value]="filters().plateNumber"
         (input)="update('plateNumber', $any($event.target).value)"
       />
-    </label>
+    </tui-textfield>
   }
 
   @if (has('work_type')) {
-    <label>
-      <span>Тип работ</span>
-      <select
-        [value]="filters().workTypeId ?? ''"
-        (change)="update('workTypeId', $any($event.target).value ? +$any($event.target).value : null)"
-      >
-        <option value="">Все типы</option>
-        @for (workType of workTypes(); track workType.id) {
-          <option [value]="workType.id">{{ workType.name }}</option>
-        }
-      </select>
-    </label>
+    <tui-textfield tuiChevron [stringify]="stringifyWorkType">
+      <label tuiLabel>Тип работ</label>
+      <input
+        tuiSelect
+        [ngModel]="filters().workTypeId ?? 0"
+        (ngModelChange)="onWorkTypeChange($event)"
+      />
+      <tui-data-list-wrapper
+        *tuiDropdown
+        [items]="workTypeItems()"
+        [itemContent]="stringifyWorkType"
+      />
+    </tui-textfield>
   }
 
   @if (has('status')) {
-    <label>
-      <span>Статус заказа</span>
-      <select
-        [value]="filters().statusId ?? ''"
-        (change)="update('statusId', $any($event.target).value ? +$any($event.target).value : null)"
-      >
-        <option value="">Все статусы</option>
-        @for (status of statuses(); track status.id) {
-          <option [value]="status.id">{{ status.name }}</option>
-        }
-      </select>
-    </label>
+    <tui-textfield tuiChevron [stringify]="stringifyStatus">
+      <label tuiLabel>Статус заказа</label>
+      <input
+        tuiSelect
+        [ngModel]="filters().statusId ?? 0"
+        (ngModelChange)="onStatusChange($event)"
+      />
+      <tui-data-list-wrapper
+        *tuiDropdown
+        [items]="statusItems()"
+        [itemContent]="stringifyStatus"
+      />
+    </tui-textfield>
   }
 
   @if (has('work_status')) {
-    <label>
-      <span>Статус работы</span>
-      <select
-        [value]="filters().workStatusId ?? ''"
-        (change)="update('workStatusId', $any($event.target).value ? +$any($event.target).value : null)"
-      >
-        <option value="">Все статусы</option>
-        @for (status of workStatuses(); track status.id) {
-          <option [value]="status.id">{{ status.name }}</option>
-        }
-      </select>
-    </label>
+    <tui-textfield tuiChevron [stringify]="stringifyWorkStatus">
+      <label tuiLabel>Статус работы</label>
+      <input
+        tuiSelect
+        [ngModel]="filters().workStatusId ?? 0"
+        (ngModelChange)="onWorkStatusChange($event)"
+      />
+      <tui-data-list-wrapper
+        *tuiDropdown
+        [items]="workStatusItems()"
+        [itemContent]="stringifyWorkStatus"
+      />
+    </tui-textfield>
   }
 
   @if (has('date_range')) {
-    <label>
-      <span>Дата от</span>
+    <tui-textfield>
+      <label tuiLabel>Дата от</label>
       <input
-        type="date"
-        [value]="filters().dateFrom ?? ''"
-        (change)="update('dateFrom', $any($event.target).value || null)"
+        tuiInputDate
+        [ngModel]="dateValue(filters().dateFrom)"
+        (ngModelChange)="onDateChange('dateFrom', $event)"
       />
-    </label>
+      <tui-calendar *tuiDropdown />
+    </tui-textfield>
 
-    <label>
-      <span>Дата до</span>
+    <tui-textfield>
+      <label tuiLabel>Дата до</label>
       <input
-        type="date"
-        [value]="filters().dateTo ?? ''"
-        (change)="update('dateTo', $any($event.target).value || null)"
+        tuiInputDate
+        [ngModel]="dateValue(filters().dateTo)"
+        (ngModelChange)="onDateChange('dateTo', $event)"
       />
-    </label>
+      <tui-calendar *tuiDropdown />
+    </tui-textfield>
   }
 
-  <button type="button" class="reset-button" (click)="reset()">Сбросить</button>
+  <button
+    appearance="secondary"
+    size="m"
+    tuiButton
+    type="button"
+    (click)="reset()"
+  >
+    Сбросить
+  </button>
 </section>
