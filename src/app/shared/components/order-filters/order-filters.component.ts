@@ -2,14 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  effect,
   inject,
   input,
   output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
 import { CarBrand, CarModel } from 'app/shared/models/car.model';
 import {
   OrderFilterPermissions,
@@ -58,12 +55,6 @@ export class OrderFiltersComponent {
   protected readonly filters = signal<OrderFilters>({ ...EMPTY_FILTERS });
 
   constructor() {
-    effect(() => {
-      this.filters();
-      this.permissions();
-      this.context();
-    });
-
     this.destroyRef.onDestroy(() => {
       if (this.searchTimer) {
         clearTimeout(this.searchTimer);
@@ -73,6 +64,11 @@ export class OrderFiltersComponent {
 
   protected has(key: keyof OrderFilterPermissions): boolean {
     return this.permissions()[key];
+  }
+
+  protected availableModels(): CarModel[] {
+    const brandId = this.filters().brandId;
+    return brandId ? this.models().filter((model) => model.brand === brandId) : [];
   }
 
   protected isAllContext(): boolean {
