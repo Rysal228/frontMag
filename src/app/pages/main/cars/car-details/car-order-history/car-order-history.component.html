@@ -3,6 +3,15 @@
     <h2>История заказов</h2>
   </header>
 
+  <app-order-filters
+    context="car"
+    [permissions]="filterPermissions()"
+    [workTypes]="workTypes()"
+    [statuses]="statuses()"
+    [workStatuses]="workStatuses()"
+    (filtersChange)="onFiltersChange($event)"
+  />
+
   @if (isLoading()) {
     <div class="state">
       <p>Загрузка истории...</p>
