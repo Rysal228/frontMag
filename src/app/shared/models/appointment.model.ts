@@ -36,13 +36,6 @@ export type Appointment = {
   createdAt: string;
 };
 
-export type AppointmentPage = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Appointment[];
-};
-
 export type CreateAppointmentRequest = {
   car: string;
   workType: number;
