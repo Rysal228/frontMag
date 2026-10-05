@@ -2,7 +2,6 @@
   @if (has('search')) {
     <app-form-field label="Поиск" class="search">
       <app-text-field
-        type="search"
         placeholder="VIN, гос. номер, заказ, клиент..."
         [ngModel]="filters().search"
         (ngModelChange)="onSearch($event)"
@@ -43,11 +42,7 @@
 
   @if (isAllContext() && has('vin')) {
     <app-form-field label="VIN">
-      <app-text-field
-        placeholder="VIN"
-        [ngModel]="filters().vin"
-        (ngModelChange)="update('vin', $event)"
-      />
+      <app-text-field placeholder="VIN" [ngModel]="filters().vin" (ngModelChange)="update('vin', $event)" />
     </app-form-field>
   }
 
@@ -93,27 +88,13 @@
 
   @if (has('date_range')) {
     <app-form-field label="Дата от">
-      <app-date-field
-        [ngModel]="filters().dateFrom"
-        (ngModelChange)="update('dateFrom', $event)"
-      />
+      <app-date-field [ngModel]="filters().dateFrom" (ngModelChange)="update('dateFrom', $event)" />
     </app-form-field>
 
     <app-form-field label="Дата до">
-      <app-date-field
-        [ngModel]="filters().dateTo"
-        (ngModelChange)="update('dateTo', $event)"
-      />
+      <app-date-field [ngModel]="filters().dateTo" (ngModelChange)="update('dateTo', $event)" />
     </app-form-field>
   }
 
-  <button
-    appearance="secondary"
-    size="m"
-    tuiButton
-    type="button"
-    (click)="reset()"
-  >
-    Сбросить
-  </button>
+  <button appearance="secondary" size="m" tuiButton type="button" (click)="reset()">Сбросить</button>
 </section>

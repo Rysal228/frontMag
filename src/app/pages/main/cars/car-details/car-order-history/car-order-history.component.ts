@@ -1,15 +1,21 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-
 import { forkJoin } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
 import { TuiPagination } from '@taiga-ui/kit';
 
-import { OrderFiltersComponent } from 'app/shared/components/order-filters/order-filters.component';
 import { OrderCardComponent } from 'app/shared/components/order-card/order-card.component';
+import { OrderFiltersComponent } from 'app/shared/components/order-filters/order-filters.component';
 import { ORDER_PAGE_SIZE } from 'app/shared/consts/pagination.const';
-import { Appointment, OrderFilterPermissions, OrderFilters, OrderStatus, WorkStatus, WorkType } from 'app/shared/models/appointment.model';
+import {
+  Appointment,
+  OrderFilterPermissions,
+  OrderFilters,
+  OrderStatus,
+  WorkStatus,
+  WorkType,
+} from 'app/shared/models/appointment.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 
 @Component({

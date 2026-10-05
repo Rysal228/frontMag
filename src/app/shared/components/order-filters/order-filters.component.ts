@@ -1,22 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { TuiButton } from '@taiga-ui/core';
+
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
-import {
-  SelectComponent,
-  SelectOption,
-} from 'app/shared/components/select/select.component';
+import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
-import { CarBrand, CarModel } from 'app/shared/models/car.model';
 import {
   OrderFilterPermissions,
   OrderFilters,
@@ -24,6 +14,7 @@ import {
   WorkStatus,
   WorkType,
 } from 'app/shared/models/appointment.model';
+import { CarBrand, CarModel } from 'app/shared/models/car.model';
 
 export type OrderFilterContext = 'all' | 'car';
 
@@ -46,14 +37,7 @@ const ALL_ID = 0;
 @Component({
   selector: 'app-order-filters',
   standalone: true,
-  imports: [
-    DateFieldComponent,
-    FormFieldComponent,
-    FormsModule,
-    SelectComponent,
-    TextFieldComponent,
-    TuiButton,
-  ],
+  imports: [DateFieldComponent, FormFieldComponent, FormsModule, SelectComponent, TextFieldComponent, TuiButton],
   templateUrl: './order-filters.component.html',
   styleUrl: './order-filters.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,19 +73,14 @@ export class OrderFiltersComponent {
   protected availableModels(): CarModel[] {
     const brandId = this.filters().brandId;
 
-    return brandId
-      ? this.models().filter((model) => model.brand === brandId)
-      : [];
+    return brandId ? this.models().filter((model) => model.brand === brandId) : [];
   }
 
   protected isAllContext(): boolean {
     return this.context() === 'all';
   }
 
-  protected update<K extends keyof OrderFilters>(
-    key: K,
-    value: OrderFilters[K],
-  ): void {
+  protected update<K extends keyof OrderFilters>(key: K, value: OrderFilters[K]): void {
     this.filters.update((current) => ({ ...current, [key]: value }));
     this.emit();
   }
