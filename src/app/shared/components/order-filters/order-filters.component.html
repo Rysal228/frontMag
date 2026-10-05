@@ -1,0 +1,147 @@
+<section class="filters">
+  @if (has('search')) {
+    <label>
+      <span>Поиск</span>
+      <input
+        type="search"
+        [value]="filters().search"
+        placeholder="VIN, гос. номер, заказ, клиент..."
+        (input)="onSearch($any($event.target).value)"
+      />
+    </label>
+  }
+
+  @if (has('order_number')) {
+    <label>
+      <span>Номер заказа</span>
+      <input
+        type="text"
+        [value]="filters().orderNumber"
+        placeholder="ORD-..."
+        (input)="update('orderNumber', $any($event.target).value)"
+      />
+    </label>
+  }
+
+  @if (isAllContext() && has('brand')) {
+    <label>
+      <span>Марка</span>
+      <select
+        [value]="filters().brandId ?? ''"
+        (change)="onBrandChange($any($event.target).value)"
+      >
+        <option value="">Все марки</option>
+        @for (brand of brands(); track brand.id) {
+          <option [value]="brand.id">{{ brand.name }}</option>
+        }
+      </select>
+    </label>
+  }
+
+  @if (isAllContext() && has('model')) {
+    <label>
+      <span>Модель</span>
+      <select
+        [value]="filters().modelId ?? ''"
+        [disabled]="!filters().brandId"
+        (change)="update('modelId', $any($event.target).value ? +$any($event.target).value : null)"
+      >
+        <option value="">Все модели</option>
+        @for (model of models(); track model.id) {
+          <option [value]="model.id">{{ model.name }}</option>
+        }
+      </select>
+    </label>
+  }
+
+  @if (isAllContext() && has('vin')) {
+    <label>
+      <span>VIN</span>
+      <input
+        type="text"
+        [value]="filters().vin"
+        placeholder="VIN"
+        (input)="update('vin', $any($event.target).value)"
+      />
+    </label>
+  }
+
+  @if (isAllContext() && has('plate_number')) {
+    <label>
+      <span>Гос. номер</span>
+      <input
+        type="text"
+        [value]="filters().plateNumber"
+        placeholder="Гос. номер"
+        (input)="update('plateNumber', $any($event.target).value)"
+      />
+    </label>
+  }
+
+  @if (has('work_type')) {
+    <label>
+      <span>Тип работ</span>
+      <select
+        [value]="filters().workTypeId ?? ''"
+        (change)="update('workTypeId', $any($event.target).value ? +$any($event.target).value : null)"
+      >
+        <option value="">Все типы</option>
+        @for (workType of workTypes(); track workType.id) {
+          <option [value]="workType.id">{{ workType.name }}</option>
+        }
+      </select>
+    </label>
+  }
+
+  @if (has('status')) {
+    <label>
+      <span>Статус заказа</span>
+      <select
+        [value]="filters().statusId ?? ''"
+        (change)="update('statusId', $any($event.target).value ? +$any($event.target).value : null)"
+      >
+        <option value="">Все статусы</option>
+        @for (status of statuses(); track status.id) {
+          <option [value]="status.id">{{ status.name }}</option>
+        }
+      </select>
+    </label>
+  }
+
+  @if (has('work_status')) {
+    <label>
+      <span>Статус работы</span>
+      <select
+        [value]="filters().workStatusId ?? ''"
+        (change)="update('workStatusId', $any($event.target).value ? +$any($event.target).value : null)"
+      >
+        <option value="">Все статусы</option>
+        @for (status of workStatuses(); track status.id) {
+          <option [value]="status.id">{{ status.name }}</option>
+        }
+      </select>
+    </label>
+  }
+
+  @if (has('date_range')) {
+    <label>
+      <span>Дата от</span>
+      <input
+        type="date"
+        [value]="filters().dateFrom ?? ''"
+        (change)="update('dateFrom', $any($event.target).value || null)"
+      />
+    </label>
+
+    <label>
+      <span>Дата до</span>
+      <input
+        type="date"
+        [value]="filters().dateTo ?? ''"
+        (change)="update('dateTo', $any($event.target).value || null)"
+      />
+    </label>
+  }
+
+  <button type="button" class="reset-button" (click)="reset()">Сбросить</button>
+</section>
