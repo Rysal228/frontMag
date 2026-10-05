@@ -4,38 +4,31 @@
 
 .filters {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
   align-items: end;
 }
 
-app-form-field,
-button {
-  grid-column: span 3;
+.search {
   min-inline-size: 0;
 }
 
-.search {
-  grid-column: span 6;
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-button {
-  align-self: end;
-  min-block-size: 48px;
+tui-badged-content {
+  display: block;
 }
 
-@media (max-width: 900px) {
-  app-form-field,
-  button,
-  .search {
-    grid-column: span 6;
+@media (max-width: 600px) {
+  .filters {
+    grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 520px) {
-  app-form-field,
-  button,
-  .search {
-    grid-column: 1 / -1;
+  .actions {
+    justify-content: space-between;
   }
 }
