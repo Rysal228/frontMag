@@ -8,18 +8,24 @@ import {
   AppointmentAvailability,
   CreateAppointmentRequest,
   WorkType,
+  OrderFilterPermissions,
+  OrderFilters,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
   private readonly appointmentApiService = inject(AppointmentApiService);
 
-  public getAll(page = 1): Observable<AppointmentPage> {
-    return this.appointmentApiService.getAll(page);
+  public getAll(page = 1, filters?: OrderFilters): Observable<AppointmentPage> {
+    return this.appointmentApiService.getAll(page, filters);
   }
 
-  public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
-    return this.appointmentApiService.getByCarId(carId, page);
+  public getFilterPermissions(): Observable<OrderFilterPermissions> {
+    return this.appointmentApiService.getFilterPermissions();
+  }
+
+  public getByCarId(carId: string, page = 1, filters?: OrderFilters): Observable<AppointmentPage> {
+    return this.appointmentApiService.getByCarId(carId, page, filters);
   }
 
   public getWorkTypes(): Observable<WorkType[]> {
