@@ -14,8 +14,8 @@ import {
 export class AppointmentService {
   private readonly appointmentApiService = inject(AppointmentApiService);
 
-  public getAll(): Observable<Appointment[]> {
-    return this.appointmentApiService.getAll();
+  public getAll(page = 1): Observable<AppointmentPage> {
+    return this.appointmentApiService.getAll(page);
   }
 
   public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
