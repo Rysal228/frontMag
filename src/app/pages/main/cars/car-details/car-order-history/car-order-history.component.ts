@@ -67,7 +67,10 @@ export class CarOrderHistoryComponent {
 
   constructor() {
     effect(() => {
-      this.loadOrders(this.carId());
+      const carId = this.carId();
+
+      this.loadReferenceData();
+      this.loadOrders(carId);
     });
   }
 
@@ -84,27 +87,37 @@ export class CarOrderHistoryComponent {
     this.loadOrders(this.carId(), pageIndex + 1);
   }
 
-  private loadOrders(carId: string, page = 1): void {
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
+  private loadReferenceData(): void {
     forkJoin({
-      orders: this.appointmentService.getByCarId(carId, page, this.filters()),
       workTypes: this.appointmentService.getWorkTypes(),
       statuses: this.appointmentService.getStatuses(),
       workStatuses: this.appointmentService.getWorkStatuses(),
       filterPermissions: this.appointmentService.getFilterPermissions(),
-    })
+    }).subscribe({
+      next: ({ workTypes, statuses, workStatuses, filterPermissions }) => {
+        this.workTypes.set(workTypes);
+        this.statuses.set(statuses);
+        this.workStatuses.set(workStatuses);
+        this.filterPermissions.set(filterPermissions);
+      },
+      error: () => {
+        this.hasError.set(true);
+      },
+    });
+  }
+
+  private loadOrders(carId: string, page = 1): void {
+    this.isLoading.set(true);
+    this.hasError.set(false);
+
+    this.appointmentService
+      .getByCarId(carId, page, this.filters())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: ({ orders, workTypes, statuses, workStatuses, filterPermissions }) => {
-          this.orders.set(orders.results);
+        next: (response) => {
+          this.orders.set(response.results);
           this.currentPage.set(page);
-          this.totalPages.set(Math.ceil(orders.count / ORDER_PAGE_SIZE));
-          this.workTypes.set(workTypes);
-          this.statuses.set(statuses);
-          this.workStatuses.set(workStatuses);
-          this.filterPermissions.set(filterPermissions);
+          this.totalPages.set(Math.ceil(response.count / ORDER_PAGE_SIZE));
         },
         error: () => {
           this.orders.set([]);
