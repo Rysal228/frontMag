@@ -5,10 +5,18 @@ import { TuiButton, TuiHint } from '@taiga-ui/core';
 import { TuiPagination } from '@taiga-ui/kit';
 
 import { AppointmentFormComponent } from 'app/pages/main/appointments/appointments-form/appointment-form.component';
+import { OrderCardComponent } from 'app/shared/components/order-card/order-card.component';
 import { OrderFiltersComponent } from 'app/shared/components/order-filters/order-filters.component';
 import { ORDER_PAGE_SIZE } from 'app/shared/consts/pagination.const';
-import { OrderCardComponent } from 'app/shared/components/order-card/order-card.component';
-import { Appointment, AppointmentPage, OrderFilterPermissions, OrderFilters, OrderStatus, WorkStatus, WorkType } from 'app/shared/models/appointment.model';
+import {
+  Appointment,
+  AppointmentPage,
+  OrderFilterPermissions,
+  OrderFilters,
+  OrderStatus,
+  WorkStatus,
+  WorkType,
+} from 'app/shared/models/appointment.model';
 import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CarService } from 'app/shared/services/car.service';
