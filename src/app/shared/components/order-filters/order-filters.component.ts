@@ -102,6 +102,7 @@ export class OrderFiltersComponent {
 
   protected resetAll(): void {
     this.filters.set({ ...EMPTY_FILTERS });
+    this.isModalOpen.set(false);
     this.emit();
   }
 
