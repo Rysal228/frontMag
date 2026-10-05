@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { finalize } from 'rxjs';
 import { forkJoin } from 'rxjs';
 
@@ -69,8 +69,10 @@ export class CarOrderHistoryComponent {
     effect(() => {
       const carId = this.carId();
 
-      this.loadReferenceData();
-      this.loadOrders(carId);
+      untracked(() => {
+        this.loadReferenceData();
+        this.loadOrders(carId);
+      });
     });
   }
 
