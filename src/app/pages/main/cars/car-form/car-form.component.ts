@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { SelectComponent, SelectOption } from 'app/shared/components/select/select.component';
@@ -16,7 +16,15 @@ import { vinValidator } from 'app/shared/validators/vin.validator';
 @Component({
   selector: 'app-car-form',
   standalone: true,
-  imports: [FormFieldComponent, ReactiveFormsModule, RouterLink, SelectComponent, TextFieldComponent, TuiButton],
+  imports: [
+    FormFieldComponent,
+    ReactiveFormsModule,
+    RouterLink,
+    SelectComponent,
+    TextFieldComponent,
+    TuiButton,
+    TuiIcon,
+  ],
   templateUrl: './car-form.component.html',
   styleUrl: './car-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
