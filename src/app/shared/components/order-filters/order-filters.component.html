@@ -4,7 +4,7 @@
       <app-text-field
         type="search"
         placeholder="VIN, гос. номер, заказ, клиент..."
-        [(ngModel)]="filters().search"
+        [ngModel]="filters().search"
         (ngModelChange)="onSearch($event)"
       />
     </app-form-field>
@@ -14,7 +14,7 @@
     <app-form-field label="Номер заказа">
       <app-text-field
         placeholder="ORD-..."
-        [(ngModel)]="filters().orderNumber"
+        [ngModel]="filters().orderNumber"
         (ngModelChange)="update('orderNumber', $event)"
       />
     </app-form-field>
@@ -24,7 +24,7 @@
     <app-form-field label="Марка">
       <app-select
         [options]="brandOptions()"
-        [(ngModel)]="filters().brandId"
+        [ngModel]="String(filters().brandId ?? ALL_ID)"
         (ngModelChange)="onBrandChange($event)"
       />
     </app-form-field>
@@ -35,7 +35,7 @@
       <app-select
         [options]="modelOptions()"
         [disabled]="!filters().brandId"
-        [(ngModel)]="filters().modelId"
+        [ngModel]="String(filters().modelId ?? ALL_ID)"
         (ngModelChange)="onModelChange($event)"
       />
     </app-form-field>
@@ -45,7 +45,7 @@
     <app-form-field label="VIN">
       <app-text-field
         placeholder="VIN"
-        [(ngModel)]="filters().vin"
+        [ngModel]="filters().vin"
         (ngModelChange)="update('vin', $event)"
       />
     </app-form-field>
@@ -55,7 +55,7 @@
     <app-form-field label="Гос. номер">
       <app-text-field
         placeholder="Гос. номер"
-        [(ngModel)]="filters().plateNumber"
+        [ngModel]="filters().plateNumber"
         (ngModelChange)="update('plateNumber', $event)"
       />
     </app-form-field>
@@ -65,7 +65,7 @@
     <app-form-field label="Тип работ">
       <app-select
         [options]="workTypeOptions()"
-        [(ngModel)]="filters().workTypeId"
+        [ngModel]="String(filters().workTypeId ?? ALL_ID)"
         (ngModelChange)="onWorkTypeChange($event)"
       />
     </app-form-field>
@@ -75,7 +75,7 @@
     <app-form-field label="Статус заказа">
       <app-select
         [options]="statusOptions()"
-        [(ngModel)]="filters().statusId"
+        [ngModel]="String(filters().statusId ?? ALL_ID)"
         (ngModelChange)="onStatusChange($event)"
       />
     </app-form-field>
@@ -85,7 +85,7 @@
     <app-form-field label="Статус работы">
       <app-select
         [options]="workStatusOptions()"
-        [(ngModel)]="filters().workStatusId"
+        [ngModel]="String(filters().workStatusId ?? ALL_ID)"
         (ngModelChange)="onWorkStatusChange($event)"
       />
     </app-form-field>
@@ -94,14 +94,14 @@
   @if (has('date_range')) {
     <app-form-field label="Дата от">
       <app-date-field
-        [(ngModel)]="filters().dateFrom"
+        [ngModel]="filters().dateFrom"
         (ngModelChange)="update('dateFrom', $event)"
       />
     </app-form-field>
 
     <app-form-field label="Дата до">
       <app-date-field
-        [(ngModel)]="filters().dateTo"
+        [ngModel]="filters().dateTo"
         (ngModelChange)="update('dateTo', $event)"
       />
     </app-form-field>
