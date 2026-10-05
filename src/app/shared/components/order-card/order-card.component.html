@@ -26,6 +26,7 @@
 
     @if (showCarInfo()) {
       <p>Авто: {{ order().carName }}</p>
+      <p>VIN: {{ order().carVin || '-' }}</p>
       <p>Гос. номер: {{ order().carPlateNumber || '-' }}</p>
     }
 
