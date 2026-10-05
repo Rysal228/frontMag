@@ -19,37 +19,7 @@
   } @else {
     <div class="list">
       @for (order of orders(); track order.id) {
-        <article class="order-card">
-          <header class="card-header">
-            <h3>Заказ № {{ order.orderNumber }}</h3>
-            <span class="status" [attr.data-appearance]="order.status.appearance">
-              {{ order.status.name }}
-            </span>
-          </header>
-
-          <div class="details">
-            <p>Дата создания: {{ formatDate(order.createdAt) }}</p>
-
-            @if (order.appointmentAt) {
-              <p>Дата и время записи: {{ formatDate(order.appointmentAt) }}</p>
-            }
-
-            <p>Тип работ: {{ order.workTypeName }}</p>
-
-            <p>
-              Статус работ:
-              <span class="status" [attr.data-appearance]="order.workStatus?.appearance">
-                {{ order.workStatus?.name || '-' }}
-              </span>
-            </p>
-
-            <p>Стоимость работ: {{ order.price ? order.price + ' руб' : '-' }}</p>
-
-            @if (order.description) {
-              <p>Описание: {{ order.description }}</p>
-            }
-          </div>
-        </article>
+        <app-order-card [order]="order" />
       }
     </div>
 
