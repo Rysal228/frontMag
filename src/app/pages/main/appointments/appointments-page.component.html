@@ -20,6 +20,16 @@
     </span>
   </header>
 
+  <app-order-filters
+    [permissions]="filterPermissions()"
+    [brands]="brands()"
+    [models]="models()"
+    [workTypes]="workTypes()"
+    [statuses]="statuses()"
+    [workStatuses]="workStatuses()"
+    (filtersChange)="onFiltersChange($event)"
+  />
+
   @if (isLoading()) {
     <div class="state">
       <p>Загрузка записей...</p>
