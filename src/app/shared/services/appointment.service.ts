@@ -8,6 +8,8 @@ import {
   AppointmentAvailability,
   CreateAppointmentRequest,
   WorkType,
+  OrderStatus,
+  WorkStatus,
   OrderFilterPermissions,
   OrderFilters,
 } from 'app/shared/models/appointment.model';
@@ -30,6 +32,14 @@ export class AppointmentService {
 
   public getWorkTypes(): Observable<WorkType[]> {
     return this.appointmentApiService.getWorkTypes();
+  }
+
+  public getStatuses(): Observable<OrderStatus[]> {
+    return this.appointmentApiService.getStatuses();
+  }
+
+  public getWorkStatuses(): Observable<WorkStatus[]> {
+    return this.appointmentApiService.getWorkStatuses();
   }
 
   public create(request: CreateAppointmentRequest): Observable<Appointment> {
