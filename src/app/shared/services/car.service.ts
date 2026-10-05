@@ -22,7 +22,7 @@ export class CarService {
     return this.carApiService.getBrands();
   }
 
-  public getModels(brandId: number): Observable<CarModel[]> {
+  public getModels(brandId?: number): Observable<CarModel[]> {
     return this.carApiService.getModels(brandId);
   }
 
