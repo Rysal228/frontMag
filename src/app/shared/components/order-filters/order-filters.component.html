@@ -24,7 +24,7 @@
     <app-form-field label="Марка">
       <app-select
         [options]="brandOptions()"
-        [ngModel]="String(filters().brandId ?? ALL_ID)"
+        [ngModel]="selectValue(filters().brandId)"
         (ngModelChange)="onBrandChange($event)"
       />
     </app-form-field>
@@ -35,7 +35,7 @@
       <app-select
         [options]="modelOptions()"
         [disabled]="!filters().brandId"
-        [ngModel]="String(filters().modelId ?? ALL_ID)"
+        [ngModel]="selectValue(filters().modelId)"
         (ngModelChange)="onModelChange($event)"
       />
     </app-form-field>
@@ -65,7 +65,7 @@
     <app-form-field label="Тип работ">
       <app-select
         [options]="workTypeOptions()"
-        [ngModel]="String(filters().workTypeId ?? ALL_ID)"
+        [ngModel]="selectValue(filters().workTypeId)"
         (ngModelChange)="onWorkTypeChange($event)"
       />
     </app-form-field>
@@ -75,7 +75,7 @@
     <app-form-field label="Статус заказа">
       <app-select
         [options]="statusOptions()"
-        [ngModel]="String(filters().statusId ?? ALL_ID)"
+        [ngModel]="selectValue(filters().statusId)"
         (ngModelChange)="onStatusChange($event)"
       />
     </app-form-field>
@@ -85,7 +85,7 @@
     <app-form-field label="Статус работы">
       <app-select
         [options]="workStatusOptions()"
-        [ngModel]="String(filters().workStatusId ?? ALL_ID)"
+        [ngModel]="selectValue(filters().workStatusId)"
         (ngModelChange)="onWorkStatusChange($event)"
       />
     </app-form-field>
