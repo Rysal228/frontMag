@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, input } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { TuiDay } from '@taiga-ui/cdk';
@@ -21,6 +21,8 @@ import { TuiInputDate } from '@taiga-ui/kit';
   ],
 })
 export class DateFieldComponent implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   protected value: TuiDay | null = null;
   protected disabled = false;
 
@@ -32,6 +34,7 @@ export class DateFieldComponent implements ControlValueAccessor {
 
   public writeValue(value: string | null): void {
     this.value = value ? TuiDay.fromLocalNativeDate(new Date(`${value}T00:00:00`)) : null;
+    this.cdr.markForCheck();
   }
 
   public registerOnChange(fn: (value: string | null) => void): void {
@@ -44,6 +47,7 @@ export class DateFieldComponent implements ControlValueAccessor {
 
   public setDisabledState(disabled: boolean): void {
     this.disabled = disabled;
+    this.cdr.markForCheck();
   }
 
   protected onValueChange(value: TuiDay | null): void {

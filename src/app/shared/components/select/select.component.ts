@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
@@ -23,13 +24,7 @@ export type SelectOption = {
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    TuiChevron,
-    TuiDataListWrapper,
-    TuiSelect,
-    TuiTextfield,
-  ],
+  imports: [ReactiveFormsModule, TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextfield],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +38,8 @@ export type SelectOption = {
 })
 export class SelectComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   protected readonly selectControl = new FormControl<string | null>(null);
 
   public readonly options = input<readonly SelectOption[]>([]);
@@ -75,6 +72,7 @@ export class SelectComponent implements ControlValueAccessor {
 
   public writeValue(value: string | null): void {
     this.selectControl.setValue(value || null, { emitEvent: false });
+    this.cdr.markForCheck();
   }
 
   public registerOnChange(fn: (value: string) => void): void {
@@ -87,5 +85,6 @@ export class SelectComponent implements ControlValueAccessor {
 
   public setDisabledState(isDisabled: boolean): void {
     this.controlDisabled.set(isDisabled);
+    this.cdr.markForCheck();
   }
 }

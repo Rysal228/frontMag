@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MaskitoDirective } from '@maskito/angular';
 import type { MaskitoOptions } from '@maskito/core';
@@ -22,6 +22,8 @@ import { TuiPassword } from '@taiga-ui/kit';
   ],
 })
 export class TextFieldComponent implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   public readonly type = input<'text' | 'tel' | 'email' | 'password'>('text');
 
   public readonly inputmode = input<'none' | 'text' | 'decimal' | 'numeric' | 'tel' | 'search' | 'email' | 'url'>(
@@ -40,6 +42,7 @@ export class TextFieldComponent implements ControlValueAccessor {
 
   public writeValue(value: string | null): void {
     this.value = value ?? '';
+    this.cdr.markForCheck();
   }
 
   public registerOnChange(fn: (value: string) => void): void {
@@ -52,6 +55,7 @@ export class TextFieldComponent implements ControlValueAccessor {
 
   public setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   protected onInput(event: Event): void {
