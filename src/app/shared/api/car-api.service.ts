@@ -36,8 +36,12 @@ export class CarApiService {
     return this.http.get<CarBrand[]>(API_ENDPOINTS.cars.brands);
   }
 
-  public getModels(brandId: number): Observable<CarModel[]> {
-    const params = new HttpParams().set('brand', brandId);
+  public getModels(brandId?: number): Observable<CarModel[]> {
+    let params = new HttpParams();
+
+    if (brandId !== undefined) {
+      params = params.set('brand', brandId);
+    }
 
     return this.http.get<CarModel[]>(API_ENDPOINTS.cars.models, { params });
   }
