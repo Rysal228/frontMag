@@ -37,6 +37,14 @@ export class AppointmentApiService {
     return this.http.get<WorkType[]>(API_ENDPOINTS.orders.workTypes);
   }
 
+  public getStatuses(): Observable<import('app/shared/models/appointment.model').OrderStatus[]> {
+    return this.http.get<import('app/shared/models/appointment.model').OrderStatus[]>(API_ENDPOINTS.orders.statuses);
+  }
+
+  public getWorkStatuses(): Observable<import('app/shared/models/appointment.model').WorkStatus[]> {
+    return this.http.get<import('app/shared/models/appointment.model').WorkStatus[]>(API_ENDPOINTS.orders.workStatuses);
+  }
+
   private buildParams(page: number, filters?: OrderFilters): HttpParams {
     let params = new HttpParams().set('page', page);
 
