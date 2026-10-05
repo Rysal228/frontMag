@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { TuiButton } from '@taiga-ui/core';
@@ -42,7 +42,7 @@ const ALL_ID = 0;
   styleUrl: './order-filters-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderFiltersModalComponent {
+export class OrderFiltersModalComponent implements OnInit {
   public readonly permissions = input.required<OrderFilterPermissions>();
   public readonly context = input<OrderFilterContext>('all');
   public readonly filters = input.required<OrderFilters>();
@@ -58,8 +58,8 @@ export class OrderFiltersModalComponent {
   protected readonly draftFilters = signal<OrderFilters>({ ...EMPTY_FILTERS });
   protected readonly allId = String(ALL_ID);
 
-  constructor() {
-    this.syncDraft(this.filters());
+  ngOnInit(): void {
+    this.draftFilters.set({ ...this.filters() });
   }
 
   protected has(key: keyof OrderFilterPermissions): boolean {
@@ -156,10 +156,6 @@ export class OrderFiltersModalComponent {
 
   protected close(): void {
     this.closed.emit();
-  }
-
-  private syncDraft(filters: OrderFilters): void {
-    this.draftFilters.set({ ...filters });
   }
 
   private toNullableId(value: string): number | null {
