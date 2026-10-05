@@ -71,6 +71,7 @@ export class CarService {
       vin: car.vin,
       plateNumber: car.plate_number,
       photo: car.photo,
+      hasOrders: car.hasOrders,
     };
   }
 }
