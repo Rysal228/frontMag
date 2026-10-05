@@ -11,11 +11,18 @@
   } @else {
     <h1 class="title">{{ isEdit ? 'Редактирование автомобиля' : 'Добавление автомобиля' }}</h1>
 
+    @if (isEdit && hasOrders()) {
+      <p class="notice">
+        У автомобиля уже есть заказы. Марку, модель, год выпуска и VIN изменить нельзя. Номерной знак и фото можно изменить.
+      </p>
+    }
+
     <form class="form" [formGroup]="form" (ngSubmit)="save()">
       <app-form-field label="Марка">
         <app-select
           formControlName="brand"
           [options]="brandOptions()"
+          [disabled]="hasOrders()"
           placeholder="Выберите марку автомобиля"
         />
       </app-form-field>
@@ -24,7 +31,7 @@
         <app-select
           formControlName="model"
           [options]="modelOptions()"
-          [disabled]="!form.controls.brand.value || isModelsLoading()"
+          [disabled]="hasOrders() || !form.controls.brand.value || isModelsLoading()"
           [placeholder]="isModelsLoading() ? 'Загрузка моделей...' : 'Выберите модель автомобиля'"
         />
       </app-form-field>
@@ -33,6 +40,7 @@
         <app-select
           formControlName="year"
           [options]="yearOptions"
+          [disabled]="hasOrders()"
           placeholder="Выберите год выпуска"
         />
       </app-form-field>
@@ -42,7 +50,7 @@
       </app-form-field>
 
       <app-form-field label="VIN">
-        <app-text-field formControlName="vin" placeholder="Необязательно" />
+        <app-text-field formControlName="vin" [disabled]="hasOrders()" placeholder="Необязательно" />
       </app-form-field>
 
       <div class="photo-field">
@@ -50,7 +58,7 @@
 
         @if (photoPreview()) {
           <div class="preview">
-            <img [src]="photoPreview()" alt="Предпросмотр автомобиля" />
+            <img [src]="photoPreview()!" alt="Предпросмотр автомобиля" />
           </div>
         }
 
