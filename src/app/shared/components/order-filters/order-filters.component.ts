@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiDay } from '@taiga-ui/cdk';
-import { TuiButton, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiCalendar, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
 import {
   TuiChevron,
   TuiDataListWrapper,
@@ -49,8 +49,10 @@ const ALL_ID = 0;
   imports: [
     FormsModule,
     TuiButton,
+    TuiCalendar,
     TuiChevron,
     TuiDataListWrapper,
+    TuiDropdown,
     TuiInputDate,
     TuiSelect,
     TuiTextfield,
