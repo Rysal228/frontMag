@@ -130,3 +130,18 @@
     text-align: left;
   }
 }
+
+
+.edit-button {
+  --tui-background: var(--tui-background-neutral-1);
+  --tui-text: var(--tui-text-action);
+  --tui-background-hover: var(--tui-background-neutral-2);
+}
+
+.edit-button_with-orders {
+  --tui-text: var(--tui-text-warning);
+}
+
+.edit-button tui-icon {
+  flex-shrink: 0;
+}
