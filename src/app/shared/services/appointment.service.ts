@@ -5,6 +5,7 @@ import { AppointmentApiService } from 'app/shared/api/appointment-api.service';
 import {
   Appointment,
   AppointmentAvailability,
+  AppointmentPage,
   CreateAppointmentRequest,
   WorkType,
 } from 'app/shared/models/appointment.model';
@@ -17,8 +18,8 @@ export class AppointmentService {
     return this.appointmentApiService.getAll();
   }
 
-  public getByCarId(carId: string): Observable<Appointment[]> {
-    return this.appointmentApiService.getByCarId(carId);
+  public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
+    return this.appointmentApiService.getByCarId(carId, page);
   }
 
   public getWorkTypes(): Observable<WorkType[]> {
