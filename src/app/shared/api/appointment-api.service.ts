@@ -6,7 +6,6 @@ import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import {
   Appointment,
   AppointmentAvailability,
-  AppointmentPage,
   CreateAppointmentRequest,
   WorkType,
 } from 'app/shared/models/appointment.model';
@@ -19,10 +18,8 @@ export class AppointmentApiService {
     return this.http.get<Appointment[]>(API_ENDPOINTS.orders.list);
   }
 
-  public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
-    const params = new HttpParams().set('page', String(page));
-
-    return this.http.get<AppointmentPage>(API_ENDPOINTS.cars.orders(carId), {params});
+  public getByCarId(carId: string): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(API_ENDPOINTS.cars.orders(carId));
   }
 
   public getWorkTypes(): Observable<WorkType[]> {
@@ -36,6 +33,6 @@ export class AppointmentApiService {
   public getAvailability(date: string): Observable<AppointmentAvailability> {
     const params = new HttpParams().set('date', date);
 
-    return this.http.get<AppointmentAvailability>(API_ENDPOINTS.orders.availability, {params});
+    return this.http.get<AppointmentAvailability>(API_ENDPOINTS.orders.availability, { params });
   }
 }
