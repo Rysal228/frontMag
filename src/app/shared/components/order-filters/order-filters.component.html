@@ -1,5 +1,5 @@
-<section class="filters">
-  @if (has('search')) {
+<div class="filters">
+  @if (hasSearch()) {
     <app-form-field label="Поиск" class="search">
       <app-text-field
         placeholder="VIN, гос. номер, заказ, клиент..."
@@ -9,92 +9,49 @@
     </app-form-field>
   }
 
-  @if (has('order_number')) {
-    <app-form-field label="Номер заказа">
-      <app-text-field
-        placeholder="ORD-..."
-        [ngModel]="filters().orderNumber"
-        (ngModelChange)="update('orderNumber', $event)"
-      />
-    </app-form-field>
-  }
+  <div class="actions">
+    <tui-badged-content>
+      <tui-badge-notification size="s" tuiSlot="top">
+        {{ activeFilterCount() }}
+      </tui-badge-notification>
 
-  @if (isAllContext() && has('brand')) {
-    <app-form-field label="Марка">
-      <app-select
-        [options]="brandOptions()"
-        [ngModel]="selectValue(filters().brandId)"
-        (ngModelChange)="onBrandChange($event)"
-      />
-    </app-form-field>
-  }
+      <button
+        tuiButton
+        appearance="outline"
+        size="m"
+        type="button"
+        [iconStart]="'@tui.list-filter'"
+        (click)="openModal()"
+      >
+        Фильтры
+      </button>
+    </tui-badged-content>
 
-  @if (isAllContext() && has('model')) {
-    <app-form-field label="Модель">
-      <app-select
-        [options]="modelOptions()"
-        [disabled]="!filters().brandId"
-        [ngModel]="selectValue(filters().modelId)"
-        (ngModelChange)="onModelChange($event)"
-      />
-    </app-form-field>
-  }
+    @if (activeFilterCount() || filters().search) {
+      <button
+        tuiButton
+        appearance="secondary"
+        size="m"
+        type="button"
+        (click)="resetAll()"
+      >
+        Сбросить всё
+      </button>
+    }
+  </div>
+</div>
 
-  @if (isAllContext() && has('vin')) {
-    <app-form-field label="VIN">
-      <app-text-field placeholder="VIN" [ngModel]="filters().vin" (ngModelChange)="update('vin', $event)" />
-    </app-form-field>
-  }
-
-  @if (isAllContext() && has('plate_number')) {
-    <app-form-field label="Гос. номер">
-      <app-text-field
-        placeholder="Гос. номер"
-        [ngModel]="filters().plateNumber"
-        (ngModelChange)="update('plateNumber', $event)"
-      />
-    </app-form-field>
-  }
-
-  @if (has('work_type')) {
-    <app-form-field label="Тип работ">
-      <app-select
-        [options]="workTypeOptions()"
-        [ngModel]="selectValue(filters().workTypeId)"
-        (ngModelChange)="onWorkTypeChange($event)"
-      />
-    </app-form-field>
-  }
-
-  @if (has('status')) {
-    <app-form-field label="Статус заказа">
-      <app-select
-        [options]="statusOptions()"
-        [ngModel]="selectValue(filters().statusId)"
-        (ngModelChange)="onStatusChange($event)"
-      />
-    </app-form-field>
-  }
-
-  @if (has('work_status')) {
-    <app-form-field label="Статус работы">
-      <app-select
-        [options]="workStatusOptions()"
-        [ngModel]="selectValue(filters().workStatusId)"
-        (ngModelChange)="onWorkStatusChange($event)"
-      />
-    </app-form-field>
-  }
-
-  @if (has('date_range')) {
-    <app-form-field label="Дата от">
-      <app-date-field [ngModel]="filters().dateFrom" (ngModelChange)="update('dateFrom', $event)" />
-    </app-form-field>
-
-    <app-form-field label="Дата до">
-      <app-date-field [ngModel]="filters().dateTo" (ngModelChange)="update('dateTo', $event)" />
-    </app-form-field>
-  }
-
-  <button appearance="secondary" size="m" tuiButton type="button" (click)="reset()">Сбросить</button>
-</section>
+@if (isModalOpen()) {
+  <app-order-filters-modal
+    [permissions]="permissions()"
+    [context]="context()"
+    [filters]="filters()"
+    [brands]="brands()"
+    [models]="models()"
+    [workTypes]="workTypes()"
+    [statuses]="statuses()"
+    [workStatuses]="workStatuses()"
+    (filtersChange)="onModalFiltersChange($event)"
+    (closed)="closeModal()"
+  />
+}
