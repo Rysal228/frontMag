@@ -52,13 +52,5 @@
         </article>
       }
     </div>
-
-    @if (pageCount() > 1) {
-      <tui-pagination
-        [length]="pageCount()"
-        [index]="currentPage() - 1"
-        (indexChange)="onPageChange($event)"
-      />
-    }
   }
 </section>
