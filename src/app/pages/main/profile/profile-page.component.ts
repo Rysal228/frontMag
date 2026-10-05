@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { TuiDay, TuiHovered } from '@taiga-ui/cdk';
@@ -56,9 +56,18 @@ export class ProfilePageComponent {
   protected readonly isMechanic = computed(() => this.currentRole.role() === UserRole.Mechanic);
 
   protected readonly form = new FormGroup({
-    lastName: new FormControl('', { nonNullable: true }),
-    firstName: new FormControl('', { nonNullable: true }),
-    patronymic: new FormControl('', { nonNullable: true }),
+    lastName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(150)],
+    }),
+    firstName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(150)],
+    }),
+    patronymic: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(150)],
+    }),
     phone: new FormControl('', { nonNullable: true }),
     birthday: new FormControl('', { nonNullable: true }),
   });
