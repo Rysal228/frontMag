@@ -36,43 +36,17 @@
   } @else {
     <div class="list">
       @for (appointment of appointments(); track appointment.id) {
-        <article class="appointment-card">
-          <header class="card-header">
-            <h2>Заказ № {{ appointment.orderNumber }}</h2>
-            <span class="status" [attr.data-appearance]="appointment.status.appearance">
-              {{ appointment.status.name }}
-            </span>
-          </header>
-
-          <div class="details">
-            <p>Дата создания: {{ formatDate(appointment.createdAt) }}</p>
-
-            @if (appointment.appointmentAt) {
-              <p>Дата и время записи: {{ formatAppointmentDate(appointment.appointmentAt) }}</p>
-            }
-
-            <p>Тип работ: {{ appointment.workTypeName }}</p>
-            <p>
-              Статус работ:
-              <span class="status" [attr.data-appearance]="appointment.workStatus?.appearance">
-                {{ appointment.workStatus?.name || '-' }}
-              </span>
-            </p>
-            <p>Стоимость работ: {{ appointment.price ? appointment.price + ' руб' : '-' }}</p>
-            <p>Авто: {{ appointment.carName }}</p>
-            <p>Гос. номер: {{ appointment.carPlateNumber || '-' }}</p>
-
-            @if (appointment.description) {
-              <p>Кр. описание: {{ appointment.description }}</p>
-            }
-          </div>
-
-          @if (appointment.status.requiresPayment) {
-            <button tuiButton appearance="outline" type="button" class="payment-button">Оплатить</button>
-          }
-        </article>
+        <app-order-card [order]="appointment" [showCarInfo]="true" [showPayment]="true" />
       }
     </div>
+
+    @if (totalPages() > 1) {
+      <tui-pagination
+        [length]="totalPages()"
+        [index]="currentPage() - 1"
+        (indexChange)="onPageChange($event)"
+      />
+    }
   }
 </section>
 
