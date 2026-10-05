@@ -4,13 +4,15 @@ import { finalize } from 'rxjs';
 import { TuiButton } from '@taiga-ui/core';
 import { TuiPagination } from '@taiga-ui/kit';
 
+import { OrderCardComponent } from 'app/shared/components/order-card/order-card.component';
+import { ORDER_PAGE_SIZE } from 'app/shared/consts/pagination.const';
 import { Appointment } from 'app/shared/models/appointment.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 
 @Component({
   selector: 'app-car-order-history',
   standalone: true,
-  imports: [TuiButton, TuiPagination],
+  imports: [OrderCardComponent, TuiButton, TuiPagination],
   templateUrl: './car-order-history.component.html',
   styleUrl: './car-order-history.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,16 +42,6 @@ export class CarOrderHistoryComponent {
     this.loadOrders(this.carId(), pageIndex + 1);
   }
 
-  protected formatDate(value: string): string {
-    return new Intl.DateTimeFormat('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(value));
-  }
-
   private loadOrders(carId: string, page = 1): void {
     this.isLoading.set(true);
     this.hasError.set(false);
@@ -61,7 +53,7 @@ export class CarOrderHistoryComponent {
         next: (response) => {
           this.orders.set(response.results);
           this.currentPage.set(page);
-          this.totalPages.set(Math.ceil(response.count / 5));
+          this.totalPages.set(Math.ceil(response.count / ORDER_PAGE_SIZE));
         },
         error: () => {
           this.orders.set([]);
