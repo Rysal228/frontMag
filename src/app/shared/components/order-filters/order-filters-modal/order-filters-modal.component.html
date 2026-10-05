@@ -1,0 +1,125 @@
+<div class="backdrop" (click)="close()"></div>
+
+<section class="modal" role="dialog" aria-modal="true" aria-labelledby="order-filters-title">
+  <header class="header">
+    <h2 id="order-filters-title">Фильтры заказов</h2>
+    <button
+      tuiButton
+      appearance="flat"
+      size="s"
+      type="button"
+      [iconStart]="'@tui.x'"
+      aria-label="Закрыть"
+      (click)="close()"
+    ></button>
+  </header>
+
+  <div class="content">
+    @if (has('order_number')) {
+      <app-form-field label="Номер заказа">
+        <app-text-field
+          placeholder="ORD-..."
+          [ngModel]="draftFilters().orderNumber"
+          (ngModelChange)="update('orderNumber', $event)"
+        />
+      </app-form-field>
+    }
+
+    @if (isAllContext() && has('brand')) {
+      <app-form-field label="Марка">
+        <app-select
+          [options]="brandOptions()"
+          [ngModel]="selectValue(draftFilters().brandId)"
+          (ngModelChange)="onBrandChange($event)"
+        />
+      </app-form-field>
+    }
+
+    @if (isAllContext() && has('model')) {
+      <app-form-field label="Модель">
+        <app-select
+          [options]="modelOptions()"
+          [disabled]="!draftFilters().brandId"
+          [ngModel]="selectValue(draftFilters().modelId)"
+          (ngModelChange)="onModelChange($event)"
+        />
+      </app-form-field>
+    }
+
+    @if (isAllContext() && has('vin')) {
+      <app-form-field label="VIN">
+        <app-text-field
+          placeholder="VIN"
+          [ngModel]="draftFilters().vin"
+          (ngModelChange)="update('vin', $event)"
+        />
+      </app-form-field>
+    }
+
+    @if (isAllContext() && has('plate_number')) {
+      <app-form-field label="Гос. номер">
+        <app-text-field
+          placeholder="Гос. номер"
+          [ngModel]="draftFilters().plateNumber"
+          (ngModelChange)="update('plateNumber', $event)"
+        />
+      </app-form-field>
+    }
+
+    @if (has('work_type')) {
+      <app-form-field label="Тип работ">
+        <app-select
+          [options]="workTypeOptions()"
+          [ngModel]="selectValue(draftFilters().workTypeId)"
+          (ngModelChange)="onWorkTypeChange($event)"
+        />
+      </app-form-field>
+    }
+
+    @if (has('status')) {
+      <app-form-field label="Статус заказа">
+        <app-select
+          [options]="statusOptions()"
+          [ngModel]="selectValue(draftFilters().statusId)"
+          (ngModelChange)="onStatusChange($event)"
+        />
+      </app-form-field>
+    }
+
+    @if (has('work_status')) {
+      <app-form-field label="Статус работы">
+        <app-select
+          [options]="workStatusOptions()"
+          [ngModel]="selectValue(draftFilters().workStatusId)"
+          (ngModelChange)="onWorkStatusChange($event)"
+        />
+      </app-form-field>
+    }
+
+    @if (has('date_range')) {
+      <app-form-field label="Дата от">
+        <app-date-field
+          [ngModel]="draftFilters().dateFrom"
+          (ngModelChange)="update('dateFrom', $event)"
+        />
+      </app-form-field>
+
+      <app-form-field label="Дата до">
+        <app-date-field
+          [ngModel]="draftFilters().dateTo"
+          (ngModelChange)="update('dateTo', $event)"
+        />
+      </app-form-field>
+    }
+  </div>
+
+  <footer class="footer">
+    <button tuiButton appearance="secondary" size="m" type="button" (click)="reset()">
+      Сбросить
+    </button>
+
+    <button tuiButton appearance="primary" size="m" type="button" (click)="apply()">
+      Применить
+    </button>
+  </footer>
+</section>
