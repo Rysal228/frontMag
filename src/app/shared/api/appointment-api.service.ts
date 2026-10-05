@@ -9,26 +9,62 @@ import {
   AppointmentAvailability,
   CreateAppointmentRequest,
   WorkType,
+  OrderFilterPermissions,
+  OrderFilters,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
   private readonly http = inject(HttpClient);
 
-  public getAll(page = 1): Observable<AppointmentPage> {
-    const params = new HttpParams().set('page', page);
+  public getAll(page = 1, filters?: OrderFilters): Observable<AppointmentPage> {
+    const params = this.buildParams(page, filters);
 
     return this.http.get<AppointmentPage>(API_ENDPOINTS.orders.list, { params });
   }
 
-  public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
-    const params = new HttpParams().set('page', page);
+  public getByCarId(carId: string, page = 1, filters?: OrderFilters): Observable<AppointmentPage> {
+    const params = this.buildParams(page, filters);
 
     return this.http.get<AppointmentPage>(API_ENDPOINTS.cars.orders(carId), { params });
   }
 
+  public getFilterPermissions(): Observable<OrderFilterPermissions> {
+    return this.http.get<OrderFilterPermissions>(API_ENDPOINTS.orders.filterPermissions);
+  }
+
   public getWorkTypes(): Observable<WorkType[]> {
     return this.http.get<WorkType[]>(API_ENDPOINTS.orders.workTypes);
+  }
+
+  private buildParams(page: number, filters?: OrderFilters): HttpParams {
+    let params = new HttpParams().set('page', page);
+
+    if (!filters) {
+      return params;
+    }
+
+    const values: Record<string, string | number | null> = {
+      search: filters.search || null,
+      order_number: filters.orderNumber || null,
+      vin: filters.vin || null,
+      plate_number: filters.plateNumber || null,
+      brand: filters.brandId,
+      model: filters.modelId,
+      work_type: filters.workTypeId,
+      status: filters.statusId,
+      work_status: filters.workStatusId,
+      date_from: filters.dateFrom,
+      date_to: filters.dateTo,
+    };
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== null && value !== '') {
+        params = params.set(key, value);
+      }
+    });
+
+    return params;
   }
 
   public create(request: CreateAppointmentRequest): Observable<Appointment> {
