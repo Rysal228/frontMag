@@ -9,7 +9,7 @@ import { OrderFiltersComponent } from 'app/shared/components/order-filters/order
 import { ORDER_PAGE_SIZE } from 'app/shared/consts/pagination.const';
 import { OrderCardComponent } from 'app/shared/components/order-card/order-card.component';
 import { Appointment, AppointmentPage, OrderFilterPermissions, OrderFilters, OrderStatus, WorkStatus, WorkType } from 'app/shared/models/appointment.model';
-import { Car, CarBrand, CarModel } 'app/shared/models/car.model';
+import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CarService } from 'app/shared/services/car.service';
 
@@ -114,7 +114,7 @@ export class AppointmentsPageComponent {
     })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: ({ appointments, cars, workTypes }) => {
+        next: ({ appointments, cars, workTypes, filterPermissions, statuses, workStatuses, brands, models }) => {
           this.setAppointmentsPage(appointments, 1);
           this.cars.set(cars);
           this.workTypes.set(workTypes);
