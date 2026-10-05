@@ -15,8 +15,10 @@ import {
 export class AppointmentApiService {
   private readonly http = inject(HttpClient);
 
-  public getAll(): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(API_ENDPOINTS.orders.list);
+  public getAll(page = 1): Observable<AppointmentPage> {
+    const params = new HttpParams().set('page', page);
+
+    return this.http.get<AppointmentPage>(API_ENDPOINTS.orders.list, { params });
   }
 
   public getByCarId(carId: string, page = 1): Observable<AppointmentPage> {
