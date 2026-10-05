@@ -52,5 +52,13 @@
         </article>
       }
     </div>
+
+    @if (totalPages() > 1) {
+      <tui-pagination
+        [length]="totalPages()"
+        [index]="currentPage() - 1"
+        (indexChange)="onPageChange($event)"
+      />
+    }
   }
 </section>
