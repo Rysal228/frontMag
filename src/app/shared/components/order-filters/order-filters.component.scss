@@ -9,63 +9,32 @@
   align-items: end;
 }
 
-label {
-  display: grid;
-  gap: 4px;
+tui-textfield,
+button {
   grid-column: span 3;
+  min-inline-size: 0;
 }
 
-label:first-child {
+.search {
   grid-column: span 6;
 }
 
-label span {
-  font-size: 13px;
-  font-weight: 700;
-}
-
-input,
-select {
-  width: 100%;
-  min-height: 40px;
-  box-sizing: border-box;
-  padding: 0 10px;
-  border: 1px solid var(--tui-border-normal);
-  border-radius: 8px;
-  background: var(--tui-background-base);
-  color: var(--tui-text-primary);
-  font: inherit;
-}
-
-input:disabled,
-select:disabled {
-  opacity: 0.55;
-}
-
-.reset-button {
-  grid-column: span 3;
-  min-height: 40px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--tui-background-neutral-1);
-  color: var(--tui-text-primary);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
+button {
+  align-self: stretch;
 }
 
 @media (max-width: 900px) {
-  label,
-  label:first-child,
-  .reset-button {
+  tui-textfield,
+  button,
+  .search {
     grid-column: span 6;
   }
 }
 
 @media (max-width: 520px) {
-  label,
-  label:first-child,
-  .reset-button {
+  tui-textfield,
+  button,
+  .search {
     grid-column: 1 / -1;
   }
 }
