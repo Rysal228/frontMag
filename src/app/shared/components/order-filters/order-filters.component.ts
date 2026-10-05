@@ -8,14 +8,14 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiDay } from '@taiga-ui/cdk';
-import { TuiButton, TuiCalendar, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
+import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
+import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import {
-  TuiChevron,
-  TuiDataListWrapper,
-  TuiInputDate,
-  TuiSelect,
-} from '@taiga-ui/kit';
+  SelectComponent,
+  SelectOption,
+} from 'app/shared/components/select/select.component';
+import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { CarBrand, CarModel } from 'app/shared/models/car.model';
 import {
   OrderFilterPermissions,
@@ -47,15 +47,12 @@ const ALL_ID = 0;
   selector: 'app-order-filters',
   standalone: true,
   imports: [
+    DateFieldComponent,
+    FormFieldComponent,
     FormsModule,
+    SelectComponent,
+    TextFieldComponent,
     TuiButton,
-    TuiCalendar,
-    TuiChevron,
-    TuiDataListWrapper,
-    TuiDropdown,
-    TuiInputDate,
-    TuiSelect,
-    TuiTextfield,
   ],
   templateUrl: './order-filters.component.html',
   styleUrl: './order-filters.component.scss',
@@ -118,90 +115,92 @@ export class OrderFiltersComponent {
     this.searchTimer = setTimeout(() => this.emit(), 350);
   }
 
-  protected onBrandChange(value: number): void {
+  protected onBrandChange(value: string): void {
+    const brandId = Number(value);
+
     this.filters.update((current) => ({
       ...current,
-      brandId: value === ALL_ID ? null : value,
+      brandId: brandId === ALL_ID ? null : brandId,
       modelId: null,
     }));
     this.emit();
   }
 
-  protected onModelChange(value: number): void {
-    this.update('modelId', value === ALL_ID ? null : value);
+  protected onModelChange(value: string): void {
+    this.update('modelId', this.toNullableId(value));
   }
 
-  protected onWorkTypeChange(value: number): void {
-    this.update('workTypeId', value === ALL_ID ? null : value);
+  protected onWorkTypeChange(value: string): void {
+    this.update('workTypeId', this.toNullableId(value));
   }
 
-  protected onStatusChange(value: number): void {
-    this.update('statusId', value === ALL_ID ? null : value);
+  protected onStatusChange(value: string): void {
+    this.update('statusId', this.toNullableId(value));
   }
 
-  protected onWorkStatusChange(value: number): void {
-    this.update('workStatusId', value === ALL_ID ? null : value);
+  protected onWorkStatusChange(value: string): void {
+    this.update('workStatusId', this.toNullableId(value));
   }
 
-  protected onDateChange(
-    key: 'dateFrom' | 'dateTo',
-    value: TuiDay | null,
-  ): void {
-    this.update(key, value?.toString() ?? null);
+  protected brandOptions(): SelectOption[] {
+    return [
+      { value: String(ALL_ID), label: 'Все марки' },
+      ...this.brands().map((brand) => ({
+        value: String(brand.id),
+        label: brand.name,
+      })),
+    ];
   }
 
-  protected dateValue(value: string | null): TuiDay | null {
-    return value ? TuiDay.fromString(value) : null;
+  protected modelOptions(): SelectOption[] {
+    return [
+      { value: String(ALL_ID), label: 'Все модели' },
+      ...this.availableModels().map((model) => ({
+        value: String(model.id),
+        label: model.name,
+      })),
+    ];
   }
 
-  protected brandItems(): number[] {
-    return [ALL_ID, ...this.brands().map((brand) => brand.id)];
+  protected workTypeOptions(): SelectOption[] {
+    return [
+      { value: String(ALL_ID), label: 'Все типы' },
+      ...this.workTypes().map((workType) => ({
+        value: String(workType.id),
+        label: workType.name,
+      })),
+    ];
   }
 
-  protected modelItems(): number[] {
-    return [ALL_ID, ...this.availableModels().map((model) => model.id)];
+  protected statusOptions(): SelectOption[] {
+    return [
+      { value: String(ALL_ID), label: 'Все статусы' },
+      ...this.statuses().map((status) => ({
+        value: String(status.id),
+        label: status.name,
+      })),
+    ];
   }
 
-  protected workTypeItems(): number[] {
-    return [ALL_ID, ...this.workTypes().map((workType) => workType.id)];
+  protected workStatusOptions(): SelectOption[] {
+    return [
+      { value: String(ALL_ID), label: 'Все статусы' },
+      ...this.workStatuses().map((status) => ({
+        value: String(status.id),
+        label: status.name,
+      })),
+    ];
   }
-
-  protected statusItems(): number[] {
-    return [ALL_ID, ...this.statuses().map((status) => status.id)];
-  }
-
-  protected workStatusItems(): number[] {
-    return [ALL_ID, ...this.workStatuses().map((status) => status.id)];
-  }
-
-  protected readonly stringifyBrand = (id: number): string =>
-    id === ALL_ID
-      ? 'Все марки'
-      : this.brands().find((brand) => brand.id === id)?.name ?? '';
-
-  protected readonly stringifyModel = (id: number): string =>
-    id === ALL_ID
-      ? 'Все модели'
-      : this.models().find((model) => model.id === id)?.name ?? '';
-
-  protected readonly stringifyWorkType = (id: number): string =>
-    id === ALL_ID
-      ? 'Все типы'
-      : this.workTypes().find((workType) => workType.id === id)?.name ?? '';
-
-  protected readonly stringifyStatus = (id: number): string =>
-    id === ALL_ID
-      ? 'Все статусы'
-      : this.statuses().find((status) => status.id === id)?.name ?? '';
-
-  protected readonly stringifyWorkStatus = (id: number): string =>
-    id === ALL_ID
-      ? 'Все статусы'
-      : this.workStatuses().find((status) => status.id === id)?.name ?? '';
 
   protected reset(): void {
     this.filters.set({ ...EMPTY_FILTERS });
     this.emit();
+  }
+
+  private toNullableId(value: string): number | null {
+    const id = Number(value);
+
+    return id === ALL_ID ? null : id;
   }
 
   private emit(): void {
