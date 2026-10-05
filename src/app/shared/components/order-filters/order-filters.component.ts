@@ -72,6 +72,7 @@ export class OrderFiltersComponent {
   public readonly filtersChange = output<OrderFilters>();
 
   protected readonly filters = signal<OrderFilters>({ ...EMPTY_FILTERS });
+  protected readonly allId = String(ALL_ID);
 
   constructor() {
     this.destroyRef.onDestroy(() => {
@@ -113,6 +114,10 @@ export class OrderFiltersComponent {
     }
 
     this.searchTimer = setTimeout(() => this.emit(), 350);
+  }
+
+  protected selectValue(value: number | null): string {
+    return String(value ?? ALL_ID);
   }
 
   protected onBrandChange(value: string): void {
