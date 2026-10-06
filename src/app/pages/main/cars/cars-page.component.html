@@ -1,13 +1,10 @@
-<section class="cars-page">
+<main class="container cars-page">
   <header class="header">
     <div>
       <h1 class="title">Мои автомобили</h1>
       <p class="subtitle">Автомобили, привязанные к вашему аккаунту</p>
     </div>
-
-    <a tuiButton appearance="primary" type="button" routerLink="/cars/new">
-      Добавить авто
-    </a>
+    <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
   </header>
 
   @if (isLoading()) {
@@ -23,7 +20,7 @@
       <p>Добавьте автомобиль, чтобы записываться на обслуживание быстрее.</p>
     </div>
   } @else {
-    <div class="list">
+    <div class="cars-grid">
       @for (car of cars(); track car.id) {
         <article class="car-card">
           <div class="car-heading">
@@ -36,16 +33,28 @@
           @if (car.photo) {
             <img class="car-image" [src]="car.photo" [alt]="car.brandName + ' ' + car.modelName" />
           } @else {
-            <div class="car-placeholder">
-              <span>Фото автомобиля отсутствует</span>
-            </div>
+            <div class="car-placeholder"><span>Фото автомобиля отсутствует</span></div>
           }
 
-          <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">
-            Подробнее
-          </a>
+          <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">Подробнее</a>
         </article>
       }
     </div>
+
+    @if (totalPages() > 1) {
+      <nav class="pagination" aria-label="Пагинация автомобилей">
+        <button tuiButton appearance="flat" type="button" [disabled]="currentPage() === 1 || isLoading()" (click)="goToPage(currentPage() - 1)">Назад</button>
+        <div class="pagination-pages">
+          @for (item of pageItems(); track $index) {
+            @if (item === 'ellipsis') {
+              <span class="pagination-ellipsis" aria-hidden="true">…</span>
+            } @else {
+              <button tuiButton [appearance]="item === currentPage() ? 'primary' : 'flat'" type="button" [attr.aria-current]="item === currentPage() ? 'page' : null" [disabled]="isLoading()" (click)="goToPage(item)">{{ item }}</button>
+            }
+          }
+        </div>
+        <button tuiButton appearance="flat" type="button" [disabled]="currentPage() === totalPages() || isLoading()" (click)="goToPage(currentPage() + 1)">Далее</button>
+      </nav>
+    }
   }
-</section>
+</main>
