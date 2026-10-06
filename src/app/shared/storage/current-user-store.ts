@@ -5,12 +5,9 @@ import { CurrentUser, UpdateProfileRequest } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { isUserRole } from '../types/roles.types';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CurrentUserStore {
   private readonly userService = inject(UserService);
-
   private readonly _user = signal<CurrentUser | null>(null);
   private readonly _isLoading = signal(false);
 
@@ -19,11 +16,16 @@ export class CurrentUserStore {
 
   public load(): Observable<CurrentUser | null> {
     this._isLoading.set(true);
-
     return this.userService.getProfile().pipe(
-      tap((user) => this._user.set(isUserRole(user.role) ? user : null)),
+      tap((user) => {
+        const valid =
+          Array.isArray(user.roles) &&
+          user.roles.every(isUserRole) &&
+          (user.activeRole === null || isUserRole(user.activeRole));
+        this._user.set(valid ? user : null);
+      }),
       catchError(() => of(null)),
-      tap(() => this._isLoading.set(false))
+      tap(() => this._isLoading.set(false)),
     );
   }
 
