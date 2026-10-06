@@ -23,7 +23,7 @@ export class AuthService {
   private readonly currentUser = inject(CurrentUserStore);
 
   private refreshRequest$: Observable<AuthTokens> | null = null;
-  private maxReauthRequest$: Observable<AuthTokens> | null = null;
+  private maxReauthRequest$: Observable<AuthResult> | null = null;
 
   public authenticateWithMax(request: MaxAuthRequest): Observable<MaxAuthResult> {
     return this.http.post<MaxAuthResult>(API_ENDPOINTS.auth.max, request).pipe(
@@ -37,8 +37,14 @@ export class AuthService {
 
   public authenticateWithMaxContact(request: MaxContactAuthRequest): Observable<AuthResult> {
     return this.http
-      .post<AuthTokens>(API_ENDPOINTS.auth.max, request)
-      .pipe(tap((tokens) => this.tokenStore.set(tokens)));
+      .post<AuthResult>(API_ENDPOINTS.auth.max, request)
+      .pipe(
+        tap((result) => {
+          if ('accessToken' in result) {
+            this.tokenStore.set(result);
+          }
+        }),
+      );
   }
 
   public reauthenticateWithMax(forceContact = false): Observable<AuthResult> {
