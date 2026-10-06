@@ -3,9 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, finalize, from, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { MaxAuthRequest, MaxContactAuthRequest, MaxAuthResult } from 'app/shared/models/auth.model';
+import { AuthResult, MaxAuthRequest, MaxContactAuthRequest, MaxAuthResult } from 'app/shared/models/auth.model';
 import { MaxBridgeService } from 'app/shared/services/max/max-bridge.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { RoleSelectionStore } from 'app/shared/storage/role-selection-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
@@ -17,6 +18,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly tokenStore = inject(TokenStore);
   private readonly currentRole = inject(CurrentRoleStore);
+  private readonly roleSelection = inject(RoleSelectionStore);
   private readonly maxBridgeService = inject(MaxBridgeService);
   private readonly currentUser = inject(CurrentUserStore);
 
@@ -33,13 +35,13 @@ export class AuthService {
     );
   }
 
-  public authenticateWithMaxContact(request: MaxContactAuthRequest): Observable<AuthTokens> {
+  public authenticateWithMaxContact(request: MaxContactAuthRequest): Observable<AuthResult> {
     return this.http
       .post<AuthTokens>(API_ENDPOINTS.auth.max, request)
       .pipe(tap((tokens) => this.tokenStore.set(tokens)));
   }
 
-  public reauthenticateWithMax(forceContact = false): Observable<AuthTokens> {
+  public reauthenticateWithMax(forceContact = false): Observable<AuthResult> {
     if (this.maxReauthRequest$) {
       return this.maxReauthRequest$;
     }
@@ -56,6 +58,11 @@ export class AuthService {
     }).pipe(
       switchMap((result) => {
         if ('accessToken' in result) {
+          return of(result);
+        }
+
+        if (result.status === 'role_selection_required') {
+          this.roleSelection.set(result.selectionToken, result.roles);
           return of(result);
         }
 
