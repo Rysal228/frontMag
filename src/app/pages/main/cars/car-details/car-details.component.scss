@@ -2,32 +2,33 @@
   display: block;
 }
 
-.car-details-page {
-  position: relative;
-  box-sizing: border-box;
-  max-width: 720px;
+.car-details-layout {
+  align-items: start;
   min-height: 100%;
-  margin: 0 auto;
-  padding: 18px 20px 32px;
+  padding-block: 18px 32px;
+}
+
+.car-details-page {
+  grid-column: 2 / span 10;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .car-navigation {
-  pointer-events: none;
+  position: sticky;
+  top: 0;
+  height: calc(100dvh - var(--app-navigation-space));
+  min-height: 320px;
 }
 
 .car-navigation-button {
+  width: 100%;
   height: 100%;
-  position: fixed;
-  z-index: 5;
-  pointer-events: auto;
-  top: 0;
-  bottom: var(--app-navigation-space);
-  width: max(48px, calc((100vw - min(720px, 100vw - 2 * var(--layout-page-padding))) / 2 - var(--layout-grid-gap)));
-  min-height: 0;
+  min-height: 320px;
   padding: 0;
-  border-radius: 0;
+  border-radius: 16px;
   color: var(--tui-text-secondary);
-  opacity: 0.45;
+  opacity: 0.35;
   transition:
     color 150ms ease,
     opacity 150ms ease,
@@ -44,12 +45,12 @@
   visibility: hidden;
 }
 
-.car-navigation-button_previous {
-  left: 0;
+.car-navigation_previous {
+  grid-column: 1;
 }
 
-.car-navigation-button_next {
-  right: 0;
+.car-navigation_next {
+  grid-column: 12;
 }
 
 .back-link {
@@ -150,12 +151,37 @@
   color: var(--tui-text-negative);
 }
 
+.edit-button {
+  --tui-background: var(--tui-background-neutral-1);
+  --tui-text: var(--tui-text-action);
+  --tui-background-hover: var(--tui-background-neutral-2);
+}
+
+.edit-button_with-orders {
+  --tui-text: var(--tui-text-warning);
+}
+
+.edit-button tui-icon {
+  flex-shrink: 0;
+}
+
 @media (max-width: 1023px) {
-  .car-navigation-button {
+  .car-details-layout {
+    display: block;
+    padding-block: 18px 32px;
+  }
+
+  .car-navigation {
+    position: fixed;
+    z-index: 5;
     top: auto;
-    right: auto;
     bottom: calc(var(--app-navigation-space) + 12px);
-    left: auto;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .car-navigation-button {
     width: 44px;
     height: 44px;
     min-height: 44px;
@@ -165,25 +191,29 @@
     opacity: 1;
   }
 
-  .car-navigation-button_previous {
+  .car-navigation_previous {
     left: var(--layout-page-padding-tablet);
   }
 
-  .car-navigation-button_next {
+  .car-navigation_next {
     right: var(--layout-page-padding-tablet);
+  }
+
+  .car-details-page {
+    width: 100%;
   }
 }
 
 @media (max-width: 767px) {
-  .car-details-page {
-    padding: 16px var(--layout-page-padding-mobile) 28px;
+  .car-details-layout {
+    padding-block: 16px 28px;
   }
 
-  .car-navigation-button_previous {
+  .car-navigation_previous {
     left: var(--layout-page-padding-mobile);
   }
 
-  .car-navigation-button_next {
+  .car-navigation_next {
     right: var(--layout-page-padding-mobile);
   }
 
@@ -207,18 +237,4 @@
   .details dd {
     text-align: left;
   }
-}
-
-.edit-button {
-  --tui-background: var(--tui-background-neutral-1);
-  --tui-text: var(--tui-text-action);
-  --tui-background-hover: var(--tui-background-neutral-2);
-}
-
-.edit-button_with-orders {
-  --tui-text: var(--tui-text-warning);
-}
-
-.edit-button tui-icon {
-  flex-shrink: 0;
 }
