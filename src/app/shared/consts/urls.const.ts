@@ -7,12 +7,11 @@ export const API_ENDPOINTS = {
     max: `/api/${version}/users/auth/max/`,
     maxCodeRequest: `/api/${version}/users/auth/max/code/request/`,
     maxCodeVerify: `/api/${version}/users/auth/max/code/verify/`,
+    switchRole: `/api/${version}/users/auth/switch-role/`,
     refresh: `/api/${version}/users/auth/token/refresh/`,
     password: `/api/${version}/users/auth/password/`,
   },
-  users: {
-    profile: `/api/${version}/users/profile/`,
-  },
+  users: { profile: `/api/${version}/users/profile/` },
   cars: {
     list: `/api/${version}/cars/`,
     navigation: (id: string) => `/api/${version}/cars/${id}/navigation/`,
@@ -20,9 +19,7 @@ export const API_ENDPOINTS = {
     brands: `/api/${version}/cars/brands/`,
     models: `/api/${version}/cars/models/`,
   },
-  news: {
-    list: `/api/${version}/news/`,
-  },
+  news: { list: `/api/${version}/news/` },
   orders: {
     list: `/api/${version}/orders/`,
     statuses: `/api/${version}/orders/order-status/`,
