@@ -7,7 +7,8 @@ export type CurrentUser = {
   lastName: string;
   patronymic: string;
   birthday: string | null;
-  role: UserRole;
+  roles: UserRole[];
+  activeRole: UserRole | null;
 };
 
 export type UpdateProfileRequest = {
