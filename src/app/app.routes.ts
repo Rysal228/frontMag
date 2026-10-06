@@ -18,6 +18,7 @@ export const routes: Routes = [
 
   {
     path: 'roles',
+    canActivate: [guestGuard],
     loadComponent: () => import('./pages/auth/select-role/select-role.component').then((c) => c.SelectRoleComponent),
   },
 
@@ -64,7 +65,7 @@ export const routes: Routes = [
           {
             path: ':id',
             loadComponent: () =>
-              import('./pages/main/cars/car-details/car-details.component').then((c) => c.CarDetailsComponent),
+              import('./pages/main/cars/car-form/car-form.component').then((c) => c.CarFormComponent),
           },
         ],
         data: {
