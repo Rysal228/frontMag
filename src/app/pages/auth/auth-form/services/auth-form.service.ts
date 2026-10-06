@@ -20,7 +20,13 @@ export class AuthFormService {
   private readonly tokenStore = inject(TokenStore);
 
   public login(request: LoginRequest): Observable<AuthResult> {
-    return this.http.post<AuthResult>(API_ENDPOINTS.auth.login, request).pipe(tap((tokens) => this.tokenStore.set(tokens)));
+    return this.http.post<AuthResult>(API_ENDPOINTS.auth.login, request).pipe(
+      tap((result) => {
+        if ('accessToken' in result) {
+          this.tokenStore.set(result);
+        }
+      }),
+    );
   }
 
   public requestMaxCode(request: MaxCodeRequest): Observable<void> {
