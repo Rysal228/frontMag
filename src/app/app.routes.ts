@@ -65,7 +65,7 @@ export const routes: Routes = [
           {
             path: ':id',
             loadComponent: () =>
-              import('./pages/main/cars/car-form/car-form.component').then((c) => c.CarFormComponent),
+              import('./pages/main/cars/car-details/car-details.component').then((c) => c.CarDetailsComponent),
           },
         ],
         data: {
