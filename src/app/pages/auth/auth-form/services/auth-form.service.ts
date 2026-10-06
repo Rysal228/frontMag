@@ -28,7 +28,13 @@ export class AuthFormService {
   }
 
   public verifyMaxCode(request: MaxCodeVerifyRequest): Observable<AuthResult> {
-    return this.http.post<AuthResult>(API_ENDPOINTS.auth.maxCodeVerify, request).pipe(tap((tokens) => this.tokenStore.set(tokens)));
+    return this.http.post<AuthResult>(API_ENDPOINTS.auth.maxCodeVerify, request).pipe(
+      tap((result) => {
+        if ('accessToken' in result) {
+          this.tokenStore.set(result);
+        }
+      }),
+    );
   }
 
   public selectRole(request: RoleSelectionRequest): Observable<AuthTokens> {
