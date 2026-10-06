@@ -54,8 +54,10 @@ export class SelectRoleComponent {
   constructor() {
     if (this.isSwitchMode) {
       if (!this.currentUser.user()) {
-        this.currentUser.load().subscribe({
-          error: () => void this.router.navigateByUrl('/auth'),
+        this.currentUser.load().subscribe((user) => {
+          if (!user) {
+            void this.router.navigateByUrl('/auth');
+          }
         });
       }
 
@@ -89,11 +91,13 @@ export class SelectRoleComponent {
 
           this.currentRole.set(definition.role);
 
-          this.currentUser.load().subscribe({
-            next: () => {
-              void this.navigation.goToRoleHome(definition.role);
-            },
-            error: () => void this.router.navigateByUrl('/auth'),
+          this.currentUser.load().subscribe((user) => {
+            if (!user) {
+              void this.router.navigateByUrl('/auth');
+              return;
+            }
+
+            void this.navigation.goToRoleHome(definition.role);
           });
         },
       });
