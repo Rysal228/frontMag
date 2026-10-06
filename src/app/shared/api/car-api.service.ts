@@ -18,18 +18,36 @@ export type CarApiResponse = {
   hasOrders: boolean;
 };
 
+export type CarPaginationResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CarApiResponse[];
+};
+
+export type CarNavigationResponse = {
+  previous: CarApiResponse | null;
+  next: CarApiResponse | null;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class CarApiService {
   private readonly http = inject(HttpClient);
 
-  public getAll(): Observable<CarApiResponse[]> {
-    return this.http.get<CarApiResponse[]>(API_ENDPOINTS.cars.list);
+  public getPage(page: number): Observable<CarPaginationResponse> {
+    const params = new HttpParams().set('page', page);
+
+    return this.http.get<CarPaginationResponse>(API_ENDPOINTS.cars.list, { params });
   }
 
   public getById(id: string): Observable<CarApiResponse> {
     return this.http.get<CarApiResponse>(`${API_ENDPOINTS.cars.list}${id}/`);
+  }
+
+  public getNavigation(id: string): Observable<CarNavigationResponse> {
+    return this.http.get<CarNavigationResponse>(API_ENDPOINTS.cars.navigation(id));
   }
 
   public getBrands(): Observable<CarBrand[]> {
