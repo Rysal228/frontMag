@@ -10,7 +10,6 @@ import { FormFieldComponent } from 'app/shared/components/form-field/form-field.
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
 import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
 import { RoleSelectionStore } from 'app/shared/storage/role-selection-store';
-import { RoleSelectionRequired } from 'app/shared/models/auth.model';
 import { normalizePhone } from 'app/shared/utils/phone-normalize.util';
 import { phoneValidator } from 'app/shared/validators/phone.validator';
 
@@ -100,7 +99,7 @@ export class AuthFormComponent {
   }
 
   private handleAuthResult(result: import('app/shared/models/auth.model').AuthResult): void {
-    if (result.status === 'role_selection_required') {
+    if ('status' in result && result.status === 'role_selection_required') {
       this.roleSelection.set(result.selectionToken, result.roles);
       void this.router.navigateByUrl('/roles');
       return;
