@@ -3,11 +3,8 @@
 }
 
 .cars-page {
-  box-sizing: border-box;
-  max-width: 720px;
   min-height: 100%;
-  margin: 0 auto;
-  padding: 24px 20px 32px;
+  padding-block: 24px 32px;
 }
 
 .header {
@@ -30,13 +27,15 @@
   font-size: 13px;
 }
 
-.list {
+.cars-grid {
   display: grid;
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: var(--layout-grid-gap);
 }
 
 .car-card {
   display: grid;
+  min-width: 0;
   gap: 10px;
   padding: 12px;
   border-radius: 18px;
@@ -48,16 +47,20 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
+  min-width: 0;
   padding: 0 2px;
 }
 
 .car-heading h2 {
+  min-width: 0;
   margin: 0;
   font-size: 24px;
   line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .car-heading span {
+  flex-shrink: 0;
   color: var(--tui-text-secondary);
   font-size: 14px;
 }
@@ -82,6 +85,26 @@
   color: var(--tui-text-secondary);
   background: var(--tui-background-base);
   font-size: 13px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pagination-ellipsis {
+  min-width: 40px;
+  text-align: center;
+  color: var(--tui-text-secondary);
 }
 
 .state,
@@ -111,9 +134,9 @@
   font-weight: 600;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 767px) {
   .cars-page {
-    padding: 18px 16px 28px;
+    padding-block: 18px 28px;
   }
 
   .header {
@@ -126,5 +149,15 @@
 
   .title {
     font-size: 25px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .pagination-pages {
+    order: -1;
+    width: 100%;
+    justify-content: center;
   }
 }
