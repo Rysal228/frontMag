@@ -105,6 +105,7 @@ export class AuthFormComponent {
       return;
     }
 
+    this.roleSelection.clear();
     void this.router.navigateByUrl('/main');
   }
 
