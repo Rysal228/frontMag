@@ -25,73 +25,77 @@
         <a tuiButton appearance="outline" type="button" routerLink="/cars">Вернуться к автомобилям</a>
       </div>
     } @else {
-      <header class="header">
-        <div>
-          <h1 class="title">{{ car()!.brandName }} {{ car()!.modelName }}</h1>
-          <p class="subtitle">{{ car()!.year }} год выпуска</p>
-        </div>
+      <div class="car-details-content">
+        <section class="car-info">
+          <header class="header">
+            <div>
+              <h1 class="title">{{ car()!.brandName }} {{ car()!.modelName }}</h1>
+              <p class="subtitle">{{ car()!.year }} год выпуска</p>
+            </div>
 
-        <div class="header__buttons">
-          <button
-            tuiButton
-            appearance="secondary-destructive"
-            type="button"
-            [disabled]="isDeleting()"
-            (click)="deleteCar()"
-          >
-            {{ isDeleting() ? 'Удаление...' : 'Удалить автомобиль' }}
-          </button>
+            <div class="header__buttons">
+              <button
+                tuiButton
+                appearance="secondary-destructive"
+                type="button"
+                [disabled]="isDeleting()"
+                (click)="deleteCar()"
+              >
+                {{ isDeleting() ? 'Удаление...' : 'Удалить автомобиль' }}
+              </button>
 
-          <a
-            class="edit-button"
-            [class.edit-button_with-orders]="car()!.hasOrders"
-            tuiButton
-            appearance="outline"
-            type="button"
-            [routerLink]="['/cars', car()!.id, 'edit']"
-            [tuiHint]="
-              car()!.hasOrders
-                ? 'Есть заказы: марку, модель, год и VIN изменить нельзя. Номерной знак и фото доступны для изменения.'
-                : 'Заказов ещё нет: данные автомобиля можно изменять.'
-            "
-            tuiHintDirection="bottom"
-          >
-            <tui-icon icon="@tui.square-pen" />
-            <span>Редактировать</span>
-          </a>
-        </div>
-      </header>
+              <a
+                class="edit-button"
+                [class.edit-button_with-orders]="car()!.hasOrders"
+                tuiButton
+                appearance="outline"
+                type="button"
+                [routerLink]="['/cars', car()!.id, 'edit']"
+                [tuiHint]="
+                  car()!.hasOrders
+                    ? 'Есть заказы: марку, модель, год и VIN изменить нельзя. Номерной знак и фото доступны для изменения.'
+                    : 'Заказов ещё нет: данные автомобиля можно изменять.'
+                "
+                tuiHintDirection="bottom"
+              >
+                <tui-icon icon="@tui.square-pen" />
+                <span>Редактировать</span>
+              </a>
+            </div>
+          </header>
 
-      @if (car()!.photo) {
-        <img class="photo" [src]="car()!.photo" [alt]="car()!.brandName + ' ' + car()!.modelName" />
-      } @else {
-        <div class="photo-placeholder">Фото автомобиля отсутствует</div>
-      }
+          @if (car()!.photo) {
+            <img class="photo" [src]="car()!.photo" [alt]="car()!.brandName + ' ' + car()!.modelName" />
+          } @else {
+            <div class="photo-placeholder">Фото автомобиля отсутствует</div>
+          }
 
-      <dl class="details">
-        <div>
-          <dt>Марка</dt>
-          <dd>{{ car()!.brandName }}</dd>
-        </div>
-        <div>
-          <dt>Модель</dt>
-          <dd>{{ car()!.modelName }}</dd>
-        </div>
-        <div>
-          <dt>Год выпуска</dt>
-          <dd>{{ car()!.year }}</dd>
-        </div>
-        <div>
-          <dt>Гос. номер</dt>
-          <dd>{{ car()!.plateNumber || 'Не указан' }}</dd>
-        </div>
-        <div>
-          <dt>VIN</dt>
-          <dd>{{ car()!.vin || 'Не указан' }}</dd>
-        </div>
-      </dl>
+          <dl class="details">
+            <div>
+              <dt>Марка</dt>
+              <dd>{{ car()!.brandName }}</dd>
+            </div>
+            <div>
+              <dt>Модель</dt>
+              <dd>{{ car()!.modelName }}</dd>
+            </div>
+            <div>
+              <dt>Год выпуска</dt>
+              <dd>{{ car()!.year }}</dd>
+            </div>
+            <div>
+              <dt>Гос. номер</dt>
+              <dd>{{ car()!.plateNumber || 'Не указан' }}</dd>
+            </div>
+            <div>
+              <dt>VIN</dt>
+              <dd>{{ car()!.vin || 'Не указан' }}</dd>
+            </div>
+          </dl>
+        </section>
 
-      <app-car-order-history [carId]="car()!.id" />
+        <app-car-order-history [carId]="car()!.id" />
+      </div>
     }
   </section>
 
