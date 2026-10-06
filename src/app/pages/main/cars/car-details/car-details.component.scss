@@ -78,14 +78,15 @@ app-car-order-history {
 }
 
 .header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 16px;
   margin-bottom: 18px;
 
   &__buttons {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 16px;
   }
 }
@@ -234,16 +235,8 @@ app-car-order-history {
     right: var(--layout-page-padding-mobile);
   }
 
-  .header {
-    display: grid;
-  }
-
   .title {
     font-size: 25px;
-  }
-
-  .header > * {
-    width: 100%;
   }
 
   .details > div {
