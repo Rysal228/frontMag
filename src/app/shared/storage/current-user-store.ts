@@ -33,7 +33,12 @@ export class CurrentUserStore {
   }
 
   public update(profile: UpdateProfileRequest): Observable<CurrentUser> {
-    return this.userService.updateProfile(profile).pipe(tap((user) => this._user.set(user)));
+    return this.userService.updateProfile(profile).pipe(
+      tap((user) => {
+        this._user.set(user);
+        this.currentRole.sync(user.activeRole);
+      }),
+    );
   }
 
   public clear(): void {
