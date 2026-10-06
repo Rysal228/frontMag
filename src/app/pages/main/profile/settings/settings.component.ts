@@ -47,7 +47,7 @@ export class SettingsComponent {
       return;
     }
 
-    void this.router.navigateByUrl('/roles');
+    void this.router.navigateByUrl('/role-switch');
   }
 
   protected logout(): void {
