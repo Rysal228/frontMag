@@ -1,4 +1,28 @@
 <section class="car-details-page">
+  <div class="car-navigation" aria-label="Навигация по автомобилям">
+    <button
+      class="car-navigation-button car-navigation-button_previous"
+      tuiIconButton
+      appearance="flat"
+      type="button"
+      iconStart="@tui.chevron-left"
+      aria-label="Предыдущий автомобиль"
+      [disabled]="!previousCar()"
+      (click)="navigateToCar(previousCar())"
+    ></button>
+
+    <button
+      class="car-navigation-button car-navigation-button_next"
+      tuiIconButton
+      appearance="flat"
+      type="button"
+      iconStart="@tui.chevron-right"
+      aria-label="Следующий автомобиль"
+      [disabled]="!nextCar()"
+      (click)="navigateToCar(nextCar())"
+    ></button>
+  </div>
+
   <a class="back-link" routerLink="/cars">
     <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span></a
   >
