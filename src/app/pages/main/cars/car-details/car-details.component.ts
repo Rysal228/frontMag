@@ -24,44 +24,21 @@ export class CarDetailsComponent {
   private readonly dialogs = inject(TuiDialogService);
 
   protected readonly car = signal<Car | null>(null);
-  protected readonly cars = signal<Car[]>([]);
   protected readonly carId = signal<string | null>(null);
+  protected readonly previousCar = signal<Car | null>(null);
+  protected readonly nextCar = signal<Car | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly isDeleting = signal(false);
   protected readonly hasError = signal(false);
 
-  protected readonly currentIndex = computed(() => {
-    const id = this.carId();
-
-    if (!id) {
-      return -1;
-    }
-
-    return this.cars().findIndex((car) => car.id === id);
-  });
-
-  protected readonly previousCar = computed(() => {
-    const index = this.currentIndex();
-
-    return index > 0 ? this.cars()[index - 1] : null;
-  });
-
-  protected readonly nextCar = computed(() => {
-    const index = this.currentIndex();
-
-    return index >= 0 && index < this.cars().length - 1 ? this.cars()[index + 1] : null;
-  });
-
   constructor() {
-    this.carService.getAll().subscribe({
-      next: (cars) => this.cars.set(cars),
-    });
-
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
 
       this.carId.set(id);
       this.car.set(null);
+      this.previousCar.set(null);
+      this.nextCar.set(null);
       this.hasError.set(!id);
       this.isLoading.set(!!id);
 
@@ -73,7 +50,10 @@ export class CarDetailsComponent {
         .getById(id)
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
-          next: (car) => this.car.set(car),
+          next: (car) => {
+            this.car.set(car);
+            this.loadNavigation(id);
+          },
           error: () => this.hasError.set(true),
         });
     });
@@ -109,6 +89,15 @@ export class CarDetailsComponent {
           }
         },
       });
+  }
+
+  private loadNavigation(id: string): void {
+    this.carService.getNavigation(id).subscribe({
+      next: (navigation) => {
+        this.previousCar.set(navigation.previous);
+        this.nextCar.set(navigation.next);
+      },
+    });
   }
 
   private deleteConfirmed(): void {
