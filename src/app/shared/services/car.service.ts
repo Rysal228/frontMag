@@ -1,8 +1,25 @@
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
-import { CarApiResponse, CarApiService } from 'app/shared/api/car-api.service';
+import {
+  CarApiResponse,
+  CarApiService,
+  CarNavigationResponse,
+  CarPaginationResponse,
+} from 'app/shared/api/car-api.service';
 import { Car, CarBrand, CarModel, CreateCarRequest } from 'app/shared/models/car.model';
+
+export type CarPage = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Car[];
+};
+
+export type CarNavigation = {
+  previous: Car | null;
+  next: Car | null;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -10,12 +27,16 @@ import { Car, CarBrand, CarModel, CreateCarRequest } from 'app/shared/models/car
 export class CarService {
   private readonly carApiService = inject(CarApiService);
 
-  public getAll(): Observable<Car[]> {
-    return this.carApiService.getAll().pipe(map((cars) => cars.map((car) => this.mapCar(car))));
+  public getPage(page: number): Observable<CarPage> {
+    return this.carApiService.getPage(page).pipe(map((response) => this.mapPage(response)));
   }
 
   public getById(id: string): Observable<Car> {
     return this.carApiService.getById(id).pipe(map((car) => this.mapCar(car)));
+  }
+
+  public getNavigation(id: string): Observable<CarNavigation> {
+    return this.carApiService.getNavigation(id).pipe(map((navigation) => this.mapNavigation(navigation)));
   }
 
   public getBrands(): Observable<CarBrand[]> {
@@ -36,6 +57,22 @@ export class CarService {
 
   public delete(id: string): Observable<void> {
     return this.carApiService.delete(id);
+  }
+
+  private mapPage(response: CarPaginationResponse): CarPage {
+    return {
+      count: response.count,
+      next: response.next,
+      previous: response.previous,
+      results: response.results.map((car) => this.mapCar(car)),
+    };
+  }
+
+  private mapNavigation(response: CarNavigationResponse): CarNavigation {
+    return {
+      previous: response.previous ? this.mapCar(response.previous) : null,
+      next: response.next ? this.mapCar(response.next) : null,
+    };
   }
 
   private toFormData(request: CreateCarRequest): FormData {
