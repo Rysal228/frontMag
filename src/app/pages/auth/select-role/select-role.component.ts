@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
@@ -25,6 +25,7 @@ import { RoleNavigationService } from './services/navigation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectRoleComponent {
+  private readonly route = inject(ActivatedRoute);
   private readonly selectionStore = inject(RoleSelectionStore);
   private readonly authService = inject(AuthFormService);
   private readonly currentRole = inject(CurrentRoleStore);
@@ -35,9 +36,12 @@ export class SelectRoleComponent {
   private readonly roleCatalog = inject(ROLE_CATALOG);
 
   protected readonly isLoading = signal(false);
+  protected readonly isSwitchMode = this.route.snapshot.data['mode'] === 'switch';
 
   protected readonly roles = computed<RoleDefinition[]>(() => {
-    const allowedRoles = new Set(this.selectionStore.state()?.roles ?? []);
+    const allowedRoles = this.isSwitchMode
+      ? new Set(this.currentUser.user()?.roles ?? [])
+      : new Set(this.selectionStore.state()?.roles ?? []);
 
     return this.roleCatalog.filter(({ role }) => allowedRoles.has(role));
   });
@@ -48,36 +52,63 @@ export class SelectRoleComponent {
   }
 
   constructor() {
+    if (this.isSwitchMode) {
+      if (!this.currentUser.user()) {
+        this.currentUser.load().subscribe({
+          error: () => void this.router.navigateByUrl('/auth'),
+        });
+      }
+
+      return;
+    }
+
     if (!this.selectionStore.state()) {
       void this.router.navigateByUrl('/auth');
     }
   }
 
   protected selectRole(definition: RoleDefinition): void {
-    const state = this.selectionStore.state();
-
-    if (!state || !state.roles.includes(definition.role) || this.isLoading()) {
+    if (this.isLoading() || !this.roles().some(({ role }) => role === definition.role)) {
       return;
     }
 
     this.isLoading.set(true);
     this.maxBridge.hapticSelection();
 
-    this.authService
-      .selectRole({
-        selectionToken: state.selectionToken,
-        role: definition.role,
-      })
+    const request$ = this.isSwitchMode
+      ? this.authService.switchRole({ role: definition.role })
+      : this.selectRoleAfterAuthentication(definition.role);
+
+    request$
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
-          this.selectionStore.clear();
+          if (!this.isSwitchMode) {
+            this.selectionStore.clear();
+          }
+
           this.currentRole.set(definition.role);
 
-          this.currentUser.load().subscribe(() => {
-            void this.navigation.goToRoleHome(definition.role);
+          this.currentUser.load().subscribe({
+            next: () => {
+              void this.navigation.goToRoleHome(definition.role);
+            },
+            error: () => void this.router.navigateByUrl('/auth'),
           });
         },
       });
+  }
+
+  private selectRoleAfterAuthentication(role: RoleDefinition['role']) {
+    const state = this.selectionStore.state();
+
+    if (!state) {
+      return this.authService.switchRole({ role });
+    }
+
+    return this.authService.selectRole({
+      selectionToken: state.selectionToken,
+      role,
+    });
   }
 }
