@@ -1,5 +1,4 @@
 :host {
-  --app-navigation-space: calc(76px + env(safe-area-inset-bottom));
   display: flex;
   min-height: 100dvh;
   flex-direction: column;
@@ -10,7 +9,7 @@
   min-height: 0;
   flex: 1;
   overflow: auto;
-  padding-bottom: var(--app-navigation-space);
+  padding-bottom: 76px;
 }
 
 .navigation {
@@ -19,7 +18,7 @@
   bottom: 0;
   left: 0;
   z-index: 10;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  padding: 8px;
   background: var(--color-background-01);
   box-shadow: 0 -1px 8px rgb(0 0 0 / 8%);
 }
