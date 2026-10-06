@@ -11,7 +11,7 @@ import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { RoleSelectionStore } from 'app/shared/storage/role-selection-store';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
-import { RoleDefinition, UserRole } from 'app/shared/types/roles.types';
+import { RoleDefinition } from 'app/shared/types/roles.types';
 
 import { AuthFormService } from '../auth-form/services/auth-form.service';
 import { RoleNavigationService } from './services/navigation.service';
