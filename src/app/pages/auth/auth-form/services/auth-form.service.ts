@@ -3,21 +3,22 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { LoginRequest, MaxCodeRequest, MaxCodeVerifyRequest } from 'app/shared/models/auth.model';
+import {
+  LoginRequest,
+  MaxCodeRequest,
+  MaxCodeVerifyRequest,
+  SwitchRoleRequest,
+} from 'app/shared/models/auth.model';
 import { TokenStore } from 'app/shared/storage/token-store';
 import { AuthTokens } from 'app/shared/types/auth.types';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthFormService {
   private readonly http = inject(HttpClient);
   private readonly tokenStore = inject(TokenStore);
 
   public login(request: LoginRequest): Observable<AuthTokens> {
-    return this.http
-      .post<AuthTokens>(API_ENDPOINTS.auth.login, request)
-      .pipe(tap((tokens) => this.tokenStore.set(tokens)));
+    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.login, request).pipe(tap((tokens) => this.tokenStore.set(tokens)));
   }
 
   public requestMaxCode(request: MaxCodeRequest): Observable<void> {
@@ -25,8 +26,12 @@ export class AuthFormService {
   }
 
   public verifyMaxCode(request: MaxCodeVerifyRequest): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(API_ENDPOINTS.auth.maxCodeVerify, request).pipe(tap((tokens) => this.tokenStore.set(tokens)));
+  }
+
+  public switchRole(request: SwitchRoleRequest): Observable<AuthTokens> {
     return this.http
-      .post<AuthTokens>(API_ENDPOINTS.auth.maxCodeVerify, request)
+      .post<AuthTokens>(API_ENDPOINTS.auth.switchRole, request)
       .pipe(tap((tokens) => this.tokenStore.set(tokens)));
   }
 }
