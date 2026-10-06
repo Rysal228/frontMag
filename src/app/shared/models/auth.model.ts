@@ -28,7 +28,20 @@ export type MaxContactAuthRequest = MaxAuthRequest & {
   phoneHash: string;
 };
 
-export type MaxAuthResult = { status: 'contact_required' } | AuthTokens;
+export type RoleSelectionRequired = {
+  status: 'role_selection_required';
+  roles: UserRole[];
+  selectionToken: string;
+};
+
+export type AuthResult = AuthTokens | RoleSelectionRequired;
+
+export type MaxAuthResult = { status: 'contact_required' } | AuthResult;
+
+export type RoleSelectionRequest = {
+  selectionToken: string;
+  role: UserRole;
+};
 
 export type MaxCodeRequest = { phone: string };
 
