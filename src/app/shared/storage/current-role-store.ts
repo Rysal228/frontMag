@@ -1,11 +1,9 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 import { isUserRole, UserRole } from '../types/roles.types';
-import { LocalStorageService } from '../services/local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class CurrentRoleStore {
-  private readonly storage = inject(LocalStorageService);
   private readonly _role = signal<UserRole | null>(null);
 
   public readonly role = this._role.asReadonly();
