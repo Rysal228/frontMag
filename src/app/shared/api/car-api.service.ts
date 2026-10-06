@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable, expand, reduce } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
 import { CarBrand, CarModel } from 'app/shared/models/car.model';
@@ -40,6 +40,17 @@ export class CarApiService {
     const params = new HttpParams().set('page', page);
 
     return this.http.get<CarPaginationResponse>(API_ENDPOINTS.cars.list, { params });
+  }
+
+  public getAll(): Observable<CarApiResponse[]> {
+    return this.getPage(1).pipe(
+      expand((response) =>
+        response.next
+          ? this.http.get<CarPaginationResponse>(response.next)
+          : EMPTY
+      ),
+      reduce((cars, response) => [...cars, ...response.results], [] as CarApiResponse[])
+    );
   }
 
   public getById(id: string): Observable<CarApiResponse> {
