@@ -1,8 +1,10 @@
 import { AuthTokens } from '../types/auth.types';
+import { UserRole } from '../types/roles.types';
 
 export type LoginRequest = {
   phone: string;
   password: string;
+  role?: UserRole;
 };
 
 export type RegisterRequest = {
@@ -17,6 +19,7 @@ export type RegisterRequest = {
 export type MaxAuthRequest = {
   initData: string;
   forceContact?: boolean;
+  role?: UserRole;
 };
 
 export type MaxContactAuthRequest = MaxAuthRequest & {
@@ -25,19 +28,20 @@ export type MaxContactAuthRequest = MaxAuthRequest & {
   phoneHash: string;
 };
 
-export type MaxAuthResult =
-  | { status: 'contact_required' }
-  | AuthTokens;
+export type MaxAuthResult = { status: 'contact_required' } | AuthTokens;
 
-export type MaxCodeRequest = {
-  phone: string;
-};
+export type MaxCodeRequest = { phone: string };
 
 export type MaxCodeVerifyRequest = {
   phone: string;
   code: string;
+  role?: UserRole;
 };
 
 export type RefreshTokenRequest = {
   refreshToken: string;
+};
+
+export type SwitchRoleRequest = {
+  role: UserRole;
 };
