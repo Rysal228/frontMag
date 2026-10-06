@@ -6,17 +6,28 @@ import { CarsPageComponent } from './pages/main/cars/cars-page.component';
 import { HomePageComponent } from './pages/main/home/home-page.component';
 import { ProfilePageComponent } from './pages/main/profile/profile-page.component';
 import { authGuard } from './shared/guards/auth.guard';
+import { guestGuard } from './shared/guards/guest.guard';
 import { roleGuard } from './shared/guards/role.guard';
 
 export const routes: Routes = [
   {
     path: 'auth',
+    canActivate: [guestGuard],
     loadComponent: () => import('./pages/auth/auth-page.component').then((c) => c.AuthPageComponent),
   },
 
   {
     path: 'roles',
     loadComponent: () => import('./pages/auth/select-role/select-role.component').then((c) => c.SelectRoleComponent),
+  },
+
+  {
+    path: 'role-switch',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/auth/select-role/select-role.component').then((c) => c.SelectRoleComponent),
+    data: {
+      mode: 'switch',
+    },
   },
 
   {
@@ -74,13 +85,13 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'roles',
+        redirectTo: 'main',
       },
     ],
   },
 
   {
     path: '**',
-    redirectTo: 'roles',
+    redirectTo: 'main',
   },
 ];
