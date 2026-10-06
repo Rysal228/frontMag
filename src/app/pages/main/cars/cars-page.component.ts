@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
@@ -19,26 +19,72 @@ export class CarsPageComponent {
   private readonly carService = inject(CarService);
 
   protected readonly cars = signal<Car[]>([]);
+  protected readonly currentPage = signal(1);
+  protected readonly totalItems = signal(0);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
 
+  protected readonly totalPages = computed(() => Math.ceil(this.totalItems() / 10));
+
+  protected readonly pageItems = computed<(number | 'ellipsis')[]>(() => {
+    const totalPages = this.totalPages();
+    const currentPage = this.currentPage();
+
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = new Set<number>([1, totalPages, currentPage]);
+
+    for (const page of [currentPage - 1, currentPage + 1]) {
+      if (page > 1 && page < totalPages) {
+        pages.add(page);
+      }
+    }
+
+    const sortedPages = [...pages].sort((a, b) => a - b);
+    const result: (number | 'ellipsis')[] = [];
+
+    sortedPages.forEach((page, index) => {
+      if (index > 0 && page - sortedPages[index - 1] > 1) {
+        result.push('ellipsis');
+      }
+
+      result.push(page);
+    });
+
+    return result;
+  });
+
   constructor() {
-    this.loadCars();
+    this.loadCars(1);
   }
 
   protected reload(): void {
-    this.loadCars();
+    this.loadCars(this.currentPage());
   }
 
-  private loadCars(): void {
+  protected goToPage(page: number): void {
+    if (page === this.currentPage() || page < 1 || page > this.totalPages() || this.isLoading()) {
+      return;
+    }
+
+    this.loadCars(page);
+  }
+
+  private loadCars(page: number): void {
     this.isLoading.set(true);
     this.hasError.set(false);
 
     this.carService
-      .getAll()
+      .getPage(page)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (cars) => this.cars.set(cars),
+        next: (response) => {
+          this.currentPage.set(page);
+          this.totalItems.set(response.count);
+          this.cars.set(response.results);
+        },
         error: () => this.hasError.set(true),
       });
   }
