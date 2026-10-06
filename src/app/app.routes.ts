@@ -16,7 +16,6 @@ export const routes: Routes = [
 
   {
     path: 'roles',
-    canActivate: [authGuard],
     loadComponent: () => import('./pages/auth/select-role/select-role.component').then((c) => c.SelectRoleComponent),
   },
 
