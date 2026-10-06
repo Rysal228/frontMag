@@ -31,6 +31,10 @@ export class CarService {
     return this.carApiService.getPage(page).pipe(map((response) => this.mapPage(response)));
   }
 
+  public getAll(): Observable<Car[]> {
+    return this.carApiService.getAll().pipe(map((cars) => cars.map((car) => this.mapCar(car))));
+  }
+
   public getById(id: string): Observable<Car> {
     return this.carApiService.getById(id).pipe(map((car) => this.mapCar(car)));
   }
