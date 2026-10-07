@@ -1,0 +1,77 @@
+<div class="backdrop" (click)="close()"></div>
+
+<section class="modal" role="dialog" aria-modal="true" aria-labelledby="car-filters-title">
+  <header class="header">
+    <h2 id="car-filters-title">Фильтры автомобилей</h2>
+    <button
+      tuiButton
+      appearance="flat"
+      size="s"
+      type="button"
+      [iconStart]="'@tui.x'"
+      aria-label="Закрыть"
+      (click)="close()"
+    ></button>
+  </header>
+
+  <div class="content">
+    <app-form-field label="Состояние">
+      <app-select
+        [options]="statusOptions()"
+        [ngModel]="statusValue()"
+        (ngModelChange)="onStatusChange($event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="Марка">
+      <app-select
+        [options]="brandOptions()"
+        [ngModel]="selectValue(draftFilters().brandId)"
+        (ngModelChange)="onBrandChange($event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="Модель">
+      <app-select
+        [options]="modelOptions()"
+        [disabled]="!draftFilters().brandId"
+        [ngModel]="selectValue(draftFilters().modelId)"
+        (ngModelChange)="onModelChange($event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="Год выпуска">
+      <app-text-field
+        placeholder="Например, 2020"
+        [ngModel]="draftFilters().year ?? ''"
+        (ngModelChange)="onYearChange($event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="VIN">
+      <app-text-field
+        placeholder="VIN"
+        [ngModel]="draftFilters().vin"
+        (ngModelChange)="update('vin', $event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="Гос. номер">
+      <app-text-field
+        placeholder="Гос. номер"
+        [ngModel]="draftFilters().plateNumber"
+        (ngModelChange)="update('plateNumber', $event)"
+      />
+    </app-form-field>
+  </div>
+
+  <footer class="footer">
+    <button tuiButton appearance="secondary" size="m" type="button" (click)="reset()">
+      Сбросить
+    </button>
+
+    <button tuiButton appearance="primary" size="m" type="button" (click)="apply()">
+      Применить
+    </button>
+  </footer>
+</section>
