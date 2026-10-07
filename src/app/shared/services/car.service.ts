@@ -115,6 +115,7 @@ export class CarService {
       plateNumber: car.plate_number,
       photo: car.photo,
       hasOrders: car.hasOrders,
+      status: car.status,
     };
   }
 }

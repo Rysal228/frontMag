@@ -18,6 +18,7 @@ export type CarApiResponse = {
   plate_number: string | null;
   photo: string | null;
   hasOrders: boolean;
+  status: 'active' | 'archived';
 };
 
 export type CarPaginationResponse = {
@@ -46,11 +47,7 @@ export class CarApiService {
 
   public getAll(): Observable<CarApiResponse[]> {
     return this.getPage(1).pipe(
-      expand((response) =>
-        response.next
-          ? this.http.get<CarPaginationResponse>(response.next)
-          : EMPTY
-      ),
+      expand((response) => (response.next ? this.http.get<CarPaginationResponse>(response.next) : EMPTY)),
       reduce((cars, response) => [...cars, ...response.results], [] as CarApiResponse[])
     );
   }
