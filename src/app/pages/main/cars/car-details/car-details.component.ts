@@ -8,6 +8,8 @@ import { TUI_CONFIRM } from '@taiga-ui/kit';
 import { CarOrderHistoryComponent } from 'app/pages/main/cars/car-details/car-order-history/car-order-history.component';
 import { Car } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { UserRole } from 'app/shared/types/roles.types';
 
 @Component({
   selector: 'app-car-details',
@@ -22,6 +24,7 @@ export class CarDetailsComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly dialogs = inject(TuiDialogService);
+  private readonly currentRoleStore = inject(CurrentRoleStore);
 
   protected readonly car = signal<Car | null>(null);
   protected readonly carId = signal<string | null>(null);
@@ -30,12 +33,14 @@ export class CarDetailsComponent {
   protected readonly isLoading = signal(true);
   protected readonly isDeleting = signal(false);
   protected readonly hasError = signal(false);
+  protected readonly canManageCar = signal(false);
 
   constructor() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
 
       this.carId.set(id);
+      this.canManageCar.set(this.currentRoleStore.role() === UserRole.User);
       this.car.set(null);
       this.previousCar.set(null);
       this.nextCar.set(null);
