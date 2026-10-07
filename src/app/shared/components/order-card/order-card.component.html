@@ -9,10 +9,6 @@
   <div class="details">
     <p>Дата создания: {{ formatDate(order().createdAt) }}</p>
 
-    @if (showOwnerPhone()) {
-      <p>Телефон владельца: {{ order().ownerPhone || '-' }}</p>
-    }
-
     @if (order().appointmentAt) {
       <p>Дата и время записи: {{ formatDate(order().appointmentAt) }}</p>
     }
@@ -27,6 +23,10 @@
     </p>
 
     <p>Стоимость работ: {{ order().price ? order().price + ' руб' : '-' }}</p>
+
+    @if (isAdminRole()) {
+      <p>Телефон владельца: {{ order().ownerPhone || '-' }}</p>
+    }
 
     @if (showCarInfo()) {
       <p>Авто: {{ order().carName }}</p>

@@ -21,11 +21,9 @@ export class OrderCardComponent {
   public readonly showCarInfo = input(false);
   public readonly showPayment = input(false);
 
-  protected readonly showOwnerPhone = computed(
-    () =>
-      this.roleAccess.isActiveRole(UserRole.Mechanic) ||
-      this.roleAccess.isActiveRole(UserRole.Admin),
-  );
+  protected readonly isAdminRole = computed(() => {
+    return this.roleAccess.isActiveRole(UserRole.Admin);
+  });
 
   protected formatDate(value: string): string {
     return new Intl.DateTimeFormat('ru-RU', {
