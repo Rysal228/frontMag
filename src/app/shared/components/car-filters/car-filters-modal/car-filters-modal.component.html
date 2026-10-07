@@ -16,11 +16,7 @@
 
   <div class="content">
     <app-form-field label="Состояние">
-      <app-select
-        [options]="statusOptions()"
-        [ngModel]="statusValue()"
-        (ngModelChange)="onStatusChange($event)"
-      />
+      <app-select [options]="statusOptions()" [ngModel]="statusValue()" (ngModelChange)="onStatusChange($event)" />
     </app-form-field>
 
     <app-form-field label="Марка">
@@ -41,19 +37,11 @@
     </app-form-field>
 
     <app-form-field label="Год выпуска">
-      <app-text-field
-        placeholder="Например, 2020"
-        [ngModel]="draftFilters().year ?? ''"
-        (ngModelChange)="onYearChange($event)"
-      />
+      <app-text-field placeholder="Год" [ngModel]="draftFilters().year ?? ''" (ngModelChange)="onYearChange($event)" />
     </app-form-field>
 
     <app-form-field label="VIN">
-      <app-text-field
-        placeholder="VIN"
-        [ngModel]="draftFilters().vin"
-        (ngModelChange)="update('vin', $event)"
-      />
+      <app-text-field placeholder="VIN" [ngModel]="draftFilters().vin" (ngModelChange)="update('vin', $event)" />
     </app-form-field>
 
     <app-form-field label="Гос. номер">
@@ -66,12 +54,8 @@
   </div>
 
   <footer class="footer">
-    <button tuiButton appearance="secondary" size="m" type="button" (click)="reset()">
-      Сбросить
-    </button>
+    <button tuiButton appearance="secondary" size="m" type="button" (click)="reset()">Сбросить</button>
 
-    <button tuiButton appearance="primary" size="m" type="button" (click)="apply()">
-      Применить
-    </button>
+    <button tuiButton appearance="primary" size="m" type="button" (click)="apply()">Применить</button>
   </footer>
 </section>
