@@ -14,8 +14,8 @@
 
   <section class="car-details-page">
     <a class="back-link" routerLink="/cars">
-      <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span></a
-    >
+      <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span>
+    </a>
 
     @if (isLoading()) {
       <div class="state">Загрузка автомобиля...</div>
@@ -33,7 +33,17 @@
               <p class="subtitle">{{ car()!.year }} год выпуска</p>
             </div>
 
-            @if (canManageCar()) {
+            @if (canManageCar() && car()!.status === 'archived') {
+              <button
+                tuiButton
+                appearance="primary"
+                type="button"
+                [disabled]="isRestoring()"
+                (click)="restoreCar()"
+              >
+                {{ isRestoring() ? 'Восстановление...' : 'Восстановить автомобиль' }}
+              </button>
+            } @else if (canManageCar()) {
               <div class="header__buttons">
                 <button
                   tuiButton
