@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { EMPTY, Observable, expand, reduce } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { CarBrand, CarModel } from 'app/shared/models/car.model';
+import { CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
 
 export type CarApiResponse = {
   id: string;
@@ -39,8 +39,38 @@ export type CarNavigationResponse = {
 export class CarApiService {
   private readonly http = inject(HttpClient);
 
-  public getPage(page: number): Observable<CarPaginationResponse> {
-    const params = new HttpParams().set('page', page);
+  public getPage(page: number, filters?: CarFilters): Observable<CarPaginationResponse> {
+    let params = new HttpParams().set('page', page);
+
+    if (filters) {
+      if (filters.status !== 'all') {
+        params = params.set('status', filters.status);
+      }
+
+      if (filters.ownerPhone) {
+        params = params.set('owner_phone', filters.ownerPhone);
+      }
+
+      if (filters.brandId !== null) {
+        params = params.set('brand', filters.brandId);
+      }
+
+      if (filters.modelId !== null) {
+        params = params.set('model', filters.modelId);
+      }
+
+      if (filters.year !== null) {
+        params = params.set('year', filters.year);
+      }
+
+      if (filters.vin) {
+        params = params.set('vin', filters.vin);
+      }
+
+      if (filters.plateNumber) {
+        params = params.set('plate_number', filters.plateNumber);
+      }
+    }
 
     return this.http.get<CarPaginationResponse>(API_ENDPOINTS.cars.list, { params });
   }
@@ -84,5 +114,9 @@ export class CarApiService {
 
   public delete(id: string): Observable<void> {
     return this.http.delete<void>(`${API_ENDPOINTS.cars.list}${id}/`);
+  }
+
+  public restore(id: string): Observable<CarApiResponse> {
+    return this.http.post<CarApiResponse>(`${API_ENDPOINTS.cars.list}${id}/restore/`, {});
   }
 }
