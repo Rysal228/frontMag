@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
 import { TuiButton } from '@taiga-ui/core';
 
 import { Appointment } from 'app/shared/models/appointment.model';
+import { RoleAccessService } from 'app/shared/services/role-access.service';
+import { UserRole } from 'app/shared/types/roles.types';
 
 @Component({
   selector: 'app-order-card',
@@ -13,9 +15,17 @@ import { Appointment } from 'app/shared/models/appointment.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderCardComponent {
+  private readonly roleAccess = inject(RoleAccessService);
+
   public readonly order = input.required<Appointment>();
   public readonly showCarInfo = input(false);
   public readonly showPayment = input(false);
+
+  protected readonly showOwnerPhone = computed(
+    () =>
+      this.roleAccess.isActiveRole(UserRole.Mechanic) ||
+      this.roleAccess.isActiveRole(UserRole.Admin),
+  );
 
   protected formatDate(value: string): string {
     return new Intl.DateTimeFormat('ru-RU', {
