@@ -1,0 +1,32 @@
+.filters {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-block-end: 20px;
+}
+
+.search {
+  inline-size: min(320px, 100%);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search {
+    inline-size: 100%;
+  }
+
+  .actions {
+    justify-content: flex-end;
+  }
+}
