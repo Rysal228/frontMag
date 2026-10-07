@@ -18,7 +18,7 @@
     @if (has('order_number')) {
       <app-form-field label="Номер заказа">
         <app-text-field
-          placeholder="ORD-..."
+          placeholder="A10000"
           [ngModel]="draftFilters().orderNumber"
           (ngModelChange)="update('orderNumber', $event)"
         />
@@ -49,7 +49,7 @@
     @if (isAllContext() && has('vin')) {
       <app-form-field label="VIN">
         <app-text-field
-          placeholder="VIN"
+          placeholder="Введите идентификационный номер транспортного средства "
           [ngModel]="draftFilters().vin"
           (ngModelChange)="update('vin', $event)"
         />
@@ -59,7 +59,7 @@
     @if (isAllContext() && has('plate_number')) {
       <app-form-field label="Гос. номер">
         <app-text-field
-          placeholder="Гос. номер"
+          placeholder="Введите государственный номер"
           [ngModel]="draftFilters().plateNumber"
           (ngModelChange)="update('plateNumber', $event)"
         />
@@ -98,28 +98,18 @@
 
     @if (has('date_range')) {
       <app-form-field label="Дата от">
-        <app-date-field
-          [ngModel]="draftFilters().dateFrom"
-          (ngModelChange)="update('dateFrom', $event)"
-        />
+        <app-date-field [ngModel]="draftFilters().dateFrom" (ngModelChange)="update('dateFrom', $event)" />
       </app-form-field>
 
       <app-form-field label="Дата до">
-        <app-date-field
-          [ngModel]="draftFilters().dateTo"
-          (ngModelChange)="update('dateTo', $event)"
-        />
+        <app-date-field [ngModel]="draftFilters().dateTo" (ngModelChange)="update('dateTo', $event)" />
       </app-form-field>
     }
   </div>
 
   <footer class="footer">
-    <button tuiButton appearance="secondary" size="m" type="button" (click)="reset()">
-      Сбросить
-    </button>
+    <button tuiButton appearance="secondary" size="m" type="button" (click)="reset()">Сбросить</button>
 
-    <button tuiButton appearance="primary" size="m" type="button" (click)="apply()">
-      Применить
-    </button>
+    <button tuiButton appearance="primary" size="m" type="button" (click)="apply()">Применить</button>
   </footer>
 </section>

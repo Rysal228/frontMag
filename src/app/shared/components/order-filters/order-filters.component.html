@@ -2,7 +2,7 @@
   @if (hasSearch()) {
     <app-form-field label="Поиск" class="search">
       <app-text-field
-        placeholder="VIN, гос. номер, заказ, клиент..."
+        placeholder="VIN, гос. номер, заказ, телефон..."
         [ngModel]="filters().search"
         (ngModelChange)="onSearch($event)"
       />
@@ -30,15 +30,7 @@
     </tui-badged-content>
 
     @if (activeFilterCount() || filters().search) {
-      <button
-        tuiButton
-        appearance="secondary"
-        size="m"
-        type="button"
-        (click)="resetAll()"
-      >
-        Сбросить всё
-      </button>
+      <button tuiButton appearance="secondary" size="m" type="button" (click)="resetAll()">Сбросить всё</button>
     }
   </div>
 </div>

@@ -19,7 +19,7 @@
     </header>
 
     <form class="form" [formGroup]="form" (ngSubmit)="save()">
-      <app-form-field label="Выберите дату посещения">
+      <app-form-field label="Дата посещения">
         <app-date-field formControlName="date" [minDate]="today" />
       </app-form-field>
 

@@ -37,16 +37,24 @@
     </app-form-field>
 
     <app-form-field label="Год выпуска">
-      <app-text-field placeholder="Год" [ngModel]="draftFilters().year ?? ''" (ngModelChange)="onYearChange($event)" />
+      <app-text-field
+        placeholder="Введите год"
+        [ngModel]="draftFilters().year ?? ''"
+        (ngModelChange)="onYearChange($event)"
+      />
     </app-form-field>
 
     <app-form-field label="VIN">
-      <app-text-field placeholder="VIN" [ngModel]="draftFilters().vin" (ngModelChange)="update('vin', $event)" />
+      <app-text-field
+        placeholder="Введите идентификационный номер транспортного средства "
+        [ngModel]="draftFilters().vin"
+        (ngModelChange)="update('vin', $event)"
+      />
     </app-form-field>
 
     <app-form-field label="Гос. номер">
       <app-text-field
-        placeholder="Гос. номер"
+        placeholder="Введите государственный номер"
         [ngModel]="draftFilters().plateNumber"
         (ngModelChange)="update('plateNumber', $event)"
       />
