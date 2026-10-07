@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   computed,
+  effect,
   inject,
   input,
   output,
@@ -75,13 +76,15 @@ export class AppointmentFormComponent {
   );
 
   protected readonly availableWorkTypeSuggestions = computed(() => {
-    const selected = new Set(this.form.controls.workTypes.value.map((value) => value.casefold?.() ?? value.toLowerCase()));
+    const selected = new Set(this.form.controls.workTypes.value.map((value) => value.toLowerCase()));
 
     return this.workTypeSuggestions().filter((workType) => !selected.has(workType.toLowerCase()));
   });
 
   constructor() {
-    this.workTypeSuggestions.set(this.workTypes().map((workType) => workType.name));
+    effect(() => {
+      this.workTypeSuggestions.set(this.workTypes().map((workType) => workType.name));
+    });
 
     this.form.controls.date.valueChanges
       .pipe(
