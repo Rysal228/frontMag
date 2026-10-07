@@ -7,7 +7,9 @@ import { TuiBadgeNotification, TuiBadgedContent } from '@taiga-ui/kit';
 import { CarFiltersModalComponent } from 'app/shared/components/car-filters/car-filters-modal/car-filters-modal.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
+import { PHONE_MASKITO_OPTIONS } from 'app/shared/masks/phone-maskito';
 import { CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
+import { normalizePhone } from 'app/shared/utils/phone-normalize.util';
 
 const EMPTY_FILTERS: CarFilters = {
   status: 'active',
@@ -47,6 +49,7 @@ export class CarFiltersComponent implements OnInit {
 
   protected readonly filters = signal<CarFilters>({ ...EMPTY_FILTERS });
   protected readonly isModalOpen = signal(false);
+  protected readonly phoneMaskitoOptions = PHONE_MASKITO_OPTIONS;
 
   ngOnInit(): void {
     this.filters.update((current) => ({
@@ -81,9 +84,26 @@ export class CarFiltersComponent implements OnInit {
 
     if (this.searchTimer) {
       clearTimeout(this.searchTimer);
+      this.searchTimer = null;
     }
 
-    this.searchTimer = setTimeout(() => this.emit(), 350);
+    if (!value) {
+      this.emit();
+      return;
+    }
+
+    if (normalizePhone(value).replace(/\D/g, '').length !== 11) {
+      return;
+    }
+
+    this.searchTimer = setTimeout(() => {
+      this.searchTimer = null;
+      this.filters.update((current) => ({
+        ...current,
+        ownerPhone: normalizePhone(value),
+      }));
+      this.emit();
+    }, 350);
   }
 
   protected resetAll(): void {
