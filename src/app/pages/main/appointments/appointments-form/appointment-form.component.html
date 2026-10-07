@@ -58,11 +58,14 @@
 
           <tui-input-chip *tuiItem />
 
-          <tui-data-list-wrapper
-            *tuiDropdown
-            tuiMultiSelectGroup
-            [items]="availableWorkTypeSuggestions()"
-          />
+          @if (availableWorkTypeSuggestions().length) {
+            <ng-template tuiTextfieldDropdown>
+              <tui-data-list-wrapper
+                tuiMultiSelectGroup
+                [items]="availableWorkTypeSuggestions()"
+              />
+            </ng-template>
+          }
         </tui-textfield>
       </app-form-field>
 
