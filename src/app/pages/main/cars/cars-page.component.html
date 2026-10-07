@@ -1,8 +1,10 @@
 <main class="container cars-page">
   <header class="header">
     <div>
-      <h1 class="title">Мои автомобили</h1>
-      <p class="subtitle">Автомобили, привязанные к вашему аккаунту</p>
+      <h1 class="title">{{ isStaffRole() ? 'Автомобили' : 'Мои автомобили' }}</h1>
+      <p class="subtitle">
+        {{ isStaffRole() ? 'Все автомобили, зарегистрированные в системе' : 'Автомобили, привязанные к вашему аккаунту' }}
+      </p>
     </div>
     <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
   </header>
@@ -20,26 +22,68 @@
       <p>Добавьте автомобиль, чтобы записываться на обслуживание быстрее.</p>
     </div>
   } @else {
-    <div class="cars-grid">
-      @for (car of cars(); track car.id) {
-        <article class="car-card">
-          <div class="car-heading">
-            <h2>{{ car.brandName }} {{ car.modelName }}</h2>
-            @if (car.year) {
-              <span>{{ car.year }}</span>
+    @if (isStaffRole()) {
+      <div class="cars-table-wrapper">
+        <table class="cars-table">
+          <thead>
+            <tr>
+              <th>Автомобиль</th>
+              <th>Год</th>
+              <th>VIN</th>
+              <th>Гос. номер</th>
+              <th>Владелец</th>
+              <th class="actions-column">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (car of cars(); track car.id) {
+              <tr>
+                <td>
+                  <a class="car-link" [routerLink]="['/cars', car.id]">
+                    {{ car.brandName }} {{ car.modelName }}
+                  </a>
+                </td>
+                <td>{{ car.year }}</td>
+                <td>{{ car.vin || '—' }}</td>
+                <td>{{ car.plateNumber || '—' }}</td>
+                <td>
+                  <div class="owner">
+                    <span>{{ car.ownerName }}</span>
+                    <span class="owner-phone">{{ car.ownerPhone }}</span>
+                  </div>
+                </td>
+                <td class="actions-column">
+                  <a tuiButton appearance="flat" type="button" [routerLink]="['/cars', car.id]">
+                    Подробнее
+                  </a>
+                </td>
+              </tr>
             }
-          </div>
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="cars-grid">
+        @for (car of cars(); track car.id) {
+          <article class="car-card">
+            <div class="car-heading">
+              <h2>{{ car.brandName }} {{ car.modelName }}</h2>
+              @if (car.year) {
+                <span>{{ car.year }}</span>
+              }
+            </div>
 
-          @if (car.photo) {
-            <img class="car-image" [src]="car.photo" [alt]="car.brandName + ' ' + car.modelName" />
-          } @else {
-            <div class="car-placeholder"><span>Фото автомобиля отсутствует</span></div>
-          }
+            @if (car.photo) {
+              <img class="car-image" [src]="car.photo" [alt]="car.brandName + ' ' + car.modelName" />
+            } @else {
+              <div class="car-placeholder"><span>Фото автомобиля отсутствует</span></div>
+            }
 
-          <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">Подробнее</a>
-        </article>
-      }
-    </div>
+            <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">Подробнее</a>
+          </article>
+        }
+      </div>
+    }
 
     @if (totalPages() > 1) {
       <nav class="pagination" aria-label="Пагинация автомобилей">
