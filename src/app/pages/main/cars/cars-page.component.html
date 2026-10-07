@@ -1,9 +1,9 @@
 <main class="container cars-page">
   <header class="header">
     <div>
-      <h1 class="title">{{ isStaffRole() ? 'Автомобили' : 'Мои автомобили' }}</h1>
+      <h1 class="title">{{ isStaffRole() ? 'Автомобили на обслуживании' : 'Мои автомобили' }}</h1>
       <p class="subtitle">
-        {{ isStaffRole() ? 'Все автомобили, зарегистрированные в системе' : 'Автомобили, привязанные к вашему аккаунту' }}
+        {{ isStaffRole() ? 'Автомобили, находящиеся у вас на обслуживании' : 'Автомобили, привязанные к вашему аккаунту' }}
       </p>
     </div>
     <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
@@ -27,22 +27,19 @@
         <table class="cars-table">
           <thead>
             <tr>
-              <th>Автомобиль</th>
+              <th>Марка</th>
+              <th>Модель</th>
               <th>Год</th>
               <th>VIN</th>
               <th>Гос. номер</th>
               <th>Владелец</th>
-              <th class="actions-column">Действия</th>
             </tr>
           </thead>
           <tbody>
             @for (car of cars(); track car.id) {
-              <tr>
-                <td>
-                  <a class="car-link" [routerLink]="['/cars', car.id]">
-                    {{ car.brandName }} {{ car.modelName }}
-                  </a>
-                </td>
+              <tr class="car-row" [routerLink]="['/cars', car.id]">
+                <td>{{ car.brandName }}</td>
+                <td>{{ car.modelName }}</td>
                 <td>{{ car.year }}</td>
                 <td>{{ car.vin || '—' }}</td>
                 <td>{{ car.plateNumber || '—' }}</td>
@@ -51,11 +48,6 @@
                     <span>{{ car.ownerName }}</span>
                     <span class="owner-phone">{{ car.ownerPhone }}</span>
                   </div>
-                </td>
-                <td class="actions-column">
-                  <a tuiButton appearance="flat" type="button" [routerLink]="['/cars', car.id]">
-                    Подробнее
-                  </a>
                 </td>
               </tr>
             }
