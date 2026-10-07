@@ -35,8 +35,14 @@ export class AppointmentApiService {
     return this.http.get<OrderFilterPermissions>(API_ENDPOINTS.orders.filterPermissions);
   }
 
-  public getWorkTypes(): Observable<WorkType[]> {
-    return this.http.get<WorkType[]>(API_ENDPOINTS.orders.workTypes);
+  public getWorkTypes(search = ''): Observable<WorkType[]> {
+    let params = new HttpParams();
+
+    if (search.trim()) {
+      params = params.set('search', search.trim());
+    }
+
+    return this.http.get<WorkType[]>(API_ENDPOINTS.orders.workTypes, { params });
   }
 
   public getStatuses(): Observable<OrderStatus[]> {
