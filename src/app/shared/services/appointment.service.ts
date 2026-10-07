@@ -30,8 +30,8 @@ export class AppointmentService {
     return this.appointmentApiService.getByCarId(carId, page, filters);
   }
 
-  public getWorkTypes(): Observable<WorkType[]> {
-    return this.appointmentApiService.getWorkTypes();
+  public getWorkTypes(search = ''): Observable<WorkType[]> {
+    return this.appointmentApiService.getWorkTypes(search);
   }
 
   public getStatuses(): Observable<OrderStatus[]> {
