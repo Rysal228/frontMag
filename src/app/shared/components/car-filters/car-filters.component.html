@@ -1,0 +1,49 @@
+<div class="filters">
+  @if (isStaff()) {
+    <app-form-field label="Телефон владельца" class="search">
+      <app-text-field
+        placeholder="+7..."
+        [ngModel]="filters().ownerPhone"
+        (ngModelChange)="onOwnerPhoneSearch($event)"
+      />
+    </app-form-field>
+  }
+
+  <div class="actions">
+    <tui-badged-content>
+      @if (activeFilterCount()) {
+        <tui-badge-notification size="s" tuiSlot="top">
+          {{ activeFilterCount() }}
+        </tui-badge-notification>
+      }
+
+      <button
+        tuiButton
+        appearance="outline"
+        size="m"
+        type="button"
+        [iconStart]="'@tui.list-filter'"
+        (click)="openModal()"
+      >
+        Фильтры
+      </button>
+    </tui-badged-content>
+
+    @if (activeFilterCount() || filters().ownerPhone) {
+      <button tuiButton appearance="secondary" size="m" type="button" (click)="resetAll()">
+        Сбросить всё
+      </button>
+    }
+  </div>
+</div>
+
+@if (isModalOpen()) {
+  <app-car-filters-modal
+    [filters]="filters()"
+    [defaultStatus]="defaultStatus()"
+    [brands]="brands()"
+    [models]="models()"
+    (filtersChange)="onModalFiltersChange($event)"
+    (closed)="closeModal()"
+  />
+}
