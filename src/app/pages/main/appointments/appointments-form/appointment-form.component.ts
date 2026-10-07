@@ -14,7 +14,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { TuiDay } from '@taiga-ui/cdk';
-import { TuiButton, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiDataListWrapper, TuiInputChip, TuiMultiSelect, TuiTextarea } from '@taiga-ui/kit';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
@@ -34,7 +34,6 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
     SelectComponent,
     TuiButton,
     TuiDataListWrapper,
-    TuiDropdown,
     TuiInputChip,
     TuiMultiSelect,
     TuiTextfield,
