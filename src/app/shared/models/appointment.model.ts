@@ -34,6 +34,7 @@ export type Appointment = {
   description: string;
   price: number;
   createdAt: string;
+  ownerPhone?: string;
 };
 
 export type OrderFilterKey =
@@ -96,5 +97,4 @@ export type AppointmentAvailability = {
   dayType: 'working' | 'nonWorking';
   availableSlots: string[];
   busySlots: TimeInterval[];
-  blockedSlots: TimeInterval[];
 };
