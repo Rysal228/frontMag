@@ -83,11 +83,15 @@ export class CarApiService {
   }
 
   public getById(id: string): Observable<CarApiResponse> {
-    return this.http.get<CarApiResponse>(`${API_ENDPOINTS.cars.list}${id}/`);
+    const params = new HttpParams().set('status', 'all');
+
+    return this.http.get<CarApiResponse>(`${API_ENDPOINTS.cars.list}${id}/`, { params });
   }
 
   public getNavigation(id: string): Observable<CarNavigationResponse> {
-    return this.http.get<CarNavigationResponse>(API_ENDPOINTS.cars.navigation(id));
+    const params = new HttpParams().set('status', 'all');
+
+    return this.http.get<CarNavigationResponse>(API_ENDPOINTS.cars.navigation(id), { params });
   }
 
   public getBrands(): Observable<CarBrand[]> {
