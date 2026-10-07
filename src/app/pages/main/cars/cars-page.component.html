@@ -2,14 +2,21 @@
   <header class="header">
     <div>
       <h1 class="title">{{ title() }}</h1>
-      <p class="subtitle">
-        {{ subtitle() }}
-      </p>
+      <p class="subtitle">{{ subtitle() }}</p>
     </div>
+
     @if (!isStaffRole()) {
       <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
     }
   </header>
+
+  <app-car-filters
+    [isStaff]="isStaffRole()"
+    [defaultStatus]="defaultStatus()"
+    [brands]="brands()"
+    [models]="models()"
+    (filtersChange)="onFiltersChange($event)"
+  />
 
   @if (isLoading()) {
     <div class="state">Загрузка автомобилей...</div>
@@ -20,13 +27,11 @@
     </div>
   } @else if (!cars().length) {
     <div class="empty">
-      <div class="empty-title">
-        {{ isStaffRole() ? 'Автомобилей на обслуживании пока нет' : 'У вас пока нет автомобилей' }}
-      </div>
+      <div class="empty-title">{{ emptyTitle() }}</div>
       <p>
         {{ isStaffRole()
-          ? 'Назначенные вам автомобили появятся здесь после назначения вас специалистом по заказу.'
-          : 'Добавьте автомобиль, чтобы записываться на обслуживание быстрее.' }}
+          ? 'Измените параметры фильтрации, чтобы найти нужный автомобиль.'
+          : 'Добавьте автомобиль или измените параметры фильтрации.' }}
       </p>
     </div>
   } @else {
@@ -81,7 +86,9 @@
               <div class="car-placeholder"><span>Фото автомобиля отсутствует</span></div>
             }
 
-            <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">Подробнее</a>
+            <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">
+              Подробнее
+            </a>
           </article>
         }
       </div>
@@ -98,6 +105,7 @@
         >
           <tui-icon icon="@tui.move-left" />
         </button>
+
         <div class="pagination-pages">
           @for (item of pageItems(); track $index) {
             @if (item === 'ellipsis') {
@@ -116,6 +124,7 @@
             }
           }
         </div>
+
         <button
           tuiButton
           appearance="flat"
