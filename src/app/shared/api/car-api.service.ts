@@ -11,6 +11,8 @@ export type CarApiResponse = {
   brandName: string;
   model: number;
   modelName: string;
+  ownerName: string;
+  ownerPhone: string;
   year: number;
   vin: string | null;
   plate_number: string | null;
