@@ -47,7 +47,23 @@
       </app-form-field>
 
       <app-form-field label="Тип работ">
-        <app-select formControlName="workType" placeholder="Выберите тип работ" [options]="workTypeOptions()" />
+        <tui-textfield multi [tuiTextfieldCleaner]="false">
+          <input
+            formControlName="workTypes"
+            tuiInputChip
+            placeholder="Введите или выберите тип работы"
+            (input)="onWorkTypeInput($event)"
+            (keydown.enter)="addCustomWorkType($event)"
+          />
+
+          <tui-input-chip *tuiItem />
+
+          <tui-data-list-wrapper
+            *tuiDropdown
+            tuiMultiSelectGroup
+            [items]="availableWorkTypeSuggestions()"
+          />
+        </tui-textfield>
       </app-form-field>
 
       <app-form-field label="Краткое описание">
