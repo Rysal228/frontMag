@@ -9,6 +9,10 @@
   <div class="details">
     <p>Дата создания: {{ formatDate(order().createdAt) }}</p>
 
+    @if (showOwnerPhone()) {
+      <p>Телефон владельца: {{ order().ownerPhone || '-' }}</p>
+    }
+
     @if (order().appointmentAt) {
       <p>Дата и время записи: {{ formatDate(order().appointmentAt) }}</p>
     }
