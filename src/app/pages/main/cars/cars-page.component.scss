@@ -161,3 +161,64 @@
     justify-content: center;
   }
 }
+
+
+.cars-table-wrapper {
+  overflow-x: auto;
+  border-radius: 16px;
+  background: var(--tui-background-neutral-1);
+}
+
+.cars-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.cars-table th,
+.cars-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tui-border-normal);
+  vertical-align: middle;
+}
+
+.cars-table th {
+  color: var(--tui-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cars-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cars-table tbody tr:hover {
+  background: var(--tui-background-neutral-1-hover);
+}
+
+.car-link {
+  color: var(--tui-text-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.car-link:hover {
+  text-decoration: underline;
+}
+
+.owner {
+  display: grid;
+  gap: 2px;
+}
+
+.owner-phone {
+  color: var(--tui-text-secondary);
+  font-size: 13px;
+}
+
+.actions-column {
+  text-align: right;
+  white-space: nowrap;
+}
