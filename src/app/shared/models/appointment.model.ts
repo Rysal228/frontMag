@@ -26,8 +26,7 @@ export type Appointment = {
   carYear: number;
   carVin: string | null;
   carPlateNumber: string | null;
-  workType: number;
-  workTypeName: string;
+  workTypes: string[];
   status: OrderStatus;
   workStatus: WorkStatus | null;
   appointmentAt: string;
@@ -74,7 +73,7 @@ export type AppointmentPage = {
 
 export type CreateAppointmentRequest = {
   car: string;
-  workType: number;
+  workTypes: string[];
   appointmentAt: string;
   description: string;
 };
@@ -97,4 +96,5 @@ export type AppointmentAvailability = {
   dayType: 'working' | 'nonWorking';
   availableSlots: string[];
   busySlots: TimeInterval[];
+  blockedSlots: TimeInterval[];
 };
