@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
 import { Car } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
@@ -12,7 +12,7 @@ import { UserRole } from 'app/shared/types/roles.types';
 @Component({
   selector: 'app-cars-page',
   standalone: true,
-  imports: [RouterLink, TuiButton],
+  imports: [RouterLink, TuiButton, TuiIcon],
   templateUrl: './cars-page.component.html',
   styleUrl: './cars-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +26,34 @@ export class CarsPageComponent {
     const role = this.currentRoleStore.role();
 
     return role === UserRole.Mechanic || role === UserRole.Admin;
+  });
+
+  protected readonly title = computed(() => {
+    const role = this.currentRoleStore.role();
+
+    if (role === UserRole.User) {
+      return 'Мои автомобили';
+    } else if (role === UserRole.Mechanic) {
+      return 'Обслуживаемые автомобили';
+    } else if (role === UserRole.Admin) {
+      return 'Автомобили сервиса';
+    } else {
+      return 'Автомобили';
+    }
+  });
+
+  protected readonly subtitle = computed(() => {
+    const role = this.currentRoleStore.role();
+
+    if (role === UserRole.User) {
+      return 'Автомобили, привязанные к аккаунту';
+    } else if (role === UserRole.Mechanic) {
+      return 'Автомобили, которые необходимо обслужить';
+    } else if (role === UserRole.Admin) {
+      return 'Автомобили, числящиеся у пользователей и находящиеся на обслуживании';
+    } else {
+      return '';
+    }
   });
   protected readonly currentPage = signal(1);
   protected readonly totalItems = signal(0);
