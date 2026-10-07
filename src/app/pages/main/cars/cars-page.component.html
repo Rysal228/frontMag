@@ -6,7 +6,9 @@
         {{ subtitle() }}
       </p>
     </div>
-    <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
+    @if (!isStaffRole()) {
+      <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
+    }
   </header>
 
   @if (isLoading()) {
@@ -18,8 +20,14 @@
     </div>
   } @else if (!cars().length) {
     <div class="empty">
-      <div class="empty-title">У вас пока нет автомобилей</div>
-      <p>Добавьте автомобиль, чтобы записываться на обслуживание быстрее.</p>
+      <div class="empty-title">
+        {{ isStaffRole() ? 'Автомобилей на обслуживании пока нет' : 'У вас пока нет автомобилей' }}
+      </div>
+      <p>
+        {{ isStaffRole()
+          ? 'Назначенные вам автомобили появятся здесь после назначения вас специалистом по заказу.'
+          : 'Добавьте автомобиль, чтобы записываться на обслуживание быстрее.' }}
+      </p>
     </div>
   } @else {
     @if (isStaffRole()) {
