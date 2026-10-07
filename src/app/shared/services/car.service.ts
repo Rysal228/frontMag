@@ -7,7 +7,7 @@ import {
   CarNavigationResponse,
   CarPaginationResponse,
 } from 'app/shared/api/car-api.service';
-import { Car, CarBrand, CarModel, CreateCarRequest } from 'app/shared/models/car.model';
+import { Car, CarBrand, CarFilters, CarModel, CreateCarRequest } from 'app/shared/models/car.model';
 
 export type CarPage = {
   count: number;
@@ -27,8 +27,8 @@ export type CarNavigation = {
 export class CarService {
   private readonly carApiService = inject(CarApiService);
 
-  public getPage(page: number): Observable<CarPage> {
-    return this.carApiService.getPage(page).pipe(map((response) => this.mapPage(response)));
+  public getPage(page: number, filters?: CarFilters): Observable<CarPage> {
+    return this.carApiService.getPage(page, filters).pipe(map((response) => this.mapPage(response)));
   }
 
   public getAll(): Observable<Car[]> {
@@ -61,6 +61,10 @@ export class CarService {
 
   public delete(id: string): Observable<void> {
     return this.carApiService.delete(id);
+  }
+
+  public restore(id: string): Observable<Car> {
+    return this.carApiService.restore(id).pipe(map((car) => this.mapCar(car)));
   }
 
   private mapPage(response: CarPaginationResponse): CarPage {
