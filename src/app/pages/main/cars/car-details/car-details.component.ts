@@ -32,6 +32,7 @@ export class CarDetailsComponent {
   protected readonly nextCar = signal<Car | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly isDeleting = signal(false);
+  protected readonly isRestoring = signal(false);
   protected readonly hasError = signal(false);
   protected readonly canManageCar = signal(false);
 
@@ -93,6 +94,23 @@ export class CarDetailsComponent {
             this.deleteConfirmed();
           }
         },
+      });
+  }
+
+  protected restoreCar(): void {
+    const id = this.carId();
+
+    if (!id || this.isRestoring()) {
+      return;
+    }
+
+    this.isRestoring.set(true);
+
+    this.carService
+      .restore(id)
+      .pipe(finalize(() => this.isRestoring.set(false)))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/cars'),
       });
   }
 
