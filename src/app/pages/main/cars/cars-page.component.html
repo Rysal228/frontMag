@@ -58,7 +58,7 @@
                     <span class="owner-phone">{{ car.ownerPhone }}</span>
                   </div>
                 </td>
-                <td>{{ car.status }}</td>
+                <td>{{ getStatusLabel(car.status) }}</td>
               </tr>
             }
           </tbody>
