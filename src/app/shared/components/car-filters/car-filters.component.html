@@ -2,8 +2,11 @@
   @if (isStaff()) {
     <app-form-field label="Телефон владельца" class="search">
       <app-text-field
-        placeholder="+7..."
+        type="tel"
+        inputmode="tel"
+        placeholder="+7 (___) ___-__-__"
         [ngModel]="filters().ownerPhone"
+        [maskitoOptions]="phoneMaskitoOptions"
         (ngModelChange)="onOwnerPhoneSearch($event)"
       />
     </app-form-field>
