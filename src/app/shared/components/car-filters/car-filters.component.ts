@@ -112,10 +112,6 @@ export class CarFiltersComponent implements OnInit {
 
     const normalizedPhone = normalizePhone(value);
 
-    if (normalizedPhone.replace(/\D/g, '').length !== 11) {
-      return;
-    }
-
     this.filters.update((current) => ({
       ...current,
       ownerPhone: normalizedPhone,
