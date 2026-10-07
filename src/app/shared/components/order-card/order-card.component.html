@@ -13,7 +13,7 @@
       <p>Дата и время записи: {{ formatDate(order().appointmentAt) }}</p>
     }
 
-    <p>Тип работ: {{ order().workTypeName }}</p>
+    <p>Тип работ: {{ order().workTypes.join(', ') || '-' }}</p>
 
     <p>
       Статус работ:
