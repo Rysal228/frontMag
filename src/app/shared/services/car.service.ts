@@ -108,6 +108,8 @@ export class CarService {
       brandName: car.brandName,
       model: car.model,
       modelName: car.modelName,
+      ownerName: car.ownerName,
+      ownerPhone: car.ownerPhone,
       year: car.year,
       vin: car.vin,
       plateNumber: car.plate_number,
