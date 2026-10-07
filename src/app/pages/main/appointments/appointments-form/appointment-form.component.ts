@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { TuiDay } from '@taiga-ui/cdk';
-import { TuiButton, TuiTextfield } from '@taiga-ui/core';
-import { TuiTextarea } from '@taiga-ui/kit';
+import { TuiButton, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
+import { TuiDataListWrapper, TuiInputChip, TuiMultiSelect, TuiTextarea } from '@taiga-ui/kit';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
@@ -32,6 +32,10 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
     ReactiveFormsModule,
     SelectComponent,
     TuiButton,
+    TuiDataListWrapper,
+    TuiDropdown,
+    TuiInputChip,
+    TuiMultiSelect,
     TuiTextfield,
     TuiTextarea,
   ],
@@ -42,6 +46,7 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 export class AppointmentFormComponent {
   private readonly appointmentService = inject(AppointmentService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly workTypeSearch$ = new Subject<string>();
 
   public readonly cars = input<readonly Car[]>([]);
   public readonly workTypes = input<readonly WorkType[]>([]);
@@ -54,13 +59,14 @@ export class AppointmentFormComponent {
   protected readonly hasAvailabilityError = signal(false);
   protected readonly timeOptions = signal<SelectOption[]>([]);
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
+  protected readonly workTypeSuggestions = signal<string[]>([]);
   protected readonly today = TuiDay.currentLocal();
 
   protected readonly form = new FormGroup({
     date: new FormControl('', { nonNullable: true, validators: Validators.required }),
     time: new FormControl('', { nonNullable: true, validators: Validators.required }),
     car: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    workType: new FormControl('', { nonNullable: true, validators: Validators.required }),
+    workTypes: new FormControl<string[]>([], { nonNullable: true, validators: Validators.required }),
     description: new FormControl('', { nonNullable: true, validators: Validators.maxLength(1000) }),
   });
 
@@ -68,11 +74,15 @@ export class AppointmentFormComponent {
     this.cars().map((car) => ({ value: car.id, label: `${car.brandName} ${car.modelName}` }))
   );
 
-  protected readonly workTypeOptions = computed<SelectOption[]>(() =>
-    this.workTypes().map((workType) => ({ value: String(workType.id), label: workType.name }))
-  );
+  protected readonly availableWorkTypeSuggestions = computed(() => {
+    const selected = new Set(this.form.controls.workTypes.value.map((value) => value.casefold?.() ?? value.toLowerCase()));
+
+    return this.workTypeSuggestions().filter((workType) => !selected.has(workType.toLowerCase()));
+  });
 
   constructor() {
+    this.workTypeSuggestions.set(this.workTypes().map((workType) => workType.name));
+
     this.form.controls.date.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -104,6 +114,55 @@ export class AppointmentFormComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((options) => this.timeOptions.set(options));
+
+    this.workTypeSearch$
+      .pipe(
+        map((value) => value.trim()),
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((search) =>
+          this.appointmentService.getWorkTypes(search).pipe(
+            map((workTypes) => workTypes.map((workType) => workType.name)),
+            catchError(() => of([] as string[]))
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((suggestions) => this.workTypeSuggestions.set(suggestions));
+  }
+
+  protected onWorkTypeInput(event: Event): void {
+    this.workTypeSearch$.next((event.target as HTMLInputElement).value);
+  }
+
+  protected addCustomWorkType(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+
+    if (!value) {
+      return;
+    }
+
+    this.addWorkType(value);
+    input.value = '';
+    event.preventDefault();
+  }
+
+  private addWorkType(value: string): void {
+    const normalized = value.replace(/\s+/g, ' ').trim();
+
+    if (!normalized) {
+      return;
+    }
+
+    const current = this.form.controls.workTypes.value;
+
+    if (current.some((workType) => workType.toLowerCase() === normalized.toLowerCase())) {
+      return;
+    }
+
+    this.form.controls.workTypes.setValue([...current, normalized]);
+    this.form.controls.workTypes.markAsDirty();
   }
 
   protected save(): void {
@@ -112,7 +171,7 @@ export class AppointmentFormComponent {
       return;
     }
 
-    const { date, time, car, workType, description } = this.form.getRawValue();
+    const { date, time, car, workTypes, description } = this.form.getRawValue();
 
     this.saving.set(true);
     this.hasError.set(false);
@@ -120,7 +179,7 @@ export class AppointmentFormComponent {
     this.appointmentService
       .create({
         car,
-        workType: Number(workType),
+        workTypes,
         appointmentAt: `${date}T${time}:00`,
         description,
       })
