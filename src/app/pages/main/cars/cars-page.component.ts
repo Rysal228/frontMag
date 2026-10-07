@@ -6,6 +6,8 @@ import { TuiButton } from '@taiga-ui/core';
 
 import { Car } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { UserRole } from 'app/shared/types/roles.types';
 
 @Component({
   selector: 'app-cars-page',
@@ -17,8 +19,14 @@ import { CarService } from 'app/shared/services/car.service';
 })
 export class CarsPageComponent {
   private readonly carService = inject(CarService);
+  private readonly currentRoleStore = inject(CurrentRoleStore);
 
   protected readonly cars = signal<Car[]>([]);
+  protected readonly isStaffRole = computed(() => {
+    const role = this.currentRoleStore.role();
+
+    return role === UserRole.Mechanic || role === UserRole.Admin;
+  });
   protected readonly currentPage = signal(1);
   protected readonly totalItems = signal(0);
   protected readonly isLoading = signal(true);
