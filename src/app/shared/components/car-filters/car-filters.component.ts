@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { TuiBadgeNotification, TuiBadgedContent, TuiButton } from '@taiga-ui/kit';
 
+import { CarFiltersModalComponent } from 'app/shared/components/car-filters/car-filters-modal/car-filters-modal.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
-import { CarFilters, CarBrand, CarModel } from 'app/shared/models/car.model';
-import { CarFiltersModalComponent } from 'app/shared/components/car-filters/car-filters-modal/car-filters-modal.component';
+import { CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
 
 const EMPTY_FILTERS: CarFilters = {
   status: 'active',
@@ -34,7 +34,7 @@ const EMPTY_FILTERS: CarFilters = {
   styleUrl: './car-filters.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CarFiltersComponent {
+export class CarFiltersComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -46,6 +46,13 @@ export class CarFiltersComponent {
 
   protected readonly filters = signal<CarFilters>({ ...EMPTY_FILTERS });
   protected readonly isModalOpen = signal(false);
+
+  ngOnInit(): void {
+    this.filters.update((current) => ({
+      ...current,
+      status: this.defaultStatus(),
+    }));
+  }
 
   constructor() {
     this.destroyRef.onDestroy(() => {
