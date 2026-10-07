@@ -15,6 +15,8 @@ export type Car = {
   brandName: string;
   model: number;
   modelName: string;
+  ownerName: string;
+  ownerPhone: string;
   year: number;
   vin: string | null;
   plateNumber: string | null;
