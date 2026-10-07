@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { TuiBadgeNotification, TuiBadgedContent, TuiButton } from '@taiga-ui/kit';
+import { TuiButton } from '@taiga-ui/core';
+import { TuiBadgeNotification, TuiBadgedContent } from '@taiga-ui/kit';
 
 import { CarFiltersModalComponent } from 'app/shared/components/car-filters/car-filters-modal/car-filters-modal.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
@@ -86,6 +87,11 @@ export class CarFiltersComponent implements OnInit {
   }
 
   protected resetAll(): void {
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+      this.searchTimer = null;
+    }
+
     this.filters.set({
       ...EMPTY_FILTERS,
       status: this.defaultStatus(),
