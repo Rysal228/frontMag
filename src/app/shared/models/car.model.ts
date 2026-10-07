@@ -25,6 +25,16 @@ export type Car = {
   status: 'active' | 'archived';
 };
 
+export type CarFilters = {
+  status: 'active' | 'archived' | 'all';
+  ownerPhone: string;
+  brandId: number | null;
+  modelId: number | null;
+  year: number | null;
+  vin: string;
+  plateNumber: string;
+};
+
 export type CreateCarRequest = {
   brand: number;
   model: number;
