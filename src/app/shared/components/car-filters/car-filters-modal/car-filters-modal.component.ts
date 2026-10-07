@@ -78,7 +78,12 @@ export class CarFiltersModalComponent implements OnInit {
   protected onYearChange(value: string): void {
     const normalized = value.trim();
 
-    this.update('year', normalized ? Number(normalized) : null);
+    if (!/^\d{4}$/.test(normalized)) {
+      this.update('year', null);
+      return;
+    }
+
+    this.update('year', Number(normalized));
   }
 
   protected update<K extends keyof CarFilters>(key: K, value: CarFilters[K]): void {
