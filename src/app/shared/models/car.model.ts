@@ -22,6 +22,7 @@ export type Car = {
   plateNumber: string | null;
   photo: string | null;
   hasOrders: boolean;
+  status: 'active' | 'archived';
 };
 
 export type CreateCarRequest = {
