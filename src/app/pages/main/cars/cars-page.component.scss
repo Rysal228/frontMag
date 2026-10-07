@@ -194,18 +194,13 @@
   border-bottom: none;
 }
 
-.cars-table tbody tr:hover {
+.cars-table tbody tr.car-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.cars-table tbody tr.car-row:hover {
   background: var(--tui-background-neutral-1-hover);
-}
-
-.car-link {
-  color: var(--tui-text-primary);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.car-link:hover {
-  text-decoration: underline;
 }
 
 .owner {
@@ -218,7 +213,3 @@
   font-size: 13px;
 }
 
-.actions-column {
-  text-align: right;
-  white-space: nowrap;
-}
