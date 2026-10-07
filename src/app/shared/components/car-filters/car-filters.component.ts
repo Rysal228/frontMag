@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
 import { TuiBadgeNotification, TuiBadgedContent } from '@taiga-ui/kit';
@@ -38,8 +39,7 @@ const EMPTY_FILTERS: CarFilters = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarFiltersComponent implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
-  private searchTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly phoneSearch$ = new Subject<string>();
 
   public readonly isStaff = input(false);
   public readonly defaultStatus = input<CarFilters['status']>('active');
@@ -51,19 +51,17 @@ export class CarFiltersComponent implements OnInit {
   protected readonly isModalOpen = signal(false);
   protected readonly phoneMaskitoOptions = PHONE_MASKITO_OPTIONS;
 
+  constructor() {
+    this.phoneSearch$
+      .pipe(debounceTime(350), distinctUntilChanged())
+      .subscribe((value) => this.applyPhoneSearch(value));
+  }
+
   ngOnInit(): void {
     this.filters.update((current) => ({
       ...current,
       status: this.defaultStatus(),
     }));
-  }
-
-  constructor() {
-    this.destroyRef.onDestroy(() => {
-      if (this.searchTimer) {
-        clearTimeout(this.searchTimer);
-      }
-    });
   }
 
   protected openModal(): void {
@@ -81,43 +79,16 @@ export class CarFiltersComponent implements OnInit {
 
   protected onOwnerPhoneSearch(value: string): void {
     this.filters.update((current) => ({ ...current, ownerPhone: value }));
-
-    if (this.searchTimer) {
-      clearTimeout(this.searchTimer);
-      this.searchTimer = null;
-    }
-
-    if (!value) {
-      this.emit();
-      return;
-    }
-
-    if (normalizePhone(value).replace(/\D/g, '').length !== 11) {
-      return;
-    }
-
-    this.searchTimer = setTimeout(() => {
-      this.searchTimer = null;
-      this.filters.update((current) => ({
-        ...current,
-        ownerPhone: normalizePhone(value),
-      }));
-      this.emit();
-    }, 350);
+    this.phoneSearch$.next(value);
   }
 
   protected resetAll(): void {
-    if (this.searchTimer) {
-      clearTimeout(this.searchTimer);
-      this.searchTimer = null;
-    }
-
     this.filters.set({
       ...EMPTY_FILTERS,
       status: this.defaultStatus(),
     });
     this.isModalOpen.set(false);
-    this.emit();
+    this.phoneSearch$.next('');
   }
 
   protected activeFilterCount(): number {
@@ -131,6 +102,25 @@ export class CarFiltersComponent implements OnInit {
       filters.vin,
       filters.plateNumber,
     ].filter((value) => value !== null && value !== '').length;
+  }
+
+  private applyPhoneSearch(value: string): void {
+    if (!value) {
+      this.emit();
+      return;
+    }
+
+    const normalizedPhone = normalizePhone(value);
+
+    if (normalizedPhone.replace(/\D/g, '').length !== 11) {
+      return;
+    }
+
+    this.filters.update((current) => ({
+      ...current,
+      ownerPhone: normalizedPhone,
+    }));
+    this.emit();
   }
 
   private emit(): void {
