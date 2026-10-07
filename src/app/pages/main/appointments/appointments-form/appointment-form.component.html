@@ -60,10 +60,7 @@
 
           @if (availableWorkTypeSuggestions().length) {
             <ng-template tuiTextfieldDropdown>
-              <tui-data-list-wrapper
-                tuiMultiSelectGroup
-                [items]="availableWorkTypeSuggestions()"
-              />
+              <tui-data-list-wrapper new tuiMultiSelectGroup [items]="availableWorkTypeSuggestions()" />
             </ng-template>
           }
         </tui-textfield>
