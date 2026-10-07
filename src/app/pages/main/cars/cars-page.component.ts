@@ -96,6 +96,10 @@ export class CarsPageComponent {
     this.loadCars(1);
   }
 
+  protected getStatusLabel(status: Car['status']): string {
+    return status === 'archived' ? 'Архив' : 'Активный';
+  }
+
   protected reload(): void {
     this.loadCars(this.currentPage());
   }
