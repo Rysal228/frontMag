@@ -2,13 +2,38 @@ export type StatusAppearance = 'positive' | 'warning' | 'negative';
 
 export type OrderStatus = {
   id: number;
+  code: string | null;
   name: string;
   appearance: StatusAppearance;
   requiresPayment: boolean;
 };
 
+export type OrderWork = {
+  id: number;
+  workTypeId: number | null;
+  name: string;
+  price: number;
+};
+
+export type PaymentStatus = {
+  id: number;
+  code: string;
+  name: string;
+  appearance: StatusAppearance;
+};
+
+export type OrderPermissions = {
+  canEditWorks: boolean;
+  canEditPrice: boolean;
+  canEditAppointment: boolean;
+  canAssignMechanics: boolean;
+  canEditDescription: boolean;
+  canChangePaymentStatus: boolean;
+};
+
 export type WorkStatus = {
   id: number;
+  code: string | null;
   name: string;
   appearance: StatusAppearance;
 };
@@ -26,9 +51,11 @@ export type Appointment = {
   carYear: number;
   carVin: string | null;
   carPlateNumber: string | null;
-  workTypes: string[];
+  works: OrderWork[];
   status: OrderStatus;
   workStatus: WorkStatus | null;
+  paymentStatus: PaymentStatus | null;
+  permissions: OrderPermissions;
   appointmentAt: string;
   description: string;
   price: number;
