@@ -13,6 +13,7 @@ import {
   OrderFilterPermissions,
   OrderFilters,
   OrderPermissions,
+  PaymentStatus,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
@@ -61,6 +62,14 @@ export class AppointmentService {
 
   public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
     return this.appointmentApiService.transitionWorkStatus(id, statusId);
+  }
+
+  public getPaymentStatuses(): Observable<PaymentStatus[]> {
+    return this.appointmentApiService.getPaymentStatuses();
+  }
+
+  public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.appointmentApiService.setPaymentStatus(id, statusId);
   }
 
   public getAvailability(date: string): Observable<AppointmentAvailability> {
