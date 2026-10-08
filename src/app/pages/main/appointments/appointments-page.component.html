@@ -2,6 +2,7 @@
   <header class="header">
     <h1>Информация о записях:</h1>
 
+    @if (canCreate()) {
     <span
       tuiHintAppearance="dark"
       tuiHintDirection="top"
@@ -18,6 +19,8 @@
         Записаться
       </button>
     </span>
+    }
+
   </header>
 
   <app-order-filters
