@@ -1,4 +1,4 @@
-<article class="order-card">
+<a class="order-card" [routerLink]="['/appointments', order().id]">
   <header class="card-header">
     <h3>Заказ № {{ order().orderNumber }}</h3>
     <span class="status" [attr.data-appearance]="order().status.appearance">
@@ -46,4 +46,4 @@
   @if (showPayment() && order().status.requiresPayment) {
     <button tuiButton appearance="outline" type="button" class="payment-button">Оплатить</button>
   }
-</article>
+</a>
