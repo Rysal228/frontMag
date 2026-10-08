@@ -63,8 +63,8 @@
 
         <div>
           <h2>Специалисты</h2>
-          @if (appointment()!.mechanics.length) {
-            <p>{{ appointment()!.mechanics.join(', ') }}</p>
+          @if (appointment()!.mechanics?.length) {
+            <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
           } @else {
             <p>Специалисты пока не назначены.</p>
           }
