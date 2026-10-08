@@ -13,7 +13,7 @@
       <p>Дата и время записи: {{ formatDate(order().appointmentAt) }}</p>
     }
 
-    <p>Тип работ: {{ order().workTypes.join(', ') || '-' }}</p>
+    <p>Тип работ: {{ order().works.map((work) => work.name).join(', ') || '-' }}</p>
 
     <p>
       Статус работ:
@@ -23,6 +23,10 @@
     </p>
 
     <p>Стоимость работ: {{ order().price ? order().price + ' руб' : '-' }}</p>
+
+    @if (order().paymentStatus) {
+      <p>Оплата: {{ order().paymentStatus?.name }}</p>
+    }
 
     @if (isAdminRole()) {
       <p>Телефон владельца: {{ order().ownerPhone || '-' }}</p>
