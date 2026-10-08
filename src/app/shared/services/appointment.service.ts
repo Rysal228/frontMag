@@ -68,6 +68,10 @@ export class AppointmentService {
     return this.appointmentApiService.getPaymentStatuses();
   }
 
+  public updateMechanics(id: string, mechanics: string[]): Observable<Appointment> {
+    return this.appointmentApiService.updateMechanics(id, mechanics);
+  }
+
   public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
     return this.appointmentApiService.setPaymentStatus(id, statusId);
   }
