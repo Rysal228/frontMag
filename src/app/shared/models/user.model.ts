@@ -17,3 +17,5 @@ export type UpdateProfileRequest = {
   patronymic: string;
   birthday: string | null;
 };
+
+export type Mechanic = { id: string; firstName: string; lastName: string; patronymic: string; phone: string; };
