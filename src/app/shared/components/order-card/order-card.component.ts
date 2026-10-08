@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { TuiButton } from '@taiga-ui/core';
 
@@ -9,7 +10,7 @@ import { UserRole } from 'app/shared/types/roles.types';
 @Component({
   selector: 'app-order-card',
   standalone: true,
-  imports: [TuiButton],
+  imports: [TuiButton, RouterLink],
   templateUrl: './order-card.component.html',
   styleUrl: './order-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
