@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
@@ -10,7 +11,7 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [RouterLink, TuiIcon],
+  imports: [RouterLink, TuiIcon, DatePipe],
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
