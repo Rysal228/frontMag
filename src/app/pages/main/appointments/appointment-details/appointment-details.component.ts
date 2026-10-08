@@ -4,8 +4,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiDataListWrapper, TuiMultiSelect } from '@taiga-ui/kit';
+import { TuiButton, TuiFilterByInputPipe, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiDataListWrapper, TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
 
 import { Appointment } from 'app/shared/models/appointment.model';
 import { Mechanic } from 'app/shared/models/user.model';
@@ -15,7 +15,7 @@ import { UserService } from 'app/shared/services/user.service';
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper],
+  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper, TuiInputChip, TuiFilterByInputPipe],
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,12 +30,9 @@ export class AppointmentDetailsComponent {
   protected readonly hasError = signal(false);
   protected readonly mechanics = signal<Mechanic[]>([]);
   protected readonly isSavingMechanics = signal(false);
-  protected readonly mechanicsControl = new FormControl<string[]>([], { nonNullable: true });
-  protected readonly mechanicIds = computed(() => this.mechanics().map(({ id }) => id));
-  protected readonly stringifyMechanic = (id: string): string => {
-    const mechanic = this.mechanics().find(({ id: mechanicId }) => mechanicId === id);
-    return mechanic ? `${mechanic.lastName} ${mechanic.firstName}`.trim() : id;
-  };
+  protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
+  protected readonly stringifyMechanic = (mechanic: Mechanic): string =>
+    `${mechanic.lastName} ${mechanic.firstName} ${mechanic.patronymic}`.trim();
 
   constructor() {
     this.route.paramMap.subscribe((params) => {
@@ -54,11 +51,20 @@ export class AppointmentDetailsComponent {
         .subscribe({
           next: (appointment) => {
             this.appointment.set(appointment);
-            this.mechanicsControl.setValue([...appointment.mechanics], { emitEvent: false });
             if (appointment.permissions.canAssignMechanics) {
               this.userService.getMechanics().subscribe({
-                next: (mechanics) => this.mechanics.set(mechanics),
+                next: (mechanics) => {
+                  this.mechanics.set(mechanics);
+                  this.mechanicsControl.setValue(
+                    mechanics.filter(({ id }) => appointment.mechanics.includes(id)),
+                    { emitEvent: false },
+                  );
+                  this.mechanicsControl.markAsPristine();
+                },
               });
+            } else {
+              this.mechanicsControl.setValue([], { emitEvent: false });
+              this.mechanicsControl.markAsPristine();
             }
           },
           error: () => this.hasError.set(true),
@@ -73,7 +79,10 @@ export class AppointmentDetailsComponent {
     }
 
     this.isSavingMechanics.set(true);
-    this.appointmentService.updateMechanics(appointment.id, this.mechanicsControl.getRawValue()).subscribe({
+    this.appointmentService.updateMechanics(
+      appointment.id,
+      this.mechanicsControl.getRawValue().map(({ id }) => id),
+    ).subscribe({
       next: (updated) => {
         this.appointment.set(updated);
         this.mechanicsControl.markAsPristine();
