@@ -33,19 +33,40 @@
         <div>
           <h2>Автомобиль</h2>
           <dl>
-            <div><dt>Марка и модель</dt><dd>{{ appointment()!.carName }}</dd></div>
-            <div><dt>Год</dt><dd>{{ appointment()!.carYear }}</dd></div>
-            <div><dt>VIN</dt><dd>{{ appointment()!.carVin || 'Не указан' }}</dd></div>
-            <div><dt>Гос. номер</dt><dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd></div>
+            <div>
+              <dt>Марка и модель</dt>
+              <dd>{{ appointment()!.carName }}</dd>
+            </div>
+            <div>
+              <dt>Год</dt>
+              <dd>{{ appointment()!.carYear }}</dd>
+            </div>
+            <div>
+              <dt>VIN</dt>
+              <dd>{{ appointment()!.carVin || 'Не указан' }}</dd>
+            </div>
+            <div>
+              <dt>Гос. номер</dt>
+              <dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd>
+            </div>
           </dl>
         </div>
 
         <div>
           <h2>Запись</h2>
           <dl>
-            <div><dt>Дата и время</dt><dd>{{ appointment()!.appointmentAt | date: 'dd.MM.yyyy HH:mm' }}</dd></div>
-            <div><dt>Владелец</dt><dd>{{ appointment()!.ownerPhone || 'Не указан' }}</dd></div>
-            <div><dt>Описание</dt><dd>{{ appointment()!.description || 'Не указано' }}</dd></div>
+            <div>
+              <dt>Дата и время</dt>
+              <dd>{{ appointment()!.appointmentAt | date: 'dd.MM.yyyy HH:mm' }}</dd>
+            </div>
+            <div>
+              <dt>Владелец</dt>
+              <dd>{{ appointment()!.ownerPhone || 'Не указан' }}</dd>
+            </div>
+            <div>
+              <dt>Описание</dt>
+              <dd>{{ appointment()!.description || 'Не указано' }}</dd>
+            </div>
           </dl>
         </div>
 
@@ -63,7 +84,7 @@
 
         <div>
           <h2>Специалисты</h2>
-          @if (appointment()!.mechanics?.length) {
+          @if (appointment()!.mechanics.length) {
             <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
           } @else {
             <p>Специалисты пока не назначены.</p>

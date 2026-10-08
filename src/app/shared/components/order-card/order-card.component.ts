@@ -26,6 +26,13 @@ export class OrderCardComponent {
     return this.roleAccess.isActiveRole(UserRole.Admin);
   });
 
+  readonly workTypes = computed(
+    () =>
+      this.order()
+        .works.map((work) => work.name)
+        .join(', ') || '-'
+  );
+
   protected formatDate(value: string): string {
     return new Intl.DateTimeFormat('ru-RU', {
       day: '2-digit',
