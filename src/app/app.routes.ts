@@ -74,7 +74,20 @@ export const routes: Routes = [
       },
       {
         path: 'appointments',
-        component: AppointmentsPageComponent,
+        children: [
+          {
+            path: '',
+            component: AppointmentsPageComponent,
+            pathMatch: 'full',
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/main/appointments/appointment-details/appointment-details.component').then(
+                (c) => c.AppointmentDetailsComponent,
+              ),
+          },
+        ],
         data: {
           title: 'Записи',
         },
