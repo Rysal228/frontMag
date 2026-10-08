@@ -84,7 +84,29 @@
 
         <div>
           <h2>Специалисты</h2>
-          @if (appointment()!.mechanics.length) {
+          @if (appointment()!.permissions.canAssignMechanics) {
+            <tui-textfield multi>
+              <input
+                tuiMultiSelect
+                [formControl]="mechanicsControl"
+                [items]="mechanicIds()"
+                [stringify]="stringifyMechanic"
+                placeholder="Выберите специалистов"
+              />
+              <ng-template tuiTextfieldDropdown>
+                <tui-data-list-wrapper new tuiMultiSelectGroup [items]="mechanicIds()" [stringify]="stringifyMechanic" />
+              </ng-template>
+            </tui-textfield>
+            <button
+              tuiButton
+              appearance="primary"
+              type="button"
+              [disabled]="isSavingMechanics() || mechanicsControl.pristine"
+              (click)="saveMechanics()"
+            >
+              {{ isSavingMechanics() ? 'Сохранение...' : 'Сохранить специалистов' }}
+            </button>
+          } @else if (appointment()!.mechanics.length) {
             <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
           } @else {
             <p>Специалисты пока не назначены.</p>
