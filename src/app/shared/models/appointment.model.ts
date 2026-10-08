@@ -56,6 +56,7 @@ export type Appointment = {
   workStatus: WorkStatus | null;
   paymentStatus: PaymentStatus | null;
   permissions: OrderPermissions;
+  mechanics: string[];
   appointmentAt: string;
   description: string;
   price: number;
