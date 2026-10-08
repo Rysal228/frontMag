@@ -1,0 +1,80 @@
+<main class="container grid appointment-details-page">
+  <section class="content">
+    <a class="back-link" routerLink="/appointments">
+      <tui-icon icon="@tui.arrow-left" />
+      <span>Вернуться к записям</span>
+    </a>
+
+    @if (isLoading()) {
+      <div class="state">Загрузка заказа...</div>
+    } @else if (hasError() || !appointment()) {
+      <div class="state state_error">
+        <p>Не удалось найти заказ.</p>
+        <a routerLink="/appointments">Вернуться к записям</a>
+      </div>
+    } @else {
+      <header class="header">
+        <div>
+          <h1>Заказ №{{ appointment()!.orderNumber }}</h1>
+          <p>{{ appointment()!.carName }}</p>
+        </div>
+        <div class="statuses">
+          <span>{{ appointment()!.status.name }}</span>
+          @if (appointment()!.workStatus) {
+            <span>{{ appointment()!.workStatus!.name }}</span>
+          }
+          @if (appointment()!.paymentStatus) {
+            <span>{{ appointment()!.paymentStatus!.name }}</span>
+          }
+        </div>
+      </header>
+
+      <section class="details">
+        <div>
+          <h2>Автомобиль</h2>
+          <dl>
+            <div><dt>Марка и модель</dt><dd>{{ appointment()!.carName }}</dd></div>
+            <div><dt>Год</dt><dd>{{ appointment()!.carYear }}</dd></div>
+            <div><dt>VIN</dt><dd>{{ appointment()!.carVin || 'Не указан' }}</dd></div>
+            <div><dt>Гос. номер</dt><dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd></div>
+          </dl>
+        </div>
+
+        <div>
+          <h2>Запись</h2>
+          <dl>
+            <div><dt>Дата и время</dt><dd>{{ appointment()!.appointmentAt | date: 'dd.MM.yyyy HH:mm' }}</dd></div>
+            <div><dt>Владелец</dt><dd>{{ appointment()!.ownerPhone || 'Не указан' }}</dd></div>
+            <div><dt>Описание</dt><dd>{{ appointment()!.description || 'Не указано' }}</dd></div>
+          </dl>
+        </div>
+
+        <div>
+          <h2>Работы</h2>
+          <ul>
+            @for (work of appointment()!.works; track work.id) {
+              <li>
+                <span>{{ work.name }}</span>
+                <strong>{{ work.price }} ₽</strong>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div>
+          <h2>Специалисты</h2>
+          @if (appointment()!.mechanics.length) {
+            <p>{{ appointment()!.mechanics.join(', ') }}</p>
+          } @else {
+            <p>Специалисты пока не назначены.</p>
+          }
+        </div>
+      </section>
+
+      <section class="total">
+        <span>Итого</span>
+        <strong>{{ appointment()!.price }} ₽</strong>
+      </section>
+    }
+  </section>
+</main>
