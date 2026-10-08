@@ -12,6 +12,7 @@ import {
   WorkStatus,
   OrderFilterPermissions,
   OrderFilters,
+  OrderPermissions,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
@@ -44,6 +45,22 @@ export class AppointmentService {
 
   public create(request: CreateAppointmentRequest): Observable<Appointment> {
     return this.appointmentApiService.create(request);
+  }
+
+  public getById(id: string): Observable<Appointment> {
+    return this.appointmentApiService.getById(id);
+  }
+
+  public getPermissions(id: string): Observable<OrderPermissions> {
+    return this.appointmentApiService.getPermissions(id);
+  }
+
+  public transitionStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.appointmentApiService.transitionStatus(id, statusId);
+  }
+
+  public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.appointmentApiService.transitionWorkStatus(id, statusId);
   }
 
   public getAvailability(date: string): Observable<AppointmentAvailability> {
