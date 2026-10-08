@@ -1,128 +1,40 @@
-export type StatusAppearance = 'positive' | 'warning' | 'negative';
+const version = 'v1';
 
-export type OrderStatus = {
-  id: number;
-  code: string | null;
-  name: string;
-  appearance: StatusAppearance;
-  requiresPayment: boolean;
-};
-
-export type OrderWork = {
-  id: number;
-  workTypeId: number | null;
-  name: string;
-  price: number;
-};
-
-export type PaymentStatus = {
-  id: number;
-  code: string;
-  name: string;
-  appearance: StatusAppearance;
-};
-
-export type OrderPermissions = {
-  canEditWorks: boolean;
-  canEditPrice: boolean;
-  canEditAppointment: boolean;
-  canAssignMechanics: boolean;
-  canEditDescription: boolean;
-  canChangePaymentStatus: boolean;
-};
-
-export type WorkStatus = {
-  id: number;
-  code: string | null;
-  name: string;
-  appearance: StatusAppearance;
-};
-
-export type WorkType = {
-  id: number;
-  name: string;
-};
-
-export type Appointment = {
-  id: string;
-  orderNumber: string;
-  car: string;
-  carName: string;
-  carYear: number;
-  carVin: string | null;
-  carPlateNumber: string | null;
-  works: OrderWork[];
-  status: OrderStatus;
-  workStatus: WorkStatus | null;
-  paymentStatus: PaymentStatus | null;
-  permissions: OrderPermissions;
-  mechanics: string[];
-  appointmentAt: string;
-  description: string;
-  price: number;
-  createdAt: string;
-  ownerPhone?: string;
-};
-
-export type OrderFilterKey =
-  | 'search'
-  | 'order_number'
-  | 'vin'
-  | 'plate_number'
-  | 'brand'
-  | 'model'
-  | 'work_type'
-  | 'status'
-  | 'work_status'
-  | 'date_range';
-
-export type OrderFilterPermissions = Record<OrderFilterKey, boolean>;
-
-export type OrderFilters = {
-  search: string;
-  orderNumber: string;
-  vin: string;
-  plateNumber: string;
-  brandId: number | null;
-  modelId: number | null;
-  workTypeId: number | null;
-  statusId: number | null;
-  workStatusId: number | null;
-  dateFrom: string | null;
-  dateTo: string | null;
-};
-
-export type AppointmentPage = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Appointment[];
-};
-
-export type CreateAppointmentRequest = {
-  car: string;
-  workTypes: string[];
-  appointmentAt: string;
-  description: string;
-};
-
-export type TimeInterval = {
-  from: string;
-  to: string;
-};
-
-export type AppointmentWorkingHours = {
-  from: string;
-  to: string;
-};
-
-export type AppointmentAvailability = {
-  date: string;
-  workingHours: AppointmentWorkingHours | null;
-  appointmentDuration: number;
-  slotInterval: number;
-  dayType: 'working' | 'nonWorking';
-  availableSlots: string[];
-  busySlots: TimeInterval[];
-  blockedSlots: TimeInterval[];
-};
+export const API_ENDPOINTS = {
+  auth: {
+    login: `/api/${version}/users/auth/login/`,
+    register: `/api/${version}/users/auth/register/`,
+    max: `/api/${version}/users/auth/max/`,
+    maxCodeRequest: `/api/${version}/users/auth/max/code/request/`,
+    maxCodeVerify: `/api/${version}/users/auth/max/code/verify/`,
+    switchRole: `/api/${version}/users/auth/switch-role/`,
+    selectRole: `/api/${version}/users/auth/select-role/`,
+    refresh: `/api/${version}/users/auth/token/refresh/`,
+    password: `/api/${version}/users/auth/password/`,
+  },
+  users: {
+    profile: `/api/${version}/users/profile/`,
+    list: `/api/${version}/users/`,
+  },
+  cars: {
+    list: `/api/${version}/cars/`,
+    navigation: (id: string) => `/api/${version}/cars/${id}/navigation/`,
+    orders: (id: string) => `/api/${version}/cars/${id}/orders/`,
+    brands: `/api/${version}/cars/brands/`,
+    models: `/api/${version}/cars/models/`,
+  },
+  news: { list: `/api/${version}/news/` },
+  orders: {
+    list: `/api/${version}/orders/`,
+    statuses: `/api/${version}/orders/order-status/`,
+    workStatuses: `/api/${version}/orders/work-status/`,
+    workTypes: `/api/${version}/orders/work-type/`,
+    availability: `/api/${version}/orders/availability/`,
+    filterPermissions: `/api/${version}/orders/filter-permissions/`,
+    permissions: (id: string) => `/api/${version}/orders/${id}/permissions/`,
+    transitionStatus: (id: string) => `/api/${version}/orders/${id}/transition-status/`,
+    transitionWorkStatus: (id: string) => `/api/${version}/orders/${id}/transition-work-status/`,
+    paymentStatus: (id: string) => `/api/${version}/orders/${id}/payment-status/`,
+    paymentStatuses: `/api/${version}/orders/payment-status/`,
+  },
+} as const;
