@@ -13,6 +13,7 @@ import {
   OrderFilters,
   OrderStatus,
   WorkStatus,
+  OrderPermissions,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
@@ -81,6 +82,26 @@ export class AppointmentApiService {
     });
 
     return params;
+  }
+
+  public getById(id: string): Observable<Appointment> {
+    return this.http.get<Appointment>(`${API_ENDPOINTS.orders.list}${id}/`);
+  }
+
+  public getPermissions(id: string): Observable<OrderPermissions> {
+    return this.http.get<OrderPermissions>(API_ENDPOINTS.orders.permissions(id));
+  }
+
+  public transitionStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionStatus(id), { statusId });
+  }
+
+  public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionWorkStatus(id), { statusId });
+  }
+
+  public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.http.post<Appointment>(API_ENDPOINTS.orders.paymentStatus(id), { statusId });
   }
 
   public create(request: CreateAppointmentRequest): Observable<Appointment> {
