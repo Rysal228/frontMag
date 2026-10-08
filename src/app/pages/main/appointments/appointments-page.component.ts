@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { TuiButton, TuiHint } from '@taiga-ui/core';
@@ -20,6 +20,7 @@ import {
 import { Car, CarBrand, CarModel } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CarService } from 'app/shared/services/car.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 
 @Component({
   selector: 'app-appointments-page',
@@ -32,6 +33,7 @@ import { CarService } from 'app/shared/services/car.service';
 export class AppointmentsPageComponent {
   private readonly appointmentService = inject(AppointmentService);
   private readonly carService = inject(CarService);
+  private readonly currentRole = inject(CurrentRoleStore);
 
   protected readonly appointments = signal<Appointment[]>([]);
   protected readonly cars = signal<Car[]>([]);
@@ -70,6 +72,7 @@ export class AppointmentsPageComponent {
   protected readonly isCreateOpen = signal(false);
   protected readonly currentPage = signal(1);
   protected readonly totalPages = signal(0);
+  protected readonly canCreate = computed(() => this.currentRole.role() === 'user');
 
   constructor() {
     this.loadData();
