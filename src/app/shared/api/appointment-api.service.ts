@@ -14,6 +14,7 @@ import {
   OrderStatus,
   WorkStatus,
   OrderPermissions,
+  PaymentStatus,
 } from 'app/shared/models/appointment.model';
 
 @Injectable({ providedIn: 'root' })
@@ -98,6 +99,14 @@ export class AppointmentApiService {
 
   public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionWorkStatus(id), { statusId });
+  }
+
+  public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
+    return this.http.post<Appointment>(API_ENDPOINTS.orders.paymentStatus(id), { statusId });
+  }
+
+  public getPaymentStatuses(): Observable<PaymentStatus[]> {
+    return this.http.get<PaymentStatus[]>(API_ENDPOINTS.orders.paymentStatuses);
   }
 
   public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
