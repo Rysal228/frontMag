@@ -109,10 +109,6 @@ export class AppointmentApiService {
     return this.http.get<PaymentStatus[]>(API_ENDPOINTS.orders.paymentStatuses);
   }
 
-  public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
-    return this.http.post<Appointment>(API_ENDPOINTS.orders.paymentStatus(id), { statusId });
-  }
-
   public create(request: CreateAppointmentRequest): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.list, request);
   }
