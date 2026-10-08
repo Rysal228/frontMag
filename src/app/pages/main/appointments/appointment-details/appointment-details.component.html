@@ -85,15 +85,14 @@
         <div>
           <h2>Специалисты</h2>
           @if (appointment()!.permissions.canAssignMechanics) {
-            <tui-textfield multi>
+            <tui-textfield multi [stringify]="stringifyMechanic">
               <input
                 tuiMultiSelect
                 [formControl]="mechanicsControl"
-                [stringify]="stringifyMechanic"
                 placeholder="Выберите специалистов"
               />
               <ng-template tuiTextfieldDropdown>
-                <tui-data-list-wrapper new tuiMultiSelectGroup [items]="mechanicIds()" [stringify]="stringifyMechanic" />
+                <tui-data-list-wrapper new tuiMultiSelectGroup [items]="mechanicIds()" />
               </ng-template>
             </tui-textfield>
             <button
