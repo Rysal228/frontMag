@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiDataListWrapper, TuiMultiSelect } from '@taiga-ui/kit';
 
 import { Appointment } from 'app/shared/models/appointment.model';
@@ -15,7 +15,7 @@ import { UserService } from 'app/shared/services/user.service';
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [RouterLink, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper],
+  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper],
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
