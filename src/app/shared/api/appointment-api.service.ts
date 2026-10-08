@@ -101,6 +101,10 @@ export class AppointmentApiService {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionWorkStatus(id), { statusId });
   }
 
+  public updateMechanics(id: string, mechanics: string[]): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${API_ENDPOINTS.orders.list}${id}/`, { mechanics });
+  }
+
   public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.paymentStatus(id), { statusId });
   }
