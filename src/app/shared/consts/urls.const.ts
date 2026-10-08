@@ -28,5 +28,10 @@ export const API_ENDPOINTS = {
     workTypes: `/api/${version}/orders/work-type/`,
     availability: `/api/${version}/orders/availability/`,
     filterPermissions: `/api/${version}/orders/filter-permissions/`,
+    permissions: (id: string) => `/api/${version}/orders/${id}/permissions/`,
+    transitionStatus: (id: string) => `/api/${version}/orders/${id}/transition-status/`,
+    transitionWorkStatus: (id: string) => `/api/${version}/orders/${id}/transition-work-status/`,
+    paymentStatus: (id: string) => `/api/${version}/orders/${id}/payment-status/`,
+    paymentStatuses: `/api/${version}/orders/payment-status/`,
   },
 } as const;
