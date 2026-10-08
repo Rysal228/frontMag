@@ -87,12 +87,16 @@
           @if (appointment()!.permissions.canAssignMechanics) {
             <tui-textfield multi [stringify]="stringifyMechanic">
               <input
-                tuiMultiSelect
+                tuiInputChip
                 [formControl]="mechanicsControl"
                 placeholder="Выберите специалистов"
               />
+              <tui-input-chip *tuiItem />
               <ng-template tuiTextfieldDropdown>
-                <tui-data-list-wrapper new tuiMultiSelectGroup [items]="mechanicIds()" />
+                <tui-data-list-wrapper
+                  tuiMultiSelectGroup
+                  [items]="mechanics() | tuiFilterByInput"
+                />
               </ng-template>
             </tui-textfield>
             <button
