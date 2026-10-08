@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { CurrentUser, UpdateProfileRequest } from 'app/shared/models/user.model';
+import { CurrentUser, Mechanic, UpdateProfileRequest } from 'app/shared/models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,10 @@ export class UserService {
 
   public getProfile(): Observable<CurrentUser> {
     return this.http.get<{ user: CurrentUser }>(API_ENDPOINTS.users.profile).pipe(map(({ user }) => user));
+  }
+
+  public getMechanics(): Observable<Mechanic[]> {
+    return this.http.get<Mechanic[]>(`${API_ENDPOINTS.users.list}?role=mechanic`);
   }
 
   public updateProfile(profile: UpdateProfileRequest): Observable<CurrentUser> {
