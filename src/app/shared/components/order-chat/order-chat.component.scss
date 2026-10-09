@@ -1,0 +1,193 @@
+.order-chat {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 1rem;
+  background: var(--tui-background-base);
+}
+
+.chat-header,
+.message-meta,
+.composer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.chat-header h2 {
+  margin: 0;
+}
+
+.chat-header p,
+.composer-hint {
+  margin: .25rem 0 0;
+  color: var(--tui-text-secondary);
+  font-size: .875rem;
+}
+
+.connection {
+  flex: 0 0 auto;
+  color: var(--tui-text-secondary);
+  font-size: .875rem;
+}
+
+.connection_online {
+  color: var(--tui-status-positive);
+}
+
+.connection_offline {
+  color: var(--tui-status-negative);
+}
+
+.room-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.room-option {
+  display: grid;
+  gap: .25rem;
+  padding: .65rem .85rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: .75rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.room-option_active {
+  border-color: var(--tui-background-accent-1);
+  background: var(--tui-background-accent-1);
+  color: var(--tui-text-primary-on-accent-1);
+}
+
+.room-option small {
+  opacity: .8;
+}
+
+.chat-subtitle {
+  color: var(--tui-text-secondary);
+  font-size: .875rem;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  min-height: 12rem;
+  max-height: 28rem;
+  overflow-y: auto;
+  padding: .75rem;
+  border-radius: .75rem;
+  background: var(--tui-background-base-alt);
+}
+
+.message {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: min(85%, 42rem);
+  padding: .75rem;
+  border-radius: .75rem .75rem .75rem .2rem;
+  background: var(--tui-background-base);
+  overflow-wrap: anywhere;
+}
+
+.message_mine {
+  align-self: flex-end;
+  border-radius: .75rem .75rem .2rem .75rem;
+  background: var(--tui-background-accent-1);
+  color: var(--tui-text-primary-on-accent-1);
+}
+
+.message-meta {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  font-size: .8rem;
+}
+
+.message-meta time {
+  color: var(--tui-text-secondary);
+}
+
+.message p {
+  margin: .4rem 0 0;
+  white-space: pre-wrap;
+}
+
+.state {
+  margin: auto;
+  padding: 1.5rem .5rem;
+  color: var(--tui-text-secondary);
+  text-align: center;
+}
+
+.chat-error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+  color: var(--tui-status-negative);
+}
+
+.chat-error button {
+  flex: 0 0 auto;
+}
+
+.composer {
+  align-items: stretch;
+}
+
+.composer textarea {
+  flex: 1 1 auto;
+  min-width: 0;
+  resize: vertical;
+  padding: .75rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: .75rem;
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  font: inherit;
+}
+
+.composer button {
+  align-self: flex-end;
+  padding: .75rem 1rem;
+  border: 0;
+  border-radius: .75rem;
+  background: var(--tui-background-accent-1);
+  color: var(--tui-text-primary-on-accent-1);
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+@media (max-width: 600px) {
+  .order-chat {
+    padding: .75rem;
+  }
+
+  .chat-header {
+    align-items: flex-start;
+  }
+
+  .message {
+    max-width: 95%;
+  }
+
+  .composer {
+    flex-direction: column;
+  }
+
+  .composer button {
+    align-self: stretch;
+  }
+}
