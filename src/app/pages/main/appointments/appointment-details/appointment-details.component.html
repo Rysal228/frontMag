@@ -85,17 +85,39 @@
         <div>
           <h2>Специалисты</h2>
           @if (appointment()!.permissions.canAssignMechanics) {
-            <tui-textfield multi [stringify]="stringifyMechanic">
+            <tui-textfield
+              #input
+              multi
+              [stringify]="stringifyMechanic"
+              [content]="
+                !input.focused() && mechanicsControl.value.length
+                  ? 'Выбрано специалистов: ' + mechanicsControl.value.length
+                  : ''
+              "
+            >
+              <label tuiLabel>Специалисты</label>
               <input
                 tuiInputChip
                 [formControl]="mechanicsControl"
+                [placeholder]="
+                  mechanicsControl.value.length
+                    ? ''
+                    : 'Поиск по ФИО или телефону'
+                "
                 (input)="searchMechanics($event)"
-                placeholder="Введите ФИО или телефон"
               />
-              <tui-input-chip *tuiItem />
-              <ng-template tuiTextfieldDropdown>
-                <tui-data-list-wrapper tuiMultiSelectGroup new [items]="mechanics()" />
-              </ng-template>
+              @if (!input.focused()) {
+                <ng-template tuiItem />
+              }
+              @if (availableMechanics().length) {
+                <ng-template tuiTextfieldDropdown>
+                  <tui-data-list-wrapper
+                    tuiMultiSelectGroup
+                    new
+                    [items]="availableMechanics()"
+                  />
+                </ng-template>
+              }
             </tui-textfield>
             <button
               tuiButton
