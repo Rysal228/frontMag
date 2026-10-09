@@ -24,6 +24,10 @@ export const API_ENDPOINTS = {
     models: `/api/${version}/cars/models/`,
   },
   news: { list: `/api/${version}/news/` },
+  chats: {
+    orderRooms: (orderId: string) => `/api/${version}/chats/orders/${orderId}/`,
+    messages: (roomId: string) => `/api/${version}/chats/rooms/${roomId}/messages/`,
+  },
   orders: {
     list: `/api/${version}/orders/`,
     statuses: `/api/${version}/orders/order-status/`,
