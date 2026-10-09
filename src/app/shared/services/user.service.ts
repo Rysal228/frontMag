@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
@@ -15,8 +15,18 @@ export class UserService {
     return this.http.get<{ user: CurrentUser }>(API_ENDPOINTS.users.profile).pipe(map(({ user }) => user));
   }
 
-  public getMechanics(): Observable<Mechanic[]> {
-    return this.http.get<Mechanic[]>(`${API_ENDPOINTS.users.list}?role=mechanic`);
+  public getMechanics(search = '', ids: string[] = []): Observable<Mechanic[]> {
+    let params = new HttpParams().set('role', 'mechanic');
+
+    if (search.trim()) {
+      params = params.set('search', search.trim());
+    }
+
+    if (ids.length) {
+      params = params.set('ids', ids.join(','));
+    }
+
+    return this.http.get<Mechanic[]>(API_ENDPOINTS.users.list, { params });
   }
 
   public updateProfile(profile: UpdateProfileRequest): Observable<CurrentUser> {
