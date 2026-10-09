@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { ChatMessage, ChatRoom, ChatSocketEvent } from 'app/shared/models/chat.model';
-import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { OrderChatApiService } from 'app/shared/api/order-chat-api.service';
+import { ChatMessage, ChatRoom, ChatSocketEvent } from 'app/shared/models/chat.model';
 import { OrderChatSocketService } from 'app/shared/services/order-chat-socket.service';
+import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 
 @Component({
   selector: 'app-order-chat',
@@ -151,6 +151,9 @@ export class OrderChatComponent implements OnInit {
 
     this.isConnecting.set(false);
     this.isConnected.set(false);
+    if (event.code !== 1000) {
+      this.errorMessage.set('Соединение с чатом закрыто. Попробуйте подключиться повторно.');
+    }
   }
 
   private mergeMessages(current: ChatMessage[], incoming: ChatMessage[]): ChatMessage[] {
