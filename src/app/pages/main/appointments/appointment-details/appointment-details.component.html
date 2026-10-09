@@ -89,13 +89,14 @@
               <input
                 tuiInputChip
                 [formControl]="mechanicsControl"
-                placeholder="Выберите специалистов"
+                (input)="searchMechanics($event)"
+                placeholder="Поиск по ФИО или телефону"
               />
               <tui-input-chip *tuiItem />
               <ng-template tuiTextfieldDropdown>
                 <tui-data-list-wrapper
                   tuiMultiSelectGroup
-                  [items]="mechanics() | tuiFilterByInput"
+                  [items]="mechanics()"
                 />
               </ng-template>
             </tui-textfield>
