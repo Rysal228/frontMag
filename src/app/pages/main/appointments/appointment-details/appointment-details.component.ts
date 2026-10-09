@@ -1,10 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, of, Subject, switchMap, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { TuiButton, TuiFilterByInputPipe, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiDataListWrapper, TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
 
 import { Appointment } from 'app/shared/models/appointment.model';
@@ -15,13 +16,15 @@ import { UserService } from 'app/shared/services/user.service';
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper, TuiInputChip, TuiFilterByInputPipe],
+  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper, TuiInputChip],
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppointmentDetailsComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly mechanicSearch$ = new Subject<string>();
   private readonly appointmentService = inject(AppointmentService);
   private readonly userService = inject(UserService);
 
@@ -35,6 +38,23 @@ export class AppointmentDetailsComponent {
     `${mechanic.lastName} ${mechanic.firstName} ${mechanic.patronymic}`.trim();
 
   constructor() {
+    this.mechanicSearch$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((search) => {
+          const selectedIds = this.mechanicsControl.getRawValue().map(({ id }) => id);
+          if (search.trim().length < 2) {
+            return this.userService.getMechanics('', selectedIds);
+          }
+
+          return this.userService.getMechanics(search, selectedIds);
+        }),
+        tap((mechanics) => this.mechanics.set(mechanics)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       this.appointment.set(null);
@@ -52,7 +72,7 @@ export class AppointmentDetailsComponent {
           next: (appointment) => {
             this.appointment.set(appointment);
             if (appointment.permissions.canAssignMechanics) {
-              this.userService.getMechanics().subscribe({
+              this.userService.getMechanics('', appointment.mechanics).subscribe({
                 next: (mechanics) => {
                   this.mechanics.set(mechanics);
                   this.mechanicsControl.setValue(
@@ -70,6 +90,11 @@ export class AppointmentDetailsComponent {
           error: () => this.hasError.set(true),
         });
     });
+  }
+
+  protected searchMechanics(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? '';
+    this.mechanicSearch$.next(value);
   }
 
   protected saveMechanics(): void {
