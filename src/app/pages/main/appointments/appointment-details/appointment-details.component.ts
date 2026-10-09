@@ -97,6 +97,12 @@ export class AppointmentDetailsComponent {
     });
   }
 
+  protected availableMechanics(): Mechanic[] {
+    const selectedIds = new Set(this.mechanicsControl.getRawValue().map(({ id }) => id));
+
+    return this.mechanics().filter(({ id }) => !selectedIds.has(id));
+  }
+
   protected searchMechanics(event: Event): void {
     const value = (event.target as HTMLInputElement | null)?.value ?? '';
     this.mechanicSearch$.next(value);
