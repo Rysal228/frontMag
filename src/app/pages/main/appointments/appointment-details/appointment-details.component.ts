@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged, finalize, Subject, switchMap, tap }
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiDataListWrapper, TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
+
 
 import { Appointment } from 'app/shared/models/appointment.model';
 import { Mechanic } from 'app/shared/models/user.model';
@@ -16,7 +16,7 @@ import { UserService } from 'app/shared/services/user.service';
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield, TuiMultiSelect, TuiDataListWrapper, TuiInputChip],
+  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield],
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,13 +34,7 @@ export class AppointmentDetailsComponent {
   protected readonly mechanics = signal<Mechanic[]>([]);
   protected readonly isSavingMechanics = signal(false);
   protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
-  protected readonly stringifyMechanic = (value: Mechanic | string): string => {
-    if (typeof value === 'string') {
-      return value;
-    }
-
-    return `${value.lastName} ${value.firstName} ${value.patronymic}`.trim();
-  };
+  protected readonly mechanicSearchControl = new FormControl('', { nonNullable: true });
 
   constructor() {
     this.mechanicSearch$
@@ -103,9 +97,29 @@ export class AppointmentDetailsComponent {
     return this.mechanics().filter(({ id }) => !selectedIds.has(id));
   }
 
-  protected searchMechanics(event: Event): void {
-    const value = (event.target as HTMLInputElement | null)?.value ?? '';
-    this.mechanicSearch$.next(value);
+  protected searchMechanics(): void {
+    this.mechanicSearch$.next(this.mechanicSearchControl.getRawValue());
+  }
+
+  protected selectMechanic(mechanic: Mechanic): void {
+    const selected = this.mechanicsControl.getRawValue();
+
+    if (selected.some(({ id }) => id === mechanic.id)) {
+      return;
+    }
+
+    this.mechanicsControl.setValue([...selected, mechanic]);
+    this.mechanicsControl.markAsDirty();
+    this.mechanicSearchControl.setValue('');
+    this.mechanicSearch$.next('');
+  }
+
+  protected removeMechanic(mechanicId: string): void {
+    this.mechanicsControl.setValue(
+      this.mechanicsControl.getRawValue().filter(({ id }) => id !== mechanicId),
+    );
+    this.mechanicsControl.markAsDirty();
+    this.mechanicSearch$.next(this.mechanicSearchControl.getRawValue());
   }
 
   protected saveMechanics(): void {
