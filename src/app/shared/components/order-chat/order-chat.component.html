@@ -79,7 +79,7 @@
           maxlength="5000"
           placeholder="Введите сообщение…"
           aria-label="Текст сообщения"
-          (keydown.enter)="$event.shiftKey || $event.preventDefault(); $event.shiftKey || sendMessage()"
+          (keydown.enter)="onComposerKeydown($event)"
         ></textarea>
         <button
           type="submit"
