@@ -5,7 +5,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, finalize, Subject, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDropdown, TuiIcon, TuiOption, TuiTextfield } from '@taiga-ui/core';
+import { TuiInputChip, TuiMultiSelectGroup } from '@taiga-ui/kit';
 
 
 import { Appointment } from 'app/shared/models/appointment.model';
@@ -16,7 +17,7 @@ import { UserService } from 'app/shared/services/user.service';
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [RouterLink, TuiButton, TuiIcon, DatePipe, ReactiveFormsModule, TuiTextfield],
+  imports: [RouterLink, TuiButton, TuiDataList, TuiDropdown, TuiIcon, TuiInputChip, TuiMultiSelectGroup, TuiOption, DatePipe, ReactiveFormsModule, TuiTextfield],
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +25,8 @@ import { UserService } from 'app/shared/services/user.service';
 export class AppointmentDetailsComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly mechanicSearch$ = new Subject<string>();
+  private readonly mechanicSearch$ = new Subject<{ search: string; selectedIds: string[] }>();
+  private mechanicSearchText = '';
   private readonly appointmentService = inject(AppointmentService);
   private readonly userService = inject(UserService);
 
@@ -34,25 +36,36 @@ export class AppointmentDetailsComponent {
   protected readonly mechanics = signal<Mechanic[]>([]);
   protected readonly isSavingMechanics = signal(false);
   protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
-  protected readonly mechanicSearchControl = new FormControl('', { nonNullable: true });
+  protected readonly stringifyMechanic = (item: unknown): string => {
+    if (!this.isMechanic(item)) {
+      return typeof item === 'string' ? item : '';
+    }
+
+    return [item.lastName, item.firstName, item.patronymic].filter(Boolean).join(' ');
+  };
+  protected readonly disabledMechanic = (item: unknown): boolean => !this.isMechanic(item);
 
   constructor() {
     this.mechanicSearch$
       .pipe(
         debounceTime(300),
-        distinctUntilChanged(),
-        switchMap((search) => {
-          const selectedIds = this.mechanicsControl.getRawValue().map(({ id }) => id);
-          if (search.trim().length < 2) {
-            return this.userService.getMechanics('', selectedIds);
-          }
-
-          return this.userService.getMechanics(search, selectedIds);
-        }),
+        distinctUntilChanged(
+          (previous, current) =>
+            previous.search === current.search &&
+            previous.selectedIds.length === current.selectedIds.length &&
+            previous.selectedIds.every((id, index) => id === current.selectedIds[index]),
+        ),
+        switchMap(({ search, selectedIds }) =>
+          this.userService.getMechanics(search.trim().length < 2 ? '' : search.trim(), selectedIds),
+        ),
         tap((mechanics) => this.mechanics.set(mechanics)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+
+    this.mechanicsControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.queueMechanicSearch());
 
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
@@ -92,34 +105,39 @@ export class AppointmentDetailsComponent {
   }
 
   protected availableMechanics(): Mechanic[] {
-    const selectedIds = new Set(this.mechanicsControl.getRawValue().map(({ id }) => id));
+    const selectedIds = new Set(
+      this.mechanicsControl.getRawValue()
+        .filter((item): item is Mechanic => this.isMechanic(item))
+        .map(({ id }) => id),
+    );
 
     return this.mechanics().filter(({ id }) => !selectedIds.has(id));
   }
 
-  protected searchMechanics(): void {
-    this.mechanicSearch$.next(this.mechanicSearchControl.getRawValue());
+  protected searchMechanics(event: Event): void {
+    this.queueMechanicSearch((event.target as HTMLInputElement).value);
   }
 
-  protected selectMechanic(mechanic: Mechanic): void {
-    const selected = this.mechanicsControl.getRawValue();
+  private queueMechanicSearch(search = this.mechanicSearchText): void {
+    this.mechanicSearchText = search;
+    const selectedIds = this.mechanicsControl.getRawValue()
+      .filter((item): item is Mechanic => this.isMechanic(item))
+      .map(({ id }) => id);
 
-    if (selected.some(({ id }) => id === mechanic.id)) {
-      return;
+    this.mechanicSearch$.next({ search, selectedIds });
+  }
+
+  private isMechanic(item: unknown): item is Mechanic {
+    if (typeof item !== 'object' || item === null) {
+      return false;
     }
 
-    this.mechanicsControl.setValue([...selected, mechanic]);
-    this.mechanicsControl.markAsDirty();
-    this.mechanicSearchControl.setValue('');
-    this.mechanicSearch$.next('');
-  }
+    const mechanic = item as Partial<Mechanic>;
 
-  protected removeMechanic(mechanicId: string): void {
-    this.mechanicsControl.setValue(
-      this.mechanicsControl.getRawValue().filter(({ id }) => id !== mechanicId),
-    );
-    this.mechanicsControl.markAsDirty();
-    this.mechanicSearch$.next(this.mechanicSearchControl.getRawValue());
+    return typeof mechanic.id === 'string' &&
+      typeof mechanic.firstName === 'string' &&
+      typeof mechanic.lastName === 'string' &&
+      typeof mechanic.patronymic === 'string';
   }
 
   protected saveMechanics(): void {
@@ -131,7 +149,9 @@ export class AppointmentDetailsComponent {
     this.isSavingMechanics.set(true);
     this.appointmentService.updateMechanics(
       appointment.id,
-      this.mechanicsControl.getRawValue().map(({ id }) => id),
+      this.mechanicsControl.getRawValue()
+        .filter((item): item is Mechanic => this.isMechanic(item))
+        .map(({ id }) => id),
     ).subscribe({
       next: (updated) => {
         this.appointment.set(updated);
