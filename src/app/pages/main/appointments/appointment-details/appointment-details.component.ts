@@ -18,6 +18,7 @@ import { TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
 import { Appointment } from 'app/shared/models/appointment.model';
 import { Mechanic } from 'app/shared/models/user.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { OrderChatComponent } from 'app/shared/components/order-chat/order-chat.component';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({
@@ -25,6 +26,7 @@ import { UserService } from 'app/shared/services/user.service';
   standalone: true,
   imports: [
     RouterLink,
+    OrderChatComponent,
     TuiButton,
     TuiDataList,
     TuiTextfieldDropdownDirective,
