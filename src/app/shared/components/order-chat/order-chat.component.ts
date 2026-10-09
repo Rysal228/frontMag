@@ -79,9 +79,10 @@ export class OrderChatComponent implements OnInit {
     this.socket.connect(room.id);
   }
 
-  protected onComposerKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
+  protected onComposerKeydown(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
+      keyboardEvent.preventDefault();
       this.sendMessage();
     }
   }
