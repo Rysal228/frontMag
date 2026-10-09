@@ -1,0 +1,94 @@
+<section class="order-chat" aria-label="Чат заказа">
+  <header class="chat-header">
+    <div>
+      <h2>Обсуждение заказа</h2>
+      <p>Сообщения сохраняются в истории заказа</p>
+    </div>
+    @if (isConnected()) {
+      <span class="connection connection_online">В сети</span>
+    } @else if (isConnecting()) {
+      <span class="connection">Подключение…</span>
+    } @else {
+      <span class="connection connection_offline">Нет соединения</span>
+    }
+  </header>
+
+  @if (isLoadingRooms()) {
+    <p class="state">Загрузка чатов…</p>
+  } @else if (!rooms().length) {
+    <p class="state">Для этого заказа пока нет доступных чатов.</p>
+  } @else {
+    @if (rooms().length > 1) {
+      <nav class="room-list" aria-label="Переписки заказа">
+        @for (room of rooms(); track room.id) {
+          <button
+            type="button"
+            class="room-option"
+            [class.room-option_active]="selectedRoom()?.id === room.id"
+            (click)="connectRoom(room)"
+          >
+            <span>{{ room.typeLabel }}</span>
+            @if (room.mechanicName) {
+              <small>{{ room.mechanicName }}</small>
+            }
+          </button>
+        }
+      </nav>
+    }
+
+    @if (selectedRoom(); as room) {
+      <div class="chat-subtitle">
+        <strong>{{ room.typeLabel }}</strong>
+        @if (room.mechanicName) {
+          <span> · {{ room.mechanicName }}</span>
+        }
+      </div>
+
+      <div class="messages" aria-live="polite">
+        @if (isLoadingMessages() && !messages().length) {
+          <p class="state">Загрузка истории сообщений…</p>
+        } @else if (!messages().length && isConnected()) {
+          <p class="state">Пока нет сообщений. Начните обсуждение.</p>
+        } @else {
+          @for (message of messages(); track message.id) {
+            <article
+              class="message"
+              [class.message_mine]="message.senderId === currentUserId()"
+            >
+              <div class="message-meta">
+                <strong>{{ message.senderName }}</strong>
+                <time [attr.datetime]="message.createdAt">{{ message.createdAt | date: 'dd.MM HH:mm' }}</time>
+              </div>
+              <p>{{ message.text }}</p>
+            </article>
+          }
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="chat-error" role="alert">
+          <span>{{ errorMessage() }}</span>
+          <button type="button" (click)="reconnect()">Переподключить</button>
+        </div>
+      }
+
+      <form class="composer" (submit)="$event.preventDefault(); sendMessage()">
+        <textarea
+          [formControl]="messageControl"
+          rows="2"
+          maxlength="5000"
+          placeholder="Введите сообщение…"
+          aria-label="Текст сообщения"
+          (keydown.enter)="$event.shiftKey || $event.preventDefault(); $event.shiftKey || sendMessage()"
+        ></textarea>
+        <button
+          type="submit"
+          [disabled]="!isConnected() || !messageControl.value.trim() || messageControl.invalid || isSending()"
+        >
+          Отправить
+        </button>
+      </form>
+      <p class="composer-hint">Enter — отправить, Shift + Enter — новая строка</p>
+    }
+  }
+</section>
