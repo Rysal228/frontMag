@@ -124,6 +124,8 @@
         </div>
       </section>
 
+      <app-order-chat [orderId]="appointment()!.id" />
+
       <section class="total">
         <span>Итого</span>
         <strong>{{ appointment()!.price }} ₽</strong>
