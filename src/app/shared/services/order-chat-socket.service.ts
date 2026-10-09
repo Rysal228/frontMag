@@ -2,8 +2,8 @@ import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { TokenStore } from 'app/shared/storage/token-store';
 import { ChatSocketEvent } from 'app/shared/models/chat.model';
+import { TokenStore } from 'app/shared/storage/token-store';
 
 @Injectable({ providedIn: 'root' })
 export class OrderChatSocketService {
@@ -29,9 +29,7 @@ export class OrderChatSocketService {
 
     const location = this.document.location;
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(
-      `${protocol}//${location.host}/ws/chats/${roomId}/`
-    );
+    const socket = new WebSocket(`${protocol}//${location.host}/ws/chats/${roomId}/`);
     this.socket = socket;
 
     socket.onopen = () => {
