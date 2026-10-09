@@ -85,12 +85,8 @@
         <div>
           <h2>Специалисты</h2>
           @if (appointment()!.permissions.canAssignMechanics) {
-            <tui-textfield
-              multi
-              [stringify]="stringifyMechanic"
-              [disabledItemHandler]="disabledMechanic"
-            >
-              <label tuiLabel>Поиск специалистов</label>
+            <tui-textfield multi [stringify]="stringifyMechanic" [disabledItemHandler]="disabledMechanic">
+              <label tuiLabel>Выберите специалистов</label>
               <input
                 tuiInputChip
                 [formControl]="mechanicsControl"
@@ -99,9 +95,9 @@
               />
               <tui-input-chip *tuiItem />
               @if (availableMechanics().length) {
-                <tui-data-list *tuiDropdown tuiMultiSelectGroup>
+                <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
                   @for (mechanic of availableMechanics(); track mechanic.id) {
-                    <button tuiOption [value]="mechanic">
+                    <button tuiOption new [value]="mechanic">
                       {{ stringifyMechanic(mechanic) }}
                       @if (mechanic.phone) {
                         ({{ mechanic.phone }})
