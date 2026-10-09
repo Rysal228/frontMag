@@ -34,8 +34,13 @@ export class AppointmentDetailsComponent {
   protected readonly mechanics = signal<Mechanic[]>([]);
   protected readonly isSavingMechanics = signal(false);
   protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
-  protected readonly stringifyMechanic = (mechanic: Mechanic): string =>
-    `${mechanic.lastName} ${mechanic.firstName} ${mechanic.patronymic}`.trim();
+  protected readonly stringifyMechanic = (value: Mechanic | string): string => {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    return `${value.lastName} ${value.firstName} ${value.patronymic}`.trim();
+  };
 
   constructor() {
     this.mechanicSearch$
@@ -97,12 +102,24 @@ export class AppointmentDetailsComponent {
     this.mechanicSearch$.next(value);
   }
 
+  protected cleanMechanicSelection(): void {
+    const value = this.mechanicsControl.getRawValue() as unknown[];
+    const selectedMechanics = value.filter(
+      (item): item is Mechanic => typeof item === 'object' && item !== null && 'id' in item,
+    );
+
+    if (selectedMechanics.length !== value.length) {
+      this.mechanicsControl.setValue(selectedMechanics);
+    }
+  }
+
   protected saveMechanics(): void {
     const appointment = this.appointment();
     if (!appointment || !appointment.permissions.canAssignMechanics || this.mechanicsControl.pristine) {
       return;
     }
 
+    this.cleanMechanicSelection();
     this.isSavingMechanics.set(true);
     this.appointmentService.updateMechanics(
       appointment.id,
