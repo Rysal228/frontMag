@@ -102,24 +102,12 @@ export class AppointmentDetailsComponent {
     this.mechanicSearch$.next(value);
   }
 
-  protected cleanMechanicSelection(): void {
-    const value = this.mechanicsControl.getRawValue() as unknown[];
-    const selectedMechanics = value.filter(
-      (item): item is Mechanic => typeof item === 'object' && item !== null && 'id' in item,
-    );
-
-    if (selectedMechanics.length !== value.length) {
-      this.mechanicsControl.setValue(selectedMechanics);
-    }
-  }
-
   protected saveMechanics(): void {
     const appointment = this.appointment();
     if (!appointment || !appointment.permissions.canAssignMechanics || this.mechanicsControl.pristine) {
       return;
     }
 
-    this.cleanMechanicSelection();
     this.isSavingMechanics.set(true);
     this.appointmentService.updateMechanics(
       appointment.id,
