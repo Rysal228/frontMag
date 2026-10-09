@@ -85,53 +85,32 @@
         <div>
           <h2>Специалисты</h2>
           @if (appointment()!.permissions.canAssignMechanics) {
-            <tui-textfield>
+            <tui-textfield
+              multi
+              [stringify]="stringifyMechanic"
+              [disabledItemHandler]="disabledMechanic"
+            >
               <label tuiLabel>Поиск специалистов</label>
               <input
-                tuiTextfield
-                [formControl]="mechanicSearchControl"
-                placeholder="Введите ФИО или телефон"
-                (input)="searchMechanics()"
+                tuiInputChip
+                [formControl]="mechanicsControl"
+                [placeholder]="mechanicsControl.value.length ? '' : 'Введите ФИО или телефон'"
+                (input)="searchMechanics($event)"
               />
-            </tui-textfield>
-
-            @if (mechanicsControl.value.length) {
-              <div class="selected-mechanics">
-                @for (mechanic of mechanicsControl.value; track mechanic.id) {
-                  <span class="selected-mechanic">
-                    {{ mechanic.lastName }} {{ mechanic.firstName }} {{ mechanic.patronymic }}
-                    <button
-                      type="button"
-                      class="remove-mechanic"
-                      [attr.aria-label]="'Убрать ' + mechanic.lastName + ' ' + mechanic.firstName"
-                      (click)="removeMechanic(mechanic.id)"
-                    >
-                      <tui-icon icon="@tui.x" />
+              <tui-input-chip *tuiItem />
+              @if (availableMechanics().length) {
+                <tui-data-list *tuiDropdown tuiMultiSelectGroup>
+                  @for (mechanic of availableMechanics(); track mechanic.id) {
+                    <button tuiOption [value]="mechanic">
+                      {{ stringifyMechanic(mechanic) }}
+                      @if (mechanic.phone) {
+                        ({{ mechanic.phone }})
+                      }
                     </button>
-                  </span>
-                }
-              </div>
-            }
-
-            @if (mechanicSearchControl.value.trim().length >= 2 && availableMechanics().length) {
-              <div class="mechanic-suggestions" role="listbox" aria-label="Найденные специалисты">
-                @for (mechanic of availableMechanics(); track mechanic.id) {
-                  <button
-                    type="button"
-                    class="mechanic-suggestion"
-                    role="option"
-                    (click)="selectMechanic(mechanic)"
-                  >
-                    <span>{{ mechanic.lastName }} {{ mechanic.firstName }} {{ mechanic.patronymic }}</span>
-                    @if (mechanic.phone) {
-                      <small>{{ mechanic.phone }}</small>
-                    }
-                  </button>
-                }
-              </div>
-            } @else if (mechanicSearchControl.value.trim().length >= 2) {
-              <p class="mechanic-search-empty">Специалисты не найдены.</p>
-            }
+                  }
+                </tui-data-list>
+              }
+            </tui-textfield>
             <button
               tuiButton
               appearance="primary"
