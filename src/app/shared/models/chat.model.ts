@@ -1,11 +1,21 @@
 export type ChatRoomType = 'customer_manager' | 'manager_mechanic';
 
+export type ChatAttachment = {
+  id: string;
+  originalName: string;
+  contentType: string;
+  size: number;
+  downloadUrl: string;
+  createdAt: string;
+};
+
 export type ChatMessage = {
   id: string;
   senderId: string;
   senderName: string;
   text: string;
   createdAt: string;
+  attachments: ChatAttachment[];
 };
 
 export type ChatRoom = {
