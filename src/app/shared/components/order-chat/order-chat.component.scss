@@ -1,4 +1,4 @@
-.order-chat {
+ .order-chat {
   display: grid;
   gap: 1rem;
   min-width: 0;
@@ -71,11 +71,6 @@
   opacity: .8;
 }
 
-.chat-subtitle {
-  color: var(--tui-text-secondary);
-  font-size: .875rem;
-}
-
 .messages {
   display: flex;
   flex-direction: column;
@@ -120,11 +115,83 @@
   white-space: pre-wrap;
 }
 
-.state {
-  margin: auto;
-  padding: 1.5rem .5rem;
+.attachments {
+  display: grid;
+  gap: .4rem;
+  margin: .5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.attachment-link {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  max-width: 100%;
+  padding: .55rem .65rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: .5rem;
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.attachment-icon {
+  font-size: 1.25rem;
+}
+
+.attachment-details {
+  display: grid;
+  min-width: 0;
+  gap: .15rem;
+}
+
+.attachment-details strong {
+  overflow-wrap: anywhere;
+}
+
+.attachment-details small {
   color: var(--tui-text-secondary);
-  text-align: center;
+}
+
+.selected-files {
+  display: grid;
+  gap: .4rem;
+}
+
+.selected-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+  padding: .5rem .65rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: .5rem;
+}
+
+.selected-file span {
+  overflow-wrap: anywhere;
+}
+
+.selected-file small {
+  color: var(--tui-text-secondary);
+}
+
+.selected-file button {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.attachment-error {
+  margin: 0;
+  color: var(--tui-status-negative);
+  font-size: .875rem;
 }
 
 .chat-error {
@@ -140,7 +207,15 @@
 }
 
 .composer {
+  align-items: flex-end;
+}
+
+.composer-inputs {
+  display: flex;
   align-items: stretch;
+  gap: .5rem;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .composer textarea {
@@ -155,7 +230,29 @@
   font: inherit;
 }
 
-.composer button {
+.attach-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  padding: .65rem .8rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: .75rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.attach-button input {
+  display: none;
+}
+
+.attach-button_disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.composer > button {
+  flex: 0 0 auto;
   align-self: flex-end;
   padding: .75rem 1rem;
   border: 0;
@@ -165,9 +262,13 @@
   cursor: pointer;
 }
 
-.composer button:disabled {
+.composer > button:disabled {
   cursor: not-allowed;
   opacity: .5;
+}
+
+.composer-hint {
+  margin: -.5rem 0 0;
 }
 
 @media (max-width: 600px) {
@@ -183,11 +284,17 @@
     max-width: 95%;
   }
 
-  .composer {
+  .composer,
+  .composer-inputs {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .composer button {
+  .attach-button {
+    align-self: flex-start;
+  }
+
+  .composer > button {
     align-self: stretch;
   }
 }
