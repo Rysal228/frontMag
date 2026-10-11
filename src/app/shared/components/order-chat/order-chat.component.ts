@@ -4,9 +4,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { OrderChatApiService } from 'app/shared/api/order-chat-api.service';
-import { ChatMessage, ChatRoom, ChatSocketEvent } from 'app/shared/models/chat.model';
+import { ChatAttachment, ChatMessage, ChatRoom, ChatSocketEvent } from 'app/shared/models/chat.model';
 import { OrderChatSocketService } from 'app/shared/services/order-chat-socket.service';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
+
+const MAX_FILES = 5;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ACCEPTED_FILE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
 
 @Component({
   selector: 'app-order-chat',
@@ -27,12 +31,14 @@ export class OrderChatComponent implements OnInit {
   protected readonly rooms = signal<ChatRoom[]>([]);
   protected readonly selectedRoom = signal<ChatRoom | null>(null);
   protected readonly messages = signal<ChatMessage[]>([]);
+  protected readonly selectedFiles = signal<File[]>([]);
   protected readonly isLoadingRooms = signal(true);
   protected readonly isLoadingMessages = signal(false);
   protected readonly isConnecting = signal(false);
   protected readonly isConnected = signal(false);
   protected readonly isSending = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly attachmentError = signal<string | null>(null);
   protected readonly messageControl = new FormControl('', {
     nonNullable: true,
     validators: [Validators.maxLength(5000)],
@@ -72,6 +78,8 @@ export class OrderChatComponent implements OnInit {
     this.socket.disconnect();
     this.selectedRoom.set(room);
     this.messages.set([]);
+    this.selectedFiles.set([]);
+    this.attachmentError.set(null);
     this.errorMessage.set(null);
     this.isConnected.set(false);
     this.isConnecting.set(true);
@@ -87,15 +95,76 @@ export class OrderChatComponent implements OnInit {
     }
   }
 
+  protected onFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const incoming = Array.from(input.files ?? []);
+    input.value = '';
+
+    if (!incoming.length) {
+      return;
+    }
+
+    const combined = [...this.selectedFiles(), ...incoming];
+    if (combined.length > MAX_FILES) {
+      this.attachmentError.set('Можно прикрепить не более 5 файлов к одному сообщению.');
+      return;
+    }
+
+    const invalidFile = incoming.find((file) => {
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      const validExtension = ['jpg', 'jpeg', 'png', 'webp', 'pdf'].includes(extension ?? '');
+      return file.size > MAX_FILE_SIZE || !validExtension || !ACCEPTED_FILE_TYPES.has(file.type);
+    });
+
+    if (invalidFile) {
+      this.attachmentError.set(
+        invalidFile.size > MAX_FILE_SIZE
+          ? `Файл «${invalidFile.name}» превышает 10 МБ.`
+          : `Формат файла «${invalidFile.name}» не поддерживается. Разрешены JPEG, PNG, WebP и PDF.`,
+      );
+      return;
+    }
+
+    this.selectedFiles.set(combined);
+    this.attachmentError.set(null);
+  }
+
+  protected removeSelectedFile(index: number): void {
+    this.selectedFiles.update((files) => files.filter((_, fileIndex) => fileIndex !== index));
+    this.attachmentError.set(null);
+  }
+
   protected sendMessage(): void {
     const text = this.messageControl.value.trim();
     const room = this.selectedRoom();
+    const files = this.selectedFiles();
 
-    if (!text || !room || this.isSending() || !this.isConnected()) {
+    if ((!text && !files.length) || !room || this.isSending() || !this.isConnected()) {
       return;
     }
 
     this.isSending.set(true);
+    this.errorMessage.set(null);
+
+    if (files.length) {
+      this.api.sendMessageWithAttachments(room.id, text, files)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (message) => {
+            this.messages.update((current) => this.mergeMessages(current, [message]));
+            this.messageControl.setValue('');
+            this.selectedFiles.set([]);
+            this.attachmentError.set(null);
+            this.isSending.set(false);
+          },
+          error: () => {
+            this.errorMessage.set('Не удалось отправить сообщение с файлами. Попробуйте ещё раз.');
+            this.isSending.set(false);
+          },
+        });
+      return;
+    }
+
     const sent = this.socket.sendMessage(text);
     if (!sent) {
       this.isSending.set(false);
@@ -106,6 +175,29 @@ export class OrderChatComponent implements OnInit {
 
     this.messageControl.setValue('');
     this.isSending.set(false);
+  }
+
+  protected downloadAttachment(attachment: ChatAttachment): void {
+    this.api.downloadAttachment(attachment.downloadUrl)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = attachment.originalName;
+          anchor.click();
+          URL.revokeObjectURL(url);
+        },
+        error: () => this.errorMessage.set(`Не удалось скачать файл «${attachment.originalName}».`),
+      });
+  }
+
+  protected formatFileSize(size: number): string {
+    if (size < 1024 * 1024) {
+      return `${Math.max(1, Math.round(size / 1024))} КБ`;
+    }
+    return `${(size / (1024 * 1024)).toFixed(1)} МБ`;
   }
 
   protected reconnect(): void {
