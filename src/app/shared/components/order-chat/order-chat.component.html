@@ -49,7 +49,24 @@
                 <strong>{{ message.senderName }}</strong>
                 <time [attr.datetime]="message.createdAt">{{ message.createdAt | date: 'dd.MM HH:mm' }}</time>
               </div>
-              <p>{{ message.text }}</p>
+              @if (message.text) {
+                <p>{{ message.text }}</p>
+              }
+              @if (message.attachments.length) {
+                <ul class="attachments">
+                  @for (attachment of message.attachments; track attachment.id) {
+                    <li>
+                      <button type="button" class="attachment-link" (click)="downloadAttachment(attachment)">
+                        <span class="attachment-icon" aria-hidden="true">↧</span>
+                        <span class="attachment-details">
+                          <strong>{{ attachment.originalName }}</strong>
+                          <small>{{ formatFileSize(attachment.size) }}</small>
+                        </span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
             </article>
           }
         }
@@ -62,22 +79,51 @@
         </div>
       }
 
+      @if (selectedFiles().length) {
+        <div class="selected-files" aria-label="Прикреплённые файлы">
+          @for (file of selectedFiles(); track $index) {
+            <div class="selected-file">
+              <span>{{ file.name }} <small>({{ formatFileSize(file.size) }})</small></span>
+              <button type="button" aria-label="Убрать файл" (click)="removeSelectedFile($index)">×</button>
+            </div>
+          }
+        </div>
+      }
+
+      @if (attachmentError()) {
+        <p class="attachment-error" role="alert">{{ attachmentError() }}</p>
+      }
+
       <form class="composer" (submit)="$event.preventDefault(); sendMessage()">
-        <textarea
-          [formControl]="messageControl"
-          rows="2"
-          maxlength="5000"
-          placeholder="Введите сообщение…"
-          aria-label="Текст сообщения"
-          (keydown.enter)="onComposerKeydown($event)"
-        ></textarea>
+        <div class="composer-inputs">
+          <textarea
+            [formControl]="messageControl"
+            rows="2"
+            maxlength="5000"
+            placeholder="Введите сообщение…"
+            aria-label="Текст сообщения"
+            (keydown.enter)="onComposerKeydown($event)"
+          ></textarea>
+          <label class="attach-button" [class.attach-button_disabled]="!isConnected() || isSending()">
+            <span aria-hidden="true">📎</span>
+            <span>Прикрепить</span>
+            <input
+              type="file"
+              multiple
+              accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
+              [disabled]="!isConnected() || isSending()"
+              (change)="onFilesSelected($event)"
+            />
+          </label>
+        </div>
         <button
           type="submit"
-          [disabled]="!isConnected() || !messageControl.value.trim() || messageControl.invalid || isSending()"
+          [disabled]="!isConnected() || (!messageControl.value.trim() && !selectedFiles().length) || messageControl.invalid || isSending()"
         >
-          Отправить
+          {{ isSending() ? 'Отправка…' : 'Отправить' }}
         </button>
       </form>
+      <p class="composer-hint">До 5 файлов по 10 МБ. JPEG, PNG, WebP или PDF.</p>
     }
   }
 </section>
