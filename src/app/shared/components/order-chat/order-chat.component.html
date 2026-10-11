@@ -37,13 +37,6 @@
     }
 
     @if (selectedRoom(); as room) {
-      <div class="chat-subtitle">
-        <strong>{{ room.typeLabel }}</strong>
-        @if (room.mechanicName) {
-          <span> · {{ room.mechanicName }}</span>
-        }
-      </div>
-
       <div class="messages" aria-live="polite">
         @if (isLoadingMessages() && !messages().length) {
           <p class="state">Загрузка истории сообщений…</p>
@@ -51,10 +44,7 @@
           <p class="state">Пока нет сообщений. Начните обсуждение.</p>
         } @else {
           @for (message of messages(); track message.id) {
-            <article
-              class="message"
-              [class.message_mine]="message.senderId === currentUserId()"
-            >
+            <article class="message" [class.message_mine]="message.senderId === currentUserId()">
               <div class="message-meta">
                 <strong>{{ message.senderName }}</strong>
                 <time [attr.datetime]="message.createdAt">{{ message.createdAt | date: 'dd.MM HH:mm' }}</time>
@@ -88,7 +78,6 @@
           Отправить
         </button>
       </form>
-      <p class="composer-hint">Enter — отправить, Shift + Enter — новая строка</p>
     }
   }
 </section>
