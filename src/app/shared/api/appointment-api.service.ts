@@ -93,8 +93,11 @@ export class AppointmentApiService {
     return this.http.get<OrderPermissions>(API_ENDPOINTS.orders.permissions(id));
   }
 
-  public transitionStatus(id: string, statusId: number): Observable<Appointment> {
-    return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionStatus(id), { statusId });
+  public transitionStatus(id: string, statusId: number, refusalReason?: string): Observable<Appointment> {
+    return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionStatus(id), {
+      statusId,
+      ...(refusalReason !== undefined ? { refusalReason } : {}),
+    });
   }
 
   public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
