@@ -134,7 +134,12 @@ export class AppointmentDetailsComponent {
     const order = this.appointment();
     return this.currentRole.role() === 'admin' && !!order && order.permissions.canTransitionStatus && (
       (order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
-      (order.status.code === 'in_progress' && order.workStatus?.code === 'execution')
+      (order.status.code === 'in_progress' && [
+        'waiting_arrival',
+        'intake',
+        'owner_approval',
+        'execution',
+      ].includes(order.workStatus?.code ?? ''))
     );
   }
 
