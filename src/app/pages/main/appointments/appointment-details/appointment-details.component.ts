@@ -19,6 +19,7 @@ import { OrderChatComponent } from 'app/shared/components/order-chat/order-chat.
 import { Appointment } from 'app/shared/models/appointment.model';
 import { Mechanic } from 'app/shared/models/user.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({
@@ -49,12 +50,17 @@ export class AppointmentDetailsComponent {
   private mechanicSearchText = '';
   private readonly appointmentService = inject(AppointmentService);
   private readonly userService = inject(UserService);
+  private readonly currentRole = inject(CurrentRoleStore);
 
   protected readonly appointment = signal<Appointment | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
   protected readonly mechanics = signal<Mechanic[]>([]);
   protected readonly isSavingMechanics = signal(false);
+  protected readonly refusalReason = signal('');
+  protected readonly isSubmittingRefusal = signal(false);
+  protected readonly refusalError = signal('');
+  protected readonly isMechanicRole = this.currentRole.role() === 'mechanic';
   protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
   protected readonly stringifyMechanic = (item: unknown): string => {
     if (!this.isMechanic(item)) {
@@ -121,6 +127,52 @@ export class AppointmentDetailsComponent {
           },
           error: () => this.hasError.set(true),
         });
+    });
+  }
+
+  protected canRefuse(): boolean {
+    const order = this.appointment();
+    return this.currentRole.role() === 'admin' && !!order && (
+      (order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
+      (order.status.code === 'in_progress' && order.workStatus?.code === 'execution')
+    );
+  }
+
+  protected refuseOrder(): void {
+    const order = this.appointment();
+    const reason = this.refusalReason().trim();
+    if (!order || !this.canRefuse() || !reason || this.isSubmittingRefusal()) {
+      this.refusalError.set('Укажите причину отказа.');
+      return;
+    }
+
+    this.isSubmittingRefusal.set(true);
+    this.refusalError.set('');
+    this.appointmentService.getStatuses().subscribe({
+      next: (statuses) => {
+        const completedStatus = statuses.find(({ code }) => code === 'completed');
+        if (!completedStatus) {
+          this.refusalError.set('Не удалось найти статус завершения заказа.');
+          this.isSubmittingRefusal.set(false);
+          return;
+        }
+
+        this.appointmentService.transitionStatus(order.id, completedStatus.id, reason).subscribe({
+          next: (updated) => {
+            this.appointment.set(updated);
+            this.refusalReason.set('');
+            this.isSubmittingRefusal.set(false);
+          },
+          error: () => {
+            this.refusalError.set('Не удалось отказать в заказе. Проверьте данные и попробуйте ещё раз.');
+            this.isSubmittingRefusal.set(false);
+          },
+        });
+      },
+      error: () => {
+        this.refusalError.set('Не удалось загрузить статусы заказа.');
+        this.isSubmittingRefusal.set(false);
+      },
     });
   }
 
