@@ -23,6 +23,7 @@ export type PaymentStatus = {
 };
 
 export type OrderPermissions = {
+  canTransitionStatus: boolean;
   canEditWorks: boolean;
   canEditPrice: boolean;
   canEditAppointment: boolean;
@@ -59,6 +60,7 @@ export type Appointment = {
   mechanics: string[];
   appointmentAt: string;
   description: string;
+  refusalReason: string;
   price: number;
   createdAt: string;
   ownerPhone?: string;
