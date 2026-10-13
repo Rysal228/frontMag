@@ -56,8 +56,8 @@ export class AppointmentService {
     return this.appointmentApiService.getPermissions(id);
   }
 
-  public transitionStatus(id: string, statusId: number): Observable<Appointment> {
-    return this.appointmentApiService.transitionStatus(id, statusId);
+  public transitionStatus(id: string, statusId: number, refusalReason?: string): Observable<Appointment> {
+    return this.appointmentApiService.transitionStatus(id, statusId, refusalReason);
   }
 
   public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
