@@ -1,0 +1,42 @@
+<div class="details">
+  <p>Дата создания: {{ formatDate(order().createdAt) }}</p>
+
+  @if (order().appointmentAt) {
+    <p>Дата и время записи: {{ formatDate(order().appointmentAt) }}</p>
+  }
+
+  <p>Тип работ: {{ workTypes() }}</p>
+
+  <p>
+    Статус работ:
+    <span class="status" [attr.data-appearance]="order().workStatus?.appearance">
+      {{ order().workStatus?.name || '-' }}
+    </span>
+  </p>
+
+  @if (!isMechanicRole()) {
+    <p>Стоимость работ: {{ order().price ? order().price + ' руб' : '-' }}</p>
+  }
+
+  @if (order().paymentStatus) {
+    <p>Оплата: {{ order().paymentStatus?.name }}</p>
+  }
+
+  @if (isAdminRole()) {
+    <p>Телефон владельца: {{ order().ownerPhone || '-' }}</p>
+  }
+
+  @if (showCarInfo()) {
+    <p>Авто: {{ order().carName }}</p>
+    <p>VIN: {{ order().carVin || '-' }}</p>
+    <p>Гос. номер: {{ order().carPlateNumber || '-' }}</p>
+  }
+
+  @if (order().description) {
+    <p>{{ showCarInfo() ? 'Кр. описание' : 'Описание' }}: {{ order().description }}</p>
+  }
+
+  @if (order().refusalReason) {
+    <p>Причина отказа: {{ order().refusalReason }}</p>
+  }
+</div>
