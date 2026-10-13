@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { TuiButton, TuiExpand } from '@taiga-ui/core';
+import { TuiButton, TuiExpandComponent } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
 
 import { Appointment } from 'app/shared/models/appointment.model';
@@ -11,7 +11,7 @@ import { UserRole } from 'app/shared/types/roles.types';
 @Component({
   selector: 'app-order-card',
   standalone: true,
-  imports: [TuiButton, TuiExpand, TuiCardLarge, RouterLink],
+  imports: [TuiButton, TuiExpandComponent, TuiCardLarge, RouterLink],
   templateUrl: './order-card.component.html',
   styleUrl: './order-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
