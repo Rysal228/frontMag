@@ -26,6 +26,10 @@ export class OrderCardComponent {
     return this.roleAccess.isActiveRole(UserRole.Admin);
   });
 
+  protected readonly isMechanicRole = computed(() => {
+    return this.roleAccess.isActiveRole(UserRole.Mechanic);
+  });
+
   readonly workTypes = computed(
     () =>
       this.order()
