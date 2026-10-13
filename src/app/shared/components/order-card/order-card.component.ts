@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiExpand } from '@taiga-ui/core';
+import { TuiCardLarge } from '@taiga-ui/layout';
 
 import { Appointment } from 'app/shared/models/appointment.model';
 import { RoleAccessService } from 'app/shared/services/role-access.service';
@@ -10,7 +11,7 @@ import { UserRole } from 'app/shared/types/roles.types';
 @Component({
   selector: 'app-order-card',
   standalone: true,
-  imports: [TuiButton, RouterLink],
+  imports: [TuiButton, TuiExpand, TuiCardLarge, RouterLink],
   templateUrl: './order-card.component.html',
   styleUrl: './order-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +22,9 @@ export class OrderCardComponent {
   public readonly order = input.required<Appointment>();
   public readonly showCarInfo = input(false);
   public readonly showPayment = input(false);
+  public readonly compactExpandable = input(false);
+
+  protected readonly expanded = signal(false);
 
   protected readonly isAdminRole = computed(() => {
     return this.roleAccess.isActiveRole(UserRole.Admin);
@@ -45,5 +49,9 @@ export class OrderCardComponent {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(value));
+  }
+
+  protected toggleExpanded(): void {
+    this.expanded.update((value) => !value);
   }
 }
