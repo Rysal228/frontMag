@@ -22,7 +22,9 @@
       </span>
     </p>
 
-    <p>Стоимость работ: {{ order().price ? order().price + ' руб' : '-' }}</p>
+    @if (!isMechanicRole()) {
+      <p>Стоимость работ: {{ order().price ? order().price + ' руб' : '-' }}</p>
+    }
 
     @if (order().paymentStatus) {
       <p>Оплата: {{ order().paymentStatus?.name }}</p>
