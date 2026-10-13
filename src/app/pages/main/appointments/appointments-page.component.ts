@@ -73,6 +73,7 @@ export class AppointmentsPageComponent {
   protected readonly currentPage = signal(1);
   protected readonly totalPages = signal(0);
   protected readonly canCreate = computed(() => this.currentRole.role() === 'user');
+  protected readonly useExpandableCards = computed(() => ['admin', 'mechanic'].includes(this.currentRole.role()));
 
   constructor() {
     this.loadData();
