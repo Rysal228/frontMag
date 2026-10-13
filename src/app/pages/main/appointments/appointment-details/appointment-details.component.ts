@@ -132,7 +132,7 @@ export class AppointmentDetailsComponent {
 
   protected canRefuse(): boolean {
     const order = this.appointment();
-    return this.currentRole.role() === 'admin' && !!order && (
+    return this.currentRole.role() === 'admin' && !!order && order.permissions.canTransitionStatus && (
       (order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
       (order.status.code === 'in_progress' && order.workStatus?.code === 'execution')
     );
