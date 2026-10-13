@@ -67,6 +67,12 @@
               <dt>Описание</dt>
               <dd>{{ appointment()!.description || 'Не указано' }}</dd>
             </div>
+            @if (appointment()!.refusalReason) {
+              <div>
+                <dt>Причина отказа</dt>
+                <dd>{{ appointment()!.refusalReason }}</dd>
+              </div>
+            }
           </dl>
         </div>
 
@@ -76,7 +82,9 @@
             @for (work of appointment()!.works; track work.id) {
               <li>
                 <span>{{ work.name }}</span>
-                <strong>{{ work.price }} ₽</strong>
+                @if (!isMechanicRole) {
+                  <strong>{{ work.price }} ₽</strong>
+                }
               </li>
             }
           </ul>
@@ -126,10 +134,39 @@
 
       <app-order-chat [orderId]="appointment()!.id" />
 
-      <section class="total">
-        <span>Итого</span>
-        <strong>{{ appointment()!.price }} ₽</strong>
-      </section>
+      @if (!isMechanicRole) {
+        <section class="total">
+          <span>Итого</span>
+          <strong>{{ appointment()!.price }} ₽</strong>
+        </section>
+      }
+
+      @if (canRefuse()) {
+        <section class="refusal">
+          <h2>Отказ от заказа</h2>
+          <label for="refusal-reason">Причина отказа</label>
+          <textarea
+            id="refusal-reason"
+            rows="3"
+            [value]="refusalReason()"
+            (input)="refusalReason.set($any($event.target).value)"
+            placeholder="Укажите причину отказа"
+            [disabled]="isSubmittingRefusal()"
+          ></textarea>
+          @if (refusalError()) {
+            <p class="refusal-error">{{ refusalError() }}</p>
+          }
+          <button
+            tuiButton
+            appearance="destructive"
+            type="button"
+            [disabled]="isSubmittingRefusal() || !refusalReason().trim()"
+            (click)="refuseOrder()"
+          >
+            {{ isSubmittingRefusal() ? 'Отказ...' : 'Отказать в заказе' }}
+          </button>
+        </section>
+      }
     }
   </section>
 </main>
