@@ -106,3 +106,30 @@ li {
     text-align: left;
   }
 }
+
+
+.refusal {
+  display: grid;
+  gap: .75rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 1rem;
+}
+
+.refusal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: .75rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: .5rem;
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  font: inherit;
+  resize: vertical;
+}
+
+.refusal-error {
+  color: var(--tui-text-negative);
+  margin: 0;
+}
