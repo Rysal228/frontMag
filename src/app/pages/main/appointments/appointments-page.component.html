@@ -1,4 +1,4 @@
-<section class="appointments-page">
+<section class="appointments-page" [class.container]="useExpandableCards()">
   <header class="header">
     <h1>Информация о записях:</h1>
 
@@ -47,9 +47,14 @@
       <p>Текущих или прошлых записей нет. Запишитесь, чтобы видеть историю ваших обращений в сервис.</p>
     </div>
   } @else {
-    <div class="list">
+    <div class="list grid grid-12">
       @for (appointment of appointments(); track appointment.id) {
-        <app-order-card [order]="appointment" [showCarInfo]="true" [showPayment]="true" />
+        <app-order-card
+          [order]="appointment"
+          [showCarInfo]="true"
+          [showPayment]="true"
+          [compactExpandable]="useExpandableCards()"
+        />
       }
     </div>
 
