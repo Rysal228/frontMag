@@ -43,6 +43,10 @@
     @if (order().description) {
       <p>{{ showCarInfo() ? 'Кр. описание' : 'Описание' }}: {{ order().description }}</p>
     }
+
+    @if (order().refusalReason) {
+      <p>Причина отказа: {{ order().refusalReason }}</p>
+    }
   </div>
 
   @if (showPayment() && order().status.requiresPayment) {
