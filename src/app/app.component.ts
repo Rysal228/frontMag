@@ -4,6 +4,7 @@ import eruda from 'eruda';
 
 import { TuiRoot } from '@taiga-ui/core';
 
+import { OneCIntegrationApiService } from './shared/api/onec-integration-api.service';
 import { AppInitializationService } from './shared/services/app-initialization.service';
 import { ThemeService } from './shared/services/theme.service';
 
@@ -16,10 +17,12 @@ import { ThemeService } from './shared/services/theme.service';
 export class AppComponent implements OnInit {
   protected readonly initialization = inject(AppInitializationService);
   private readonly themeService = inject(ThemeService);
+  private readonly oneCIntegrationApiService = inject(OneCIntegrationApiService);
 
   protected readonly theme = this.themeService.preference;
 
   ngOnInit(): void {
     eruda.init();
+    this.oneCIntegrationApiService.testConnection().subscribe((value) => console.log('value from 1c:', value));
   }
 }
