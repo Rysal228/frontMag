@@ -41,4 +41,7 @@ export const API_ENDPOINTS = {
     paymentStatus: (id: string) => `/api/${version}/orders/${id}/payment-status/`,
     paymentStatuses: `/api/${version}/orders/payment-status/`,
   },
+  integrations: {
+    oneCConnectionTest: `/api/${version}/integrations/1c/test/`,
+  },
 } as const;
