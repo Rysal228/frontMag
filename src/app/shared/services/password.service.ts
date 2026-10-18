@@ -9,7 +9,7 @@ export type PasswordStatus = {
 };
 
 export type PasswordChangeRequest = {
-  currentPassword: string;
+  currentPassword?: string;
   newPassword: string;
 };
 
