@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -29,14 +30,19 @@ export class PasswordDialogComponent {
 
   protected readonly isLoading = signal(true);
   protected readonly isSaving = signal(false);
-  protected readonly hasPassword = signal(false);
+  // Null means the 1C password state was not loaded; it must not be treated
+  // as permission to create a password without verifying the old credential.
+  protected readonly hasPassword = signal<boolean | null>(null);
   protected readonly error = signal<string | null>(null);
 
   protected readonly form = new FormGroup({
-    currentPassword: new FormControl('', { nonNullable: true }),
+    currentPassword: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(128)],
+    }),
     newPassword: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(8)],
+      validators: [Validators.required, Validators.minLength(8), Validators.maxLength(128)],
     }),
     confirmPassword: new FormControl('', {
       nonNullable: true,
@@ -54,24 +60,20 @@ export class PasswordDialogComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: ({ hasPassword }) => {
-          this.hasPassword.set(hasPassword);
-
-          if (!hasPassword) {
-            this.form.controls.currentPassword.clearValidators();
-            this.form.controls.currentPassword.updateValueAndValidity();
-          } else {
-            this.form.controls.currentPassword.setValidators([Validators.required]);
-            this.form.controls.currentPassword.updateValueAndValidity();
+          if (typeof hasPassword !== 'boolean') {
+            this.error.set('1С вернула некорректное состояние пароля.');
+            return;
           }
+          this.hasPassword.set(hasPassword);
         },
         error: () => {
-          this.error.set('Не удалось получить состояние пароля.');
+          this.error.set('Не удалось получить состояние пароля из 1С.');
         },
       });
   }
 
   protected save(): void {
-    if (this.isLoading() || this.isSaving() || this.form.invalid) {
+    if (this.isLoading() || this.isSaving() || this.hasPassword() !== true || this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
@@ -83,18 +85,38 @@ export class PasswordDialogComponent {
       return;
     }
 
+    if (newPassword === currentPassword) {
+      this.form.controls.newPassword.setErrors({ server: 'Новый пароль должен отличаться от текущего' });
+      return;
+    }
+
     this.error.set(null);
     this.isSaving.set(true);
 
     this.passwordService
-      .save({
-        ...(this.hasPassword() ? { currentPassword } : {}),
-        newPassword,
-      })
+      .save({ currentPassword, newPassword })
       .pipe(finalize(() => this.isSaving.set(false)))
       .subscribe({
         next: () => this.context.completeWith(),
-        error: () => this.error.set('Не удалось сохранить пароль. Проверьте введённые данные.'),
+        error: (err: unknown) => {
+          if (err instanceof HttpErrorResponse && err.status === 400) {
+            const currentMessage = err.error?.currentPassword;
+            const newMessage = err.error?.newPassword;
+            if (currentMessage) {
+              this.form.controls.currentPassword.setErrors({
+                server: Array.isArray(currentMessage) ? currentMessage[0] : currentMessage,
+              });
+              return;
+            }
+            if (newMessage) {
+              this.form.controls.newPassword.setErrors({
+                server: Array.isArray(newMessage) ? newMessage[0] : newMessage,
+              });
+              return;
+            }
+          }
+          this.error.set('Не удалось изменить пароль. Проверьте введённые данные.');
+        },
       });
   }
 
