@@ -83,6 +83,11 @@ export class PasswordDialogComponent {
       return;
     }
 
+    if (this.hasPassword() && newPassword === currentPassword) {
+      this.form.controls.newPassword.setErrors({ server: 'Новый пароль должен отличаться от текущего' });
+      return;
+    }
+
     this.error.set(null);
     this.isSaving.set(true);
 
