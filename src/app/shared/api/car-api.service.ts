@@ -7,9 +7,9 @@ import { CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
 
 export type CarApiResponse = {
   id: string;
-  brand: number;
+  brand: string;
   brandName: string;
-  model: number;
+  model: string;
   modelName: string;
   ownerName: string;
   ownerPhone: string;
@@ -98,7 +98,7 @@ export class CarApiService {
     return this.http.get<CarBrand[]>(API_ENDPOINTS.cars.brands);
   }
 
-  public getModels(brandId?: number): Observable<CarModel[]> {
+  public getModels(brandId?: string): Observable<CarModel[]> {
     let params = new HttpParams();
 
     if (brandId !== undefined) {
