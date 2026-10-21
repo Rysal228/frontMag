@@ -49,7 +49,7 @@ export class CarFiltersModalComponent implements OnInit {
     return brandId ? this.models().filter((model) => model.brand === brandId) : [];
   }
 
-  protected selectValue(value: number | null): string {
+  protected selectValue(value: string | null): string {
     return value === null ? ALL_ID : String(value);
   }
 
@@ -62,7 +62,7 @@ export class CarFiltersModalComponent implements OnInit {
   }
 
   protected onBrandChange(value: string): void {
-    const brandId = value === ALL_ID ? null : Number(value);
+    const brandId = value === ALL_ID ? null : value;
 
     this.draftFilters.update((current) => ({
       ...current,
@@ -72,7 +72,7 @@ export class CarFiltersModalComponent implements OnInit {
   }
 
   protected onModelChange(value: string): void {
-    this.update('modelId', value === ALL_ID ? null : Number(value));
+    this.update('modelId', value === ALL_ID ? null : value);
   }
 
   protected onYearChange(value: string): void {
