@@ -47,7 +47,7 @@ export class CarService {
     return this.carApiService.getBrands();
   }
 
-  public getModels(brandId?: number): Observable<CarModel[]> {
+  public getModels(brandId?: string): Observable<CarModel[]> {
     return this.carApiService.getModels(brandId);
   }
 

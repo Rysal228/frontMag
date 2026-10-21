@@ -46,24 +46,38 @@
         <app-select formControlName="car" placeholder="Выберите автомобиль" [options]="carOptions()" />
       </app-form-field>
 
-      <app-form-field label="Тип работ">
-        <tui-textfield multi [tuiTextfieldCleaner]="false">
-          <input
-            formControlName="workTypes"
-            tuiInputChip
-            placeholder="Введите или выберите тип работы"
-            (input)="onWorkTypeInput($event)"
-            (keydown.enter)="addCustomWorkType($event)"
+      <app-form-field label="Тип работ (необязательно)">
+        <div class="work-type-picker">
+          <app-select
+            formControlName="workTypeToAdd"
+            [options]="availableWorkTypeOptions()"
+            placeholder="Выберите работу из справочника"
           />
-
-          <tui-input-chip *tuiItem />
-
-          @if (availableWorkTypeSuggestions().length) {
-            <ng-template tuiTextfieldDropdown>
-              <tui-data-list-wrapper new tuiMultiSelectGroup [items]="availableWorkTypeSuggestions()" />
-            </ng-template>
-          }
-        </tui-textfield>
+          <button
+            tuiButton
+            appearance="secondary"
+            type="button"
+            [disabled]="!form.controls.workTypeToAdd.value"
+            (click)="addWorkType()"
+          >
+            Добавить
+          </button>
+        </div>
+        @if (selectedWorks().length) {
+          <ul class="selected-works">
+            @for (work of selectedWorks(); track work.id) {
+              <li>
+                <span>{{ work.name }}</span>
+                <button tuiButton appearance="flat" size="s" type="button"
+                  [attr.aria-label]="'Убрать ' + work.name" (click)="removeWorkType(work.id)">
+                  Убрать
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="hint">Можно создать заказ без выбранных работ.</p>
+        }
       </app-form-field>
 
       <app-form-field label="Краткое описание">

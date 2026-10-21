@@ -76,3 +76,43 @@
     padding: 16px 20px 24px;
   }
 }
+
+
+.work-type-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.work-type-picker app-select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.selected-works {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selected-works li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--tui-text-secondary);
+}
+
+@media (max-width: 420px) {
+  .work-type-picker {
+    flex-wrap: wrap;
+  }
+}

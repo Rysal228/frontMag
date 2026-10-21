@@ -1,7 +1,7 @@
 export type StatusAppearance = 'positive' | 'warning' | 'negative';
 
 export type OrderStatus = {
-  id: number;
+  id: string;
   code: string | null;
   name: string;
   appearance: StatusAppearance;
@@ -9,14 +9,14 @@ export type OrderStatus = {
 };
 
 export type OrderWork = {
-  id: number;
-  workTypeId: number | null;
+  id: string;
+  workTypeId: string | null;
   name: string;
   price: number;
 };
 
 export type PaymentStatus = {
-  id: number;
+  id: string;
   code: string;
   name: string;
   appearance: StatusAppearance;
@@ -33,14 +33,14 @@ export type OrderPermissions = {
 };
 
 export type WorkStatus = {
-  id: number;
+  id: string;
   code: string | null;
   name: string;
   appearance: StatusAppearance;
 };
 
 export type WorkType = {
-  id: number;
+  id: string;
   name: string;
 };
 
@@ -85,11 +85,11 @@ export type OrderFilters = {
   orderNumber: string;
   vin: string;
   plateNumber: string;
-  brandId: number | null;
-  modelId: number | null;
+  brandId: string | null;
+  modelId: string | null;
   workTypeId: number | null;
-  statusId: number | null;
-  workStatusId: number | null;
+  statusId: string | null;
+  workStatusId: string | null;
   dateFrom: string | null;
   dateTo: string | null;
 };
@@ -103,7 +103,7 @@ export type AppointmentPage = {
 
 export type CreateAppointmentRequest = {
   car: string;
-  workTypes: string[];
+  works: { workTypeId: string }[];
   appointmentAt: string;
   description: string;
 };

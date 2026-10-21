@@ -32,7 +32,7 @@ const EMPTY_FILTERS: OrderFilters = {
   dateTo: null,
 };
 
-const ALL_ID = 0;
+const ALL_ID = 'all';
 
 @Component({
   selector: 'app-order-filters-modal',
@@ -56,7 +56,7 @@ export class OrderFiltersModalComponent implements OnInit {
   public readonly filtersChange = output<OrderFilters>();
 
   protected readonly draftFilters = signal<OrderFilters>({ ...EMPTY_FILTERS });
-  protected readonly allId = String(ALL_ID);
+  protected readonly allId = ALL_ID;
 
   ngOnInit(): void {
     this.draftFilters.set({ ...this.filters() });
@@ -76,16 +76,16 @@ export class OrderFiltersModalComponent implements OnInit {
     return brandId ? this.models().filter((model) => model.brand === brandId) : [];
   }
 
-  protected selectValue(value: number | null): string {
-    return String(value ?? ALL_ID);
+  protected selectValue(value: string | null): string {
+    return value ?? ALL_ID;
   }
 
   protected onBrandChange(value: string): void {
-    const brandId = Number(value);
+    const brandId = this.toNullableId(value);
 
     this.draftFilters.update((current) => ({
       ...current,
-      brandId: brandId === ALL_ID ? null : brandId,
+      brandId,
       modelId: null,
     }));
   }
@@ -158,9 +158,7 @@ export class OrderFiltersModalComponent implements OnInit {
     this.closed.emit();
   }
 
-  private toNullableId(value: string): number | null {
-    const id = Number(value);
-
-    return id === ALL_ID ? null : id;
+  private toNullableId(value: string): string | null {
+    return value === ALL_ID ? null : value;
   }
 }

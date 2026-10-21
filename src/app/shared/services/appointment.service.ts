@@ -56,11 +56,11 @@ export class AppointmentService {
     return this.appointmentApiService.getPermissions(id);
   }
 
-  public transitionStatus(id: string, statusId: number, refusalReason?: string): Observable<Appointment> {
+  public transitionStatus(id: string, statusId: string, refusalReason?: string): Observable<Appointment> {
     return this.appointmentApiService.transitionStatus(id, statusId, refusalReason);
   }
 
-  public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
+  public transitionWorkStatus(id: string, statusId: string): Observable<Appointment> {
     return this.appointmentApiService.transitionWorkStatus(id, statusId);
   }
 
@@ -72,7 +72,7 @@ export class AppointmentService {
     return this.appointmentApiService.updateMechanics(id, mechanics);
   }
 
-  public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
+  public setPaymentStatus(id: string, statusId: string): Observable<Appointment> {
     return this.appointmentApiService.setPaymentStatus(id, statusId);
   }
 
