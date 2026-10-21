@@ -22,6 +22,7 @@ import { SelectComponent, SelectOption } from 'app/shared/components/select/sele
 import { WorkType } from 'app/shared/models/appointment.model';
 import { Car } from 'app/shared/models/car.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { createAppointmentPayload } from 'app/shared/utils/appointment-payload.util';
 
 @Component({
   selector: 'app-appointment-form',
@@ -154,13 +155,7 @@ export class AppointmentFormComponent {
     this.hasError.set(false);
 
     this.appointmentService
-      .create({
-        car,
-        works: ids.map((workTypeId) => ({ workTypeId })),
-        // Workshop time zone is Asia/Krasnoyarsk, matching the 1C API contract.
-        appointmentAt: `${date}T${time}:00+07:00`,
-        description,
-      })
+      .create(createAppointmentPayload(car, date, time, ids, description))
       .subscribe({
         next: () => {
           this.saving.set(false);
