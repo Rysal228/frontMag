@@ -182,7 +182,7 @@ export class AppointmentFormComponent {
     this.workTypeSearch$.next('');
   }
 
-  protected onWorkTypeEnter(event: KeyboardEvent): void {
+  protected onWorkTypeEnter(event: Event): void {
     // Avoid accidental form submission when typing a query in the chip input.
     event.preventDefault();
   }
