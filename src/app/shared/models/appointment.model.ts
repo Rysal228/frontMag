@@ -87,7 +87,7 @@ export type OrderFilters = {
   plateNumber: string;
   brandId: string | null;
   modelId: string | null;
-  workTypeId: number | null;
+  workTypeId: string | null;
   statusId: string | null;
   workStatusId: string | null;
   dateFrom: string | null;
