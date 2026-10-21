@@ -84,7 +84,7 @@ export class CarFormComponent {
       this.form.controls.model.reset('');
 
       if (brandId) {
-        this.loadModels(Number(brandId));
+        this.loadModels(brandId);
       } else {
         this.models.set([]);
       }
@@ -121,8 +121,8 @@ export class CarFormComponent {
 
     const { brand, model, year, plateNumber, vin } = this.form.getRawValue();
     const request = {
-      brand: Number(brand),
-      model: Number(model),
+      brand,
+      model,
       year: Number(year),
       plateNumber: plateNumber.trim() || null,
       vin: vin.trim().toUpperCase() || null,
@@ -145,7 +145,7 @@ export class CarFormComponent {
     });
   }
 
-  private loadModels(brandId: number, selectedModelId?: number): void {
+  private loadModels(brandId: string, selectedModelId?: string): void {
     this.isModelsLoading.set(true);
 
     this.carService
