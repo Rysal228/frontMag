@@ -93,14 +93,14 @@ export class AppointmentApiService {
     return this.http.get<OrderPermissions>(API_ENDPOINTS.orders.permissions(id));
   }
 
-  public transitionStatus(id: string, statusId: number, refusalReason?: string): Observable<Appointment> {
+  public transitionStatus(id: string, statusId: string, refusalReason?: string): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionStatus(id), {
       statusId,
       ...(refusalReason !== undefined ? { refusalReason } : {}),
     });
   }
 
-  public transitionWorkStatus(id: string, statusId: number): Observable<Appointment> {
+  public transitionWorkStatus(id: string, statusId: string): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.transitionWorkStatus(id), { statusId });
   }
 
@@ -108,7 +108,7 @@ export class AppointmentApiService {
     return this.http.patch<Appointment>(`${API_ENDPOINTS.orders.list}${id}/`, { mechanics });
   }
 
-  public setPaymentStatus(id: string, statusId: number): Observable<Appointment> {
+  public setPaymentStatus(id: string, statusId: string): Observable<Appointment> {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.paymentStatus(id), { statusId });
   }
 
