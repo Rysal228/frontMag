@@ -47,62 +47,33 @@
       </app-form-field>
 
       <app-form-field label="Тип работ (необязательно)">
-        <div class="work-chip-combobox" (focusout)="closeWorkMenu($event)">
-          <div
-            class="work-chip-input"
-            (click)="focusWorkInput()"
-          >
-            @for (work of selectedWorks(); track work.id) {
-              <span class="work-chip">
-                <span>{{ work.name }}</span>
-                <button
-                  type="button"
-                  class="work-chip-remove"
-                  [attr.aria-label]="'Удалить ' + work.name"
-                  (click)="removeWorkType(work.id); $event.stopPropagation()"
-                >×</button>
-              </span>
-            }
-            <input
-              #workInput
-              class="work-search-input"
-              type="text"
-              autocomplete="off"
-              [formControl]="workQuery"
-              [placeholder]="selectedWorks().length ? 'Добавить ещё...' : 'Введите или выберите тип работы'"
-              [attr.aria-expanded]="workMenuOpen()"
-              aria-haspopup="listbox"
-              aria-label="Поиск видов работ"
-              (focus)="openWorkMenu()"
-              (keydown)="onWorkKeydown($event)"
-            />
-          </div>
+        <tui-textfield
+          multi
+          [stringify]="stringifyWorkType"
+          [disabledItemHandler]="disabledWorkType"
+          [tuiTextfieldCleaner]="false"
+        >
+          <input
+            tuiInputChip
+            [formControl]="selectedWorksControl"
+            placeholder="Введите или выберите тип работы"
+            (focus)="onWorkTypeFocus()"
+            (input)="onWorkTypeInput($event)"
+            (keydown.enter)="onWorkTypeEnter($event)"
+          />
 
-          @if (workMenuOpen()) {
-            <div class="work-suggestions" role="listbox" aria-label="Виды работ">
+          <tui-input-chip *tuiItem />
+
+          @if (availableWorkTypes().length) {
+            <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
               @for (work of availableWorkTypes(); track work.id) {
-                <button
-                  type="button"
-                  class="work-suggestion"
-                  role="option"
-                  aria-selected="false"
-                  (mousedown)="$event.preventDefault()"
-                  (click)="selectWorkType(work)"
-                >{{ work.name }}</button>
-              } @empty {
-                <p class="work-no-results">
-                  @if (workSearchLoading()) {
-                    Поиск видов работ...
-                  } @else if (workSearchFailed()) {
-                    Не удалось загрузить виды работ.
-                  } @else {
-                    Подходящих работ в справочнике нет.
-                  }
-                </p>
+                <button tuiOption new [value]="work">
+                  {{ work.name }}
+                </button>
               }
-            </div>
+            </tui-data-list>
           }
-        </div>
+        </tui-textfield>
       </app-form-field>
 
       <app-form-field label="Краткое описание">

@@ -2,21 +2,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  ElementRef,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
-  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { TuiDay } from '@taiga-ui/cdk';
-import { TuiButton, TuiTextfield } from '@taiga-ui/core';
-import { TuiTextarea } from '@taiga-ui/kit';
+import { TuiButton, TuiDataList, TuiOption, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
+import { TuiInputChip, TuiMultiSelect, TuiTextarea } from '@taiga-ui/kit';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
@@ -35,7 +34,12 @@ import { createAppointmentPayload } from 'app/shared/utils/appointment-payload.u
     ReactiveFormsModule,
     SelectComponent,
     TuiButton,
+    TuiDataList,
+    TuiInputChip,
+    TuiMultiSelect,
+    TuiOption,
     TuiTextfield,
+    TuiTextfieldDropdownDirective,
     TuiTextarea,
   ],
   templateUrl: './appointment-form.component.html',
@@ -46,7 +50,7 @@ export class AppointmentFormComponent {
   private readonly appointmentService = inject(AppointmentService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly workTypeSearch$ = new Subject<string>();
-  private readonly workInput = viewChild<ElementRef<HTMLInputElement>>('workInput');
+  private readonly workTypesById = new Map<string, WorkType>();
 
   public readonly cars = input<readonly Car[]>([]);
   public readonly workTypes = input<readonly WorkType[]>([]);
@@ -61,13 +65,14 @@ export class AppointmentFormComponent {
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
   protected readonly today = TuiDay.currentLocal();
 
-  // The query is free text; only actual 1C catalog items can become chips.
-  protected readonly workQuery = new FormControl('', { nonNullable: true });
-  protected readonly workMenuOpen = signal(false);
-  protected readonly workSearchLoading = signal(false);
-  protected readonly workSearchFailed = signal(false);
-  protected readonly workSuggestions = signal<readonly WorkType[]>([]);
+  // Taiga UI owns input/chip interaction. Only objects from the 1C
+  // ВидыРабот catalog survive the reactive-control validation.
+  protected readonly selectedWorksControl = new FormControl<WorkType[]>([], { nonNullable: true });
   protected readonly selectedWorks = signal<WorkType[]>([]);
+  protected readonly workTypeSuggestions = signal<WorkType[]>([]);
+  protected readonly stringifyWorkType = (value: unknown): string =>
+    this.isWorkType(value) ? value.name : '';
+  protected readonly disabledWorkType = (value: unknown): boolean => !this.isKnownWorkType(value);
 
   protected readonly form = new FormGroup({
     date: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -82,15 +87,18 @@ export class AppointmentFormComponent {
 
   protected readonly availableWorkTypes = computed(() => {
     const selectedIds = new Set(this.selectedWorks().map(({ id }) => id));
-    const query = this.workQuery.value.trim().toLocaleLowerCase('ru-RU');
-
-    return this.workSuggestions()
-      .filter(({ id, name }) =>
-        !selectedIds.has(id) && (!query || name.toLocaleLowerCase('ru-RU').includes(query))
-      );
+    return this.workTypeSuggestions().filter(({ id }) => !selectedIds.has(id));
   });
 
   constructor() {
+    effect(() => {
+      const items = this.workTypes();
+      for (const work of items) {
+        this.workTypesById.set(work.id, work);
+      }
+      this.workTypeSuggestions.set([...items]);
+    });
+
     this.form.controls.date.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -125,91 +133,68 @@ export class AppointmentFormComponent {
 
     this.workTypeSearch$
       .pipe(
-        debounceTime(200),
+        map((search) => search.trim()),
+        debounceTime(250),
         distinctUntilChanged(),
-        tap(() => {
-          this.workSearchLoading.set(true);
-          this.workSearchFailed.set(false);
-        }),
         switchMap((search) =>
           this.appointmentService.getWorkTypes(search).pipe(
-            catchError(() => {
-              this.workSearchFailed.set(true);
-              return of([] as WorkType[]);
-            })
+            catchError(() => of([] as WorkType[]))
           )
         ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((works) => {
-        this.workSuggestions.set(works);
-        this.workSearchLoading.set(false);
+      .subscribe((items) => {
+        for (const work of items) {
+          this.workTypesById.set(work.id, work);
+        }
+        this.workTypeSuggestions.set(items);
       });
 
-    this.workQuery.valueChanges
+    this.selectedWorksControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((search) => {
-        this.workMenuOpen.set(true);
-        // While a filtered HTTP result is loading, never show mismatching chips.
-        this.workSuggestions.set(this.workTypes());
-        this.workTypeSearch$.next(search.trim());
+      .subscribe((selected) => {
+        const safeItems: WorkType[] = [];
+        // TuiInputChip can emit free-text strings. Never allow those to
+        // become selected catalog rows, even if typed and confirmed by Enter.
+        for (const candidate of selected as unknown[]) {
+          if (!this.isWorkType(candidate)) {
+            continue;
+          }
+          const known = this.workTypesById.get(candidate.id);
+          if (known && !safeItems.some(({ id }) => id === known.id)) {
+            safeItems.push(known);
+          }
+        }
+        if (safeItems.length !== selected.length ||
+            safeItems.some((item, index) => item !== selected[index])) {
+          this.selectedWorksControl.setValue(safeItems, { emitEvent: false });
+        }
+        this.selectedWorks.set(safeItems);
       });
   }
 
-  protected focusWorkInput(): void {
-    this.workInput()?.nativeElement.focus();
+  protected onWorkTypeInput(event: Event): void {
+    this.workTypeSearch$.next((event.target as HTMLInputElement).value);
   }
 
-  protected openWorkMenu(): void {
-    this.workMenuOpen.set(true);
-    this.workSuggestions.set(this.workTypes());
-    this.workTypeSearch$.next(this.workQuery.value.trim());
-  }
-
-  protected closeWorkMenu(event: FocusEvent): void {
-    const next = event.relatedTarget;
-    const container = event.currentTarget;
-    if (next instanceof Node && container instanceof Node && container.contains(next)) {
-      return;
-    }
-    this.workMenuOpen.set(false);
-  }
-
-  protected onWorkKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      this.workMenuOpen.set(false);
-    }
-    if (event.key === 'Enter' || event.key === ',') {
-      // A typed name must never be submitted or converted into a custom chip.
-      event.preventDefault();
-      if (event.key === 'Enter' && this.availableWorkTypes().length === 1) {
-        this.selectWorkType(this.availableWorkTypes()[0]);
-      }
-    }
-  }
-
-  protected selectWorkType(work: WorkType): void {
-    const available = this.availableWorkTypes();
-    // Reject fabricated/stale values: they must come from current 1C results.
-    if (!available.some(({ id }) => id === work.id)) {
-      return;
-    }
-    this.selectedWorks.update((items) =>
-      items.some(({ id }) => id === work.id) ? items : [...items, work]
-    );
-    this.workQuery.setValue('', { emitEvent: false });
-    this.workMenuOpen.set(true);
-    this.workSuggestions.set(this.workTypes());
+  protected onWorkTypeFocus(): void {
+    this.workTypeSuggestions.set([...this.workTypesById.values()]);
     this.workTypeSearch$.next('');
-    this.focusWorkInput();
   }
 
-  protected removeWorkType(id: string): void {
-    this.selectedWorks.update((items) => items.filter((work) => work.id !== id));
-    this.workMenuOpen.set(true);
-    this.workSuggestions.set(this.workTypes());
-    this.workTypeSearch$.next(this.workQuery.value.trim());
-    this.focusWorkInput();
+  protected onWorkTypeEnter(event: KeyboardEvent): void {
+    // Avoid accidental form submission when typing a query in the chip input.
+    event.preventDefault();
+  }
+
+  private isWorkType(value: unknown): value is WorkType {
+    return typeof value === 'object' && value !== null &&
+      typeof (value as WorkType).id === 'string' &&
+      typeof (value as WorkType).name === 'string';
+  }
+
+  private isKnownWorkType(value: unknown): boolean {
+    return this.isWorkType(value) && this.workTypesById.has(value.id);
   }
 
   protected save(): void {
