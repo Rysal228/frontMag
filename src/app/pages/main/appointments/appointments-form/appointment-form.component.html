@@ -47,37 +47,62 @@
       </app-form-field>
 
       <app-form-field label="Тип работ (необязательно)">
-        <div class="work-type-picker">
-          <app-select
-            formControlName="workTypeToAdd"
-            [options]="availableWorkTypeOptions()"
-            placeholder="Выберите работу из справочника"
-          />
-          <button
-            tuiButton
-            appearance="secondary"
-            type="button"
-            [disabled]="!form.controls.workTypeToAdd.value"
-            (click)="addWorkType()"
+        <div class="work-chip-combobox" (focusout)="closeWorkMenu($event)">
+          <div
+            class="work-chip-input"
+            (click)="focusWorkInput()"
           >
-            Добавить
-          </button>
-        </div>
-        @if (selectedWorks().length) {
-          <ul class="selected-works">
             @for (work of selectedWorks(); track work.id) {
-              <li>
+              <span class="work-chip">
                 <span>{{ work.name }}</span>
-                <button tuiButton appearance="flat" size="s" type="button"
-                  [attr.aria-label]="'Убрать ' + work.name" (click)="removeWorkType(work.id)">
-                  Убрать
-                </button>
-              </li>
+                <button
+                  type="button"
+                  class="work-chip-remove"
+                  [attr.aria-label]="'Удалить ' + work.name"
+                  (click)="removeWorkType(work.id); $event.stopPropagation()"
+                >×</button>
+              </span>
             }
-          </ul>
-        } @else {
-          <p class="hint">Можно создать заказ без выбранных работ.</p>
-        }
+            <input
+              #workInput
+              class="work-search-input"
+              type="text"
+              autocomplete="off"
+              [formControl]="workQuery"
+              [placeholder]="selectedWorks().length ? 'Добавить ещё...' : 'Введите или выберите тип работы'"
+              [attr.aria-expanded]="workMenuOpen()"
+              aria-haspopup="listbox"
+              aria-label="Поиск видов работ"
+              (focus)="openWorkMenu()"
+              (keydown)="onWorkKeydown($event)"
+            />
+          </div>
+
+          @if (workMenuOpen()) {
+            <div class="work-suggestions" role="listbox" aria-label="Виды работ">
+              @for (work of availableWorkTypes(); track work.id) {
+                <button
+                  type="button"
+                  class="work-suggestion"
+                  role="option"
+                  aria-selected="false"
+                  (mousedown)="$event.preventDefault()"
+                  (click)="selectWorkType(work)"
+                >{{ work.name }}</button>
+              } @empty {
+                <p class="work-no-results">
+                  @if (workSearchLoading()) {
+                    Поиск видов работ...
+                  } @else if (workSearchFailed()) {
+                    Не удалось загрузить виды работ.
+                  } @else {
+                    Подходящих работ в справочнике нет.
+                  }
+                </p>
+              }
+            </div>
+          }
+        </div>
       </app-form-field>
 
       <app-form-field label="Краткое описание">
