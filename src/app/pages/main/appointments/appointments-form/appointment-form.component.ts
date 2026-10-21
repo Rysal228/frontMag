@@ -2,15 +2,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   computed,
   inject,
   input,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiTextfield } from '@taiga-ui/core';
@@ -43,6 +45,8 @@ import { createAppointmentPayload } from 'app/shared/utils/appointment-payload.u
 export class AppointmentFormComponent {
   private readonly appointmentService = inject(AppointmentService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly workTypeSearch$ = new Subject<string>();
+  private readonly workInput = viewChild<ElementRef<HTMLInputElement>>('workInput');
 
   public readonly cars = input<readonly Car[]>([]);
   public readonly workTypes = input<readonly WorkType[]>([]);
@@ -55,14 +59,20 @@ export class AppointmentFormComponent {
   protected readonly hasAvailabilityError = signal(false);
   protected readonly timeOptions = signal<SelectOption[]>([]);
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
-  protected readonly selectedWorkTypeIds = signal<string[]>([]);
   protected readonly today = TuiDay.currentLocal();
+
+  // The query is free text; only actual 1C catalog items can become chips.
+  protected readonly workQuery = new FormControl('', { nonNullable: true });
+  protected readonly workMenuOpen = signal(false);
+  protected readonly workSearchLoading = signal(false);
+  protected readonly workSearchFailed = signal(false);
+  protected readonly workSuggestions = signal<readonly WorkType[]>([]);
+  protected readonly selectedWorks = signal<WorkType[]>([]);
 
   protected readonly form = new FormGroup({
     date: new FormControl('', { nonNullable: true, validators: Validators.required }),
     time: new FormControl('', { nonNullable: true, validators: Validators.required }),
     car: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    workTypeToAdd: new FormControl('', { nonNullable: true }),
     description: new FormControl('', { nonNullable: true, validators: Validators.maxLength(1000) }),
   });
 
@@ -70,20 +80,14 @@ export class AppointmentFormComponent {
     this.cars().map((car) => ({ value: car.id, label: `${car.brandName} ${car.modelName}` }))
   );
 
-  // Only items returned from the 1C ВидыРабот catalog can be selected.
-  protected readonly availableWorkTypeOptions = computed<SelectOption[]>(() => {
-    const selected = new Set(this.selectedWorkTypeIds());
-    return this.workTypes()
-      .filter(({ id }) => !selected.has(id))
-      .map(({ id, name }) => ({ value: id, label: name }));
-  });
+  protected readonly availableWorkTypes = computed(() => {
+    const selectedIds = new Set(this.selectedWorks().map(({ id }) => id));
+    const query = this.workQuery.value.trim().toLocaleLowerCase('ru-RU');
 
-  protected readonly selectedWorks = computed(() => {
-    const types = new Map(this.workTypes().map((work) => [work.id, work.name]));
-    return this.selectedWorkTypeIds().map((id) => ({
-      id,
-      name: types.get(id) ?? id,
-    }));
+    return this.workSuggestions()
+      .filter(({ id, name }) =>
+        !selectedIds.has(id) && (!query || name.toLocaleLowerCase('ru-RU').includes(query))
+      );
   });
 
   constructor() {
@@ -118,22 +122,94 @@ export class AppointmentFormComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((options) => this.timeOptions.set(options));
+
+    this.workTypeSearch$
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        tap(() => {
+          this.workSearchLoading.set(true);
+          this.workSearchFailed.set(false);
+        }),
+        switchMap((search) =>
+          this.appointmentService.getWorkTypes(search).pipe(
+            catchError(() => {
+              this.workSearchFailed.set(true);
+              return of([] as WorkType[]);
+            })
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((works) => {
+        this.workSuggestions.set(works);
+        this.workSearchLoading.set(false);
+      });
+
+    this.workQuery.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((search) => {
+        this.workMenuOpen.set(true);
+        // While a filtered HTTP result is loading, never show mismatching chips.
+        this.workSuggestions.set(this.workTypes());
+        this.workTypeSearch$.next(search.trim());
+      });
   }
 
-  protected addWorkType(): void {
-    const id = this.form.controls.workTypeToAdd.value;
-    if (!id || !this.workTypes().some((work) => work.id === id)) {
+  protected focusWorkInput(): void {
+    this.workInput()?.nativeElement.focus();
+  }
+
+  protected openWorkMenu(): void {
+    this.workMenuOpen.set(true);
+    this.workSuggestions.set(this.workTypes());
+    this.workTypeSearch$.next(this.workQuery.value.trim());
+  }
+
+  protected closeWorkMenu(event: FocusEvent): void {
+    const next = event.relatedTarget;
+    const container = event.currentTarget;
+    if (next instanceof Node && container instanceof Node && container.contains(next)) {
       return;
     }
+    this.workMenuOpen.set(false);
+  }
 
-    this.selectedWorkTypeIds.update((current) =>
-      current.includes(id) ? current : [...current, id]
+  protected onWorkKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.workMenuOpen.set(false);
+    }
+    if (event.key === 'Enter' || event.key === ',') {
+      // A typed name must never be submitted or converted into a custom chip.
+      event.preventDefault();
+      if (event.key === 'Enter' && this.availableWorkTypes().length === 1) {
+        this.selectWorkType(this.availableWorkTypes()[0]);
+      }
+    }
+  }
+
+  protected selectWorkType(work: WorkType): void {
+    const available = this.availableWorkTypes();
+    // Reject fabricated/stale values: they must come from current 1C results.
+    if (!available.some(({ id }) => id === work.id)) {
+      return;
+    }
+    this.selectedWorks.update((items) =>
+      items.some(({ id }) => id === work.id) ? items : [...items, work]
     );
-    this.form.controls.workTypeToAdd.setValue('');
+    this.workQuery.setValue('', { emitEvent: false });
+    this.workMenuOpen.set(true);
+    this.workSuggestions.set(this.workTypes());
+    this.workTypeSearch$.next('');
+    this.focusWorkInput();
   }
 
   protected removeWorkType(id: string): void {
-    this.selectedWorkTypeIds.update((current) => current.filter((item) => item !== id));
+    this.selectedWorks.update((items) => items.filter((work) => work.id !== id));
+    this.workMenuOpen.set(true);
+    this.workSuggestions.set(this.workTypes());
+    this.workTypeSearch$.next(this.workQuery.value.trim());
+    this.focusWorkInput();
   }
 
   protected save(): void {
@@ -143,19 +219,13 @@ export class AppointmentFormComponent {
     }
 
     const { date, time, car, description } = this.form.getRawValue();
-    const ids = this.selectedWorkTypeIds();
-
-    // Never forward free-text work names even if the browser modifies form state.
-    if (!ids.every((id) => this.workTypes().some((work) => work.id === id))) {
-      this.hasError.set(true);
-      return;
-    }
-
     this.saving.set(true);
     this.hasError.set(false);
 
     this.appointmentService
-      .create(createAppointmentPayload(car, date, time, ids, description))
+      .create(createAppointmentPayload(
+        car, date, time, this.selectedWorks().map(({ id }) => id), description
+      ))
       .subscribe({
         next: () => {
           this.saving.set(false);
