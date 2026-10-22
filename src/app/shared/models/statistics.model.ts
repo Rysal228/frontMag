@@ -1,4 +1,9 @@
-export type StatisticsPeriod = 7 | 30 | 90;
+export type StatisticsPeriod = number;
+
+export type StatisticsPeriodsResponse = {
+  periods: Array<{ days: number }>;
+  defaultDays: number | null;
+};
 
 export type StatisticsSummary = {
   orders: number;
