@@ -53,6 +53,9 @@ export class AppShellComponent {
       icon: '@tui.calendar',
       route: '/appointments',
     },
+    ...(this.currentRole.role() === 'admin'
+      ? [{ label: 'Статистика', icon: '@tui.chart-column', route: '/statistics' }]
+      : []),
     {
       label: 'Профиль',
       icon: '@tui.user',
