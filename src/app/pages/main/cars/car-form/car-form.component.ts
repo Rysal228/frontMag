@@ -107,8 +107,8 @@ export class CarFormComponent {
     }
 
     input.value = '';
-    if (file.size > 2 * 1024 * 1024) {
-      this.photoError.set('Размер фотографии не должен превышать 2 МиБ.');
+    if (file.size > 5_000_000) {
+      this.photoError.set('Размер фотографии не должен превышать 5 МБ.');
       return;
     }
 
