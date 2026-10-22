@@ -35,6 +35,7 @@ export const API_ENDPOINTS = {
     workTypes: `/api/${version}/orders/work-type/`,
     availability: `/api/${version}/orders/availability/`,
     statistics: `/api/${version}/orders/statistics/`,
+    statisticsPeriods: `/api/${version}/orders/statistics/periods/`,
     filterPermissions: `/api/${version}/orders/filter-permissions/`,
     permissions: (id: string) => `/api/${version}/orders/${id}/permissions/`,
     transitionStatus: (id: string) => `/api/${version}/orders/${id}/transition-status/`,
