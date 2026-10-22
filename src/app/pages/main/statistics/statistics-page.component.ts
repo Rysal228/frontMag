@@ -55,6 +55,7 @@ export class StatisticsPageComponent {
   protected readonly workCounts = computed(() => (this.dashboard()?.topWorkTypes ?? []).map((item) => item.count));
   protected readonly workLabels = computed(() => this.workCounts().map((_, index) => String(index + 1)));
   protected readonly workMax = computed(() => Math.max(1, ...this.workCounts()));
+  protected readonly workYLabels = computed(() => ['0', String(this.workMax())]);
   protected readonly weekdayPercentages = computed(() => (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.percent));
   protected readonly weekdayLabels = computed(() => (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.weekdayName));
 
