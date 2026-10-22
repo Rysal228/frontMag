@@ -28,7 +28,7 @@ export class StatisticsPageComponent {
   protected readonly hasError = signal(false);
 
   protected readonly trendPoints = computed<Array<[number, number]>>(() =>
-    (this.dashboard()?.ordersTrend ?? []).map((point, index) => [index, point.count])
+    (this.dashboard()?.ordersTrend ?? []).map((point, index): [number, number] => [index, point.count])
   );
   protected readonly trendWidth = computed(() => Math.max(this.trendPoints().length - 1, 1));
   protected readonly trendMax = computed(() =>
