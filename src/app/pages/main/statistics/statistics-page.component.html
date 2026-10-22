@@ -116,7 +116,7 @@
         @if (stats.topWorkTypes.length) {
           <tui-axes
             class="bar-axes"
-            [axisYLabels]="['0', String(workMax())]"
+            [axisYLabels]="workYLabels()"
             [axisXLabels]="workLabels()"
             [horizontalLines]="2"
           >
