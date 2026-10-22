@@ -45,6 +45,7 @@ export class CarFormComponent {
   protected readonly isModelsLoading = signal(false);
   protected readonly loadError = signal(false);
   protected readonly selectedPhoto = signal<File | null>(null);
+  protected readonly photoError = signal<string | null>(null);
   protected readonly photoPreview = signal<string | null>(null);
   protected readonly hasOrders = signal(false);
 
@@ -105,7 +106,19 @@ export class CarFormComponent {
       return;
     }
 
-    if (this.photoPreview()) {
+    input.value = '';
+    if (file.size > 5_000_000) {
+      this.photoError.set('Размер фотографии не должен превышать 5 МБ.');
+      return;
+    }
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      this.photoError.set('Допустимы только фотографии JPEG, PNG или WebP.');
+      return;
+    }
+
+    this.photoError.set(null);
+    if (this.selectedPhoto() && this.photoPreview()?.startsWith('blob:')) {
       URL.revokeObjectURL(this.photoPreview()!);
     }
 
@@ -114,7 +127,7 @@ export class CarFormComponent {
   }
 
   protected save(): void {
-    if (this.form.invalid || this.isSaving()) {
+    if (this.form.invalid || this.isSaving() || this.photoError()) {
       this.form.markAllAsTouched();
       return;
     }
