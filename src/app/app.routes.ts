@@ -93,6 +93,16 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'statistics',
+        canActivate: [roleGuard],
+        data: {
+          requiredRole: 'admin',
+          title: 'Статистика',
+        },
+        loadComponent: () =>
+          import('./pages/main/statistics/statistics-page.component').then((c) => c.StatisticsPageComponent),
+      },
+      {
         path: 'profile',
         component: ProfilePageComponent,
       },
