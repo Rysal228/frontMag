@@ -6,7 +6,7 @@
     </div>
 
     <div class="period-selector" role="group" aria-label="Период статистики">
-      @for (days of periods; track days) {
+      @for (days of periods(); track days) {
         <button
           tuiButton
           type="button"
@@ -16,7 +16,7 @@
           [attr.aria-pressed]="period() === days"
           (click)="setPeriod(days)"
         >
-          {{ days }} дней
+          {{ periodLabel(days) }}
         </button>
       }
     </div>
@@ -28,6 +28,10 @@
     <div class="status-message status-message_error">
       <p>Не удалось получить статистику. Проверьте соединение с сервером.</p>
       <button tuiButton type="button" appearance="outline" (click)="retry()">Повторить</button>
+    </div>
+  } @else if (!periods().length) {
+    <div class="status-message">
+      Периоды статистики не настроены. Добавьте доступные варианты в Django Admin.
     </div>
   } @else if (dashboard(); as stats) {
     <p class="period-caption">Период: {{ stats.period.from }} — {{ stats.period.to }}</p>
@@ -69,7 +73,7 @@
         >
           <tui-line-chart
             class="line-chart"
-            [dots]="period() === 7"
+            [dots]="trendPoints().length <= 14"
             [filled]="true"
             [height]="trendMax()"
             [width]="trendWidth()"

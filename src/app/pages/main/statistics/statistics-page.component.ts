@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 
 import { TuiAxes, TuiBarChart, TuiLineChart, TuiRingChart } from '@taiga-ui/addon-charts';
 import { TuiButton } from '@taiga-ui/core';
@@ -21,8 +21,8 @@ export class StatisticsPageComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly selection$ = new Subject<StatisticsPeriod>();
 
-  protected readonly periods: readonly StatisticsPeriod[] = [7, 30, 90];
-  protected readonly period = signal<StatisticsPeriod>(30);
+  protected readonly periods = signal<readonly StatisticsPeriod[]>([]);
+  protected readonly period = signal<StatisticsPeriod | null>(null);
   protected readonly dashboard = signal<StatisticsDashboard | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
@@ -66,6 +66,12 @@ export class StatisticsPageComponent {
       maximumFractionDigits: 0,
     }).format(value);
 
+  protected readonly periodLabel = (days: number): string => {
+    const category = new Intl.PluralRules('ru-RU').select(days);
+    const unit = category === 'one' ? 'день' : category === 'few' ? 'дня' : 'дней';
+    return `${days} ${unit}`;
+  };
+
   protected readonly formatDay = (value: number): string => {
     const date = this.dashboard()?.ordersTrend[Math.round(value)]?.date;
     return date ? `${date.slice(8, 10)}.${date.slice(5, 7)}` : '';
@@ -74,7 +80,6 @@ export class StatisticsPageComponent {
   constructor() {
     this.selection$
       .pipe(
-        startWith(30 as StatisticsPeriod),
         tap(() => {
           this.isLoading.set(true);
           this.hasError.set(false);
@@ -93,16 +98,49 @@ export class StatisticsPageComponent {
         this.dashboard.set(response);
         this.isLoading.set(false);
       });
+
+    this.loadPeriods();
+  }
+
+  private loadPeriods(): void {
+    this.isLoading.set(true);
+    this.hasError.set(false);
+
+    this.api
+      .getPeriods()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ periods, defaultDays }) => {
+          // Period choices and the initial selection are supplied by Django.
+          const options = periods.map(({ days }) => days);
+          this.periods.set(options);
+          const chosen = options.includes(defaultDays ?? NaN) ? defaultDays : (options[0] ?? null);
+          this.period.set(chosen);
+          if (chosen === null) {
+            this.dashboard.set(null);
+            this.isLoading.set(false);
+            return;
+          }
+          this.selection$.next(chosen);
+        },
+        error: () => {
+          this.periods.set([]);
+          this.period.set(null);
+          this.dashboard.set(null);
+          this.hasError.set(true);
+          this.isLoading.set(false);
+        },
+      });
   }
 
   protected setPeriod(days: StatisticsPeriod): void {
-    if (this.period() !== days) {
+    if (this.periods().includes(days) && this.period() !== days) {
       this.period.set(days);
       this.selection$.next(days);
     }
   }
 
   protected retry(): void {
-    this.selection$.next(this.period());
+    this.loadPeriods();
   }
 }
