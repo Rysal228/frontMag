@@ -66,14 +66,17 @@
         }
 
         <label class="upload-area">
-          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" />
+          <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoSelected($event)" />
           <span>{{ selectedPhoto() ? 'Выбрать другое фото' : 'Выберите файл или перетащите его сюда' }}</span>
-          <small>JPG, PNG или другой формат изображения</small>
+          <small>JPG, PNG или WebP, не более 2 МиБ</small>
         </label>
+        @if (photoError()) {
+          <p class="photo-error" role="alert">{{ photoError() }}</p>
+        }
       </div>
 
       <div class="actions">
-        <button tuiButton appearance="primary" type="submit" [disabled]="form.invalid || isSaving()">
+        <button tuiButton appearance="primary" type="submit" [disabled]="form.invalid || isSaving() || !!photoError()">
           {{ isSaving() ? 'Сохранение...' : isEdit ? 'Сохранить изменения' : 'Сохранить' }}
         </button>
 
