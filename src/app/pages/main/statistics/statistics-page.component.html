@@ -1,0 +1,166 @@
+<section class="statistics-page">
+  <header class="page-heading">
+    <div>
+      <h1>Статистика</h1>
+      <p>Показатели автосервиса на основе заказов и расписания</p>
+    </div>
+
+    <div class="period-selector" role="group" aria-label="Период статистики">
+      @for (days of periods; track days) {
+        <button
+          tuiButton
+          type="button"
+          size="s"
+          [appearance]="period() === days ? 'primary' : 'outline'"
+          [disabled]="isLoading()"
+          [attr.aria-pressed]="period() === days"
+          (click)="setPeriod(days)"
+        >
+          {{ days }} дней
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="status-message" role="status">Загружаем статистику…</div>
+  } @else if (hasError()) {
+    <div class="status-message status-message_error">
+      <p>Не удалось получить статистику. Проверьте соединение с сервером.</p>
+      <button tuiButton type="button" appearance="outline" (click)="retry()">Повторить</button>
+    </div>
+  } @else if (dashboard(); as stats) {
+    <p class="period-caption">Период: {{ stats.period.from }} — {{ stats.period.to }}</p>
+
+    <div class="metrics">
+      <article class="metric-card">
+        <span class="metric-label">Новых заказов</span>
+        <strong>{{ stats.summary.orders }}</strong>
+        <small>По дате создания</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Завершено</span>
+        <strong>{{ stats.summary.completed }}</strong>
+        <small>Сейчас в статусе «Завершён»</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Стоимость работ</span>
+        <strong>{{ formatRubles(stats.summary.workAmount) }}</strong>
+        <small>Сумма строк заказов, не выручка</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Загрузка записи</span>
+        <strong>{{ stats.summary.occupancyPercent }}%</strong>
+        <small>Доля занятых стартовых слотов</small>
+      </article>
+    </div>
+
+    <div class="charts">
+      <article class="chart-card chart-card_wide">
+        <div class="chart-heading">
+          <h2>Динамика новых заказов</h2>
+          <p>Количество заказов по дате создания</p>
+        </div>
+        <tui-axes
+          class="line-axes"
+          [horizontalLines]="2"
+          [axisYLabels]="trendYLabels()"
+          [axisXLabels]="trendXLabels()"
+        >
+          <tui-line-chart
+            class="line-chart"
+            [dots]="period() === 7"
+            [filled]="true"
+            [height]="trendMax()"
+            [width]="trendWidth()"
+            [value]="trendPoints()"
+            [xStringify]="formatDay"
+          />
+        </tui-axes>
+      </article>
+
+      <article class="chart-card">
+        <div class="chart-heading">
+          <h2>Статусы заказов</h2>
+          <p>Текущий статус заказов, созданных за период</p>
+        </div>
+        @if (stats.statusDistribution.length) {
+          <div class="status-chart">
+            <tui-ring-chart size="l" [value]="statusCounts()">
+              <span class="ring-total">{{ stats.summary.orders }}</span>
+              <span>заказов</span>
+            </tui-ring-chart>
+            <ul class="legend">
+              @for (status of stats.statusDistribution; track status.code; let index = $index) {
+                <li>
+                  <span
+                    class="legend-dot"
+                    [style.background]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
+                  ></span>
+                  <span class="legend-name">{{ status.name }}</span>
+                  <strong>{{ status.count }}</strong>
+                </li>
+              }
+            </ul>
+          </div>
+        } @else {
+          <p class="empty-state">За этот период заказов нет</p>
+        }
+      </article>
+
+      <article class="chart-card">
+        <div class="chart-heading">
+          <h2>Популярные виды работ</h2>
+          <p>Количество строк работ в новых заказах — топ-7</p>
+        </div>
+        @if (stats.topWorkTypes.length) {
+          <tui-axes
+            class="bar-axes"
+            [axisYLabels]="['0', String(workMax())]"
+            [axisXLabels]="workLabels()"
+            [horizontalLines]="2"
+          >
+            <tui-bar-chart [value]="[workCounts()]" [max]="workMax()" [collapsed]="true" />
+          </tui-axes>
+          <ol class="work-legend">
+            @for (work of stats.topWorkTypes; track work.id; let index = $index) {
+              <li><span>{{ index + 1 }}. {{ work.name }}</span><strong>{{ work.count }}</strong></li>
+            }
+          </ol>
+        } @else {
+          <p class="empty-state">За этот период работы не добавляли</p>
+        }
+      </article>
+
+      <article class="chart-card chart-card_wide">
+        <div class="chart-heading">
+          <h2>Загрузка по дням недели</h2>
+          <p>Доля стартовых слотов, пересекающихся с записью; блокировки исключены</p>
+        </div>
+        <tui-axes
+          class="bar-axes occupancy-axes"
+          [axisXLabels]="weekdayLabels()"
+          [axisYLabels]="['0%', '50%', '100%']"
+          [horizontalLines]="2"
+        >
+          <tui-bar-chart [value]="[weekdayPercentages()]" [max]="100" [collapsed]="true" />
+        </tui-axes>
+        <div class="occupancy-details">
+          @for (day of stats.weekdayOccupancy; track day.weekday) {
+            <div class="occupancy-day">
+              <span>{{ day.weekdayName }}</span>
+              <strong>{{ day.capacity ? day.percent + '%' : '—' }}</strong>
+              <small>{{ day.busy }} из {{ day.capacity }}</small>
+            </div>
+          }
+        </div>
+        <p class="chart-footnote">
+          Загрузка рассчитана по датам посещения, в отличие от остальных графиков — по датам создания.
+          Если за день нет доступных по расписанию слотов, процент не вычисляется.
+        </p>
+      </article>
+    </div>
+  } @else {
+    <div class="status-message">Нет данных для отображения.</div>
+  }
+</section>
