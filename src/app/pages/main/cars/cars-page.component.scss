@@ -95,20 +95,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
   margin-top: 24px;
-}
-
-.pagination-pages {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.pagination-ellipsis {
-  min-width: 40px;
-  text-align: center;
-  color: var(--tui-text-secondary);
 }
 
 .state,
@@ -153,16 +140,6 @@
 
   .title {
     font-size: 25px;
-  }
-
-  .pagination {
-    flex-wrap: wrap;
-  }
-
-  .pagination-pages {
-    order: -1;
-    width: 100%;
-    justify-content: center;
   }
 }
 

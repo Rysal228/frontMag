@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { map, Subject, switchMap, takeUntil, timer } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
 import { TuiBadgeNotification, TuiBadgedContent } from '@taiga-ui/kit';
@@ -38,11 +39,14 @@ const EMPTY_FILTERS: CarFilters = {
   styleUrl: './car-filters.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CarFiltersComponent implements OnInit {
+export class CarFiltersComponent {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly phoneSearch$ = new Subject<string>();
+  private readonly cancelPhoneSearch$ = new Subject<void>();
 
   public readonly isStaff = input(false);
   public readonly defaultStatus = input<CarFilters['status']>('active');
+  public readonly appliedFilters = input.required<CarFilters>();
   public readonly brands = input<CarBrand[]>([]);
   public readonly models = input<CarModel[]>([]);
   public readonly filtersChange = output<CarFilters>();
@@ -53,15 +57,20 @@ export class CarFiltersComponent implements OnInit {
 
   constructor() {
     this.phoneSearch$
-      .pipe(debounceTime(350), distinctUntilChanged())
+      .pipe(
+        switchMap((value) =>
+          timer(350).pipe(
+            map(() => value),
+            takeUntil(this.cancelPhoneSearch$)
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe((value) => this.applyPhoneSearch(value));
-  }
 
-  ngOnInit(): void {
-    this.filters.update((current) => ({
-      ...current,
-      status: this.defaultStatus(),
-    }));
+    // Keep the visible controls in sync with the filters actually used by
+    // the page, including when the active role arrives asynchronously.
+    effect(() => this.filters.set({ ...this.appliedFilters() }));
   }
 
   protected openModal(): void {
@@ -83,12 +92,14 @@ export class CarFiltersComponent implements OnInit {
   }
 
   protected resetAll(): void {
-    this.filters.set({
+    this.cancelPhoneSearch$.next();
+    const cleared: CarFilters = {
       ...EMPTY_FILTERS,
       status: this.defaultStatus(),
-    });
+    };
+    this.filters.set(cleared);
     this.isModalOpen.set(false);
-    this.phoneSearch$.next('');
+    this.emit();
   }
 
   protected activeFilterCount(): number {
