@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { TuiButton, TuiDialogService } from '@taiga-ui/core';
-import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
+import { TuiButton } from '@taiga-ui/core';
 
 import { AuthService } from 'app/pages/auth/services/auth.service';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
@@ -15,7 +14,7 @@ import { PasswordDialogComponent } from '../password-dialog/password-dialog.comp
 @Component({
   selector: 'app-profile-settings',
   standalone: true,
-  imports: [ThemeToggleComponent, TuiButton],
+  imports: [PasswordDialogComponent, ThemeToggleComponent, TuiButton],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,7 +25,8 @@ export class SettingsComponent {
   private readonly roleAccess = inject(RoleAccessService);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly roleCatalog = inject(ROLE_CATALOG);
-  private readonly dialogs = inject(TuiDialogService);
+
+  protected readonly passwordDialogOpen = signal(false);
 
   protected readonly canChangeRole = computed(() => {
     const availableRoles = this.roleCatalog.filter(({ role }) => this.roleAccess.hasAccess(role));
@@ -35,11 +35,11 @@ export class SettingsComponent {
   });
 
   protected changePassword(): void {
-    this.dialogs
-      .open(new PolymorpheusComponent(PasswordDialogComponent), {
-        size: 's',
-      })
-      .subscribe();
+    this.passwordDialogOpen.set(true);
+  }
+
+  protected closePasswordDialog(): void {
+    this.passwordDialogOpen.set(false);
   }
 
   protected changeRole(): void {

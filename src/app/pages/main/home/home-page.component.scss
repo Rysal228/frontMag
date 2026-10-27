@@ -44,7 +44,7 @@
 
 .home-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 22px;
 }
@@ -90,7 +90,7 @@
 
 .featured-appointment {
   display: flex;
-  min-height: 300px;
+  min-height: 260px;
   flex-direction: column;
   align-items: flex-start;
   padding: 25px;
@@ -286,10 +286,10 @@
 .news-card {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 24px;
   overflow: hidden;
   min-width: 0;
-  padding: 18px;
+  padding: 22px;
   border: 1px solid var(--app-border);
   border-radius: 13px;
   background: var(--app-surface-subtle);
@@ -297,16 +297,19 @@
 
 .news-image {
   display: block;
-  width: 104px;
-  height: 104px;
-  flex: 0 0 104px;
+  width: clamp(220px, 35%, 420px);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  flex: 0 0 clamp(220px, 35%, 420px);
+  margin-left: auto;
   border-radius: 12px;
   object-fit: cover;
 }
 
 .news-body {
   min-width: 0;
-  flex: 1;
+  max-width: 680px;
+  flex: 1 1 auto;
   padding: 0;
 }
 
@@ -344,12 +347,6 @@
 
 .load-more-trigger {
   height: 1px;
-}
-
-@media (max-width: 1200px) {
-  .home-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (max-width: 767px) {
@@ -404,9 +401,9 @@
   }
 
   .news-image {
-    width: 82px;
-    height: 82px;
-    flex-basis: 82px;
+    width: clamp(100px, 32%, 180px);
+    aspect-ratio: 4 / 3;
+    flex-basis: clamp(100px, 32%, 180px);
     border-radius: 10px;
   }
 }

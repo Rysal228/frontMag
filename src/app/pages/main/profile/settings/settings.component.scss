@@ -74,6 +74,10 @@
   flex: 0 0 auto;
 }
 
+.setting-row_theme {
+  align-items: center;
+}
+
 @media (max-width: 767px) {
   .settings {
     padding: 19px;

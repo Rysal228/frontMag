@@ -1,0 +1,26 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.theme-toggle span {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.theme-toggle input {
+  flex: 0 0 auto;
+  margin: 0;
+}

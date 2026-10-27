@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { TuiButton, TuiDialogContext, TuiTextfield } from '@taiga-ui/core';
-import { injectContext } from '@taiga-ui/polymorpheus';
+import { TuiAutoFocus, TuiFocusTrap } from '@taiga-ui/cdk';
+import { TuiButton } from '@taiga-ui/core';
 
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
@@ -12,20 +12,15 @@ import { PasswordService } from 'app/shared/services/password.service';
 @Component({
   selector: 'app-password-dialog',
   standalone: true,
-  imports: [
-    FormFieldComponent,
-    ReactiveFormsModule,
-    TextFieldComponent,
-    TuiButton,
-    TuiTextfield,
-  ],
+  imports: [FormFieldComponent, ReactiveFormsModule, TextFieldComponent, TuiButton, TuiAutoFocus, TuiFocusTrap],
   templateUrl: './password-dialog.component.html',
   styleUrl: './password-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordDialogComponent {
   private readonly passwordService = inject(PasswordService);
-  private readonly context = injectContext<TuiDialogContext<void>>();
+
+  public readonly closed = output<void>();
 
   protected readonly isLoading = signal(true);
   protected readonly isSaving = signal(false);
@@ -46,6 +41,12 @@ export class PasswordDialogComponent {
 
   constructor() {
     this.loadPasswordStatus();
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  protected onEscape(event: KeyboardEvent): void {
+    event.preventDefault();
+    this.close();
   }
 
   private loadPasswordStatus(): void {
@@ -98,12 +99,12 @@ export class PasswordDialogComponent {
       })
       .pipe(finalize(() => this.isSaving.set(false)))
       .subscribe({
-        next: () => this.context.completeWith(),
+        next: () => this.close(),
         error: () => this.error.set('Не удалось сохранить пароль. Проверьте введённые данные.'),
       });
   }
 
   protected close(): void {
-    this.context.$implicit.complete();
+    this.closed.emit();
   }
 }
