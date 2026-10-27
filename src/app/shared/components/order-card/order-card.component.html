@@ -3,7 +3,11 @@
     <header class="card-header">
       <h3>Заказ № {{ order().orderNumber }}</h3>
 
-      <span class="status" [attr.data-appearance]="order().status.appearance">
+      <span
+        class="status status-badge"
+        [attr.data-appearance]="order().status.appearance"
+        [attr.data-status-code]="order().status.code"
+      >
         {{ order().status.name }}
       </span>
 
@@ -42,7 +46,11 @@
   <a class="order-card" [routerLink]="['/appointments', order().id]">
     <header class="card-header">
       <h3>Заказ № {{ order().orderNumber }}</h3>
-      <span class="status" [attr.data-appearance]="order().status.appearance">
+      <span
+        class="status status-badge"
+        [attr.data-appearance]="order().status.appearance"
+        [attr.data-status-code]="order().status.code"
+      >
         {{ order().status.name }}
       </span>
     </header>

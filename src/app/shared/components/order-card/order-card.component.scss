@@ -38,9 +38,8 @@
 
 .card-header .status {
   flex: 0 0 auto;
-  font-size: 15px;
-  line-height: 24px;
-  font-weight: 800;
+  max-width: 50%;
+  font-size: 11px;
 }
 
 .card-actions {
@@ -67,18 +66,6 @@
   line-height: 24px;
   font-weight: 800;
   overflow-wrap: anywhere;
-}
-
-.status[data-appearance='positive'] {
-  color: var(--tui-text-positive);
-}
-
-.status[data-appearance='warning'] {
-  color: var(--tui-text-warning);
-}
-
-.status[data-appearance='negative'] {
-  color: var(--tui-text-negative);
 }
 
 .payment-button {

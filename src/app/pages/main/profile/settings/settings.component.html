@@ -1,13 +1,43 @@
-<section class="settings">
-  <h2>Настройки</h2>
+<section class="settings" aria-labelledby="profile-settings-heading">
+  <header class="settings-heading">
+    <span class="eyebrow">УПРАВЛЕНИЕ АККАУНТОМ</span>
+    <h2 id="profile-settings-heading">Настройки</h2>
+    <p>Безопасность и персонализация</p>
+  </header>
 
-  <button tuiButton appearance="outline" type="button" (click)="changePassword()">Изменить пароль</button>
+  <div class="settings-list">
+    <div class="setting-row">
+      <div class="setting-description">
+        <strong>Пароль</strong>
+        <span>Настройки безопасности</span>
+      </div>
+      <button tuiButton appearance="outline" size="s" type="button" (click)="changePassword()">Изменить</button>
+    </div>
 
-  @if (canChangeRole()) {
-    <button tuiButton appearance="flat" type="button" (click)="changeRole()">Сменить роль</button>
-  }
+    @if (canChangeRole()) {
+      <div class="setting-row">
+        <div class="setting-description">
+          <strong>Активная роль</strong>
+          <span>Переключить рабочий режим</span>
+        </div>
+        <button tuiButton appearance="outline" size="s" type="button" (click)="changeRole()">Сменить</button>
+      </div>
+    }
 
-  <app-theme-toggle />
+    <div class="setting-row setting-row_theme">
+      <div class="setting-description">
+        <strong>Оформление</strong>
+        <span>Настройте цветовую тему</span>
+      </div>
+      <app-theme-toggle />
+    </div>
 
-  <button tuiButton appearance="outline" type="button" (click)="logout()">Выйти из аккаунта</button>
+    <div class="setting-row">
+      <div class="setting-description">
+        <strong>Выход из аккаунта</strong>
+        <span>Завершить текущий сеанс</span>
+      </div>
+      <button tuiButton appearance="outline" size="s" type="button" (click)="logout()">Выйти</button>
+    </div>
+  </div>
 </section>
