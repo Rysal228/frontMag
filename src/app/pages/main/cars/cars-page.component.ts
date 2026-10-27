@@ -1,8 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { finalize, forkJoin } from 'rxjs';
+import { EMPTY, Subject, catchError, finalize, forkJoin, switchMap, tap } from 'rxjs';
 
-import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
+import { TuiPagination } from '@taiga-ui/kit';
 
 import { Car, CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
 import { CarFiltersComponent } from 'app/shared/components/car-filters/car-filters.component';
@@ -13,7 +24,7 @@ import { UserRole } from 'app/shared/types/roles.types';
 @Component({
   selector: 'app-cars-page',
   standalone: true,
-  imports: [CarFiltersComponent, RouterLink, TuiButton, TuiIcon],
+  imports: [CarFiltersComponent, RouterLink, TuiButton, TuiPagination],
   templateUrl: './cars-page.component.html',
   styleUrl: './cars-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +32,8 @@ import { UserRole } from 'app/shared/types/roles.types';
 export class CarsPageComponent {
   private readonly carService = inject(CarService);
   private readonly currentRoleStore = inject(CurrentRoleStore);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly carRequests$ = new Subject<{ page: number; filters: CarFilters }>();
 
   protected readonly cars = signal<Car[]>([]);
   protected readonly brands = signal<CarBrand[]>([]);
@@ -94,44 +107,53 @@ export class CarsPageComponent {
 
   protected readonly totalPages = computed(() => Math.ceil(this.totalItems() / 10));
 
-  protected readonly pageItems = computed<(number | 'ellipsis')[]>(() => {
-    const totalPages = this.totalPages();
-    const currentPage = this.currentPage();
-
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, index) => index + 1);
-    }
-
-    const pages = new Set<number>([1, totalPages, currentPage]);
-
-    for (const page of [currentPage - 1, currentPage + 1]) {
-      if (page > 1 && page < totalPages) {
-        pages.add(page);
-      }
-    }
-
-    const sortedPages = [...pages].sort((a, b) => a - b);
-    const result: (number | 'ellipsis')[] = [];
-
-    sortedPages.forEach((page, index) => {
-      if (index > 0 && page - sortedPages[index - 1] > 1) {
-        result.push('ellipsis');
-      }
-
-      result.push(page);
-    });
-
-    return result;
-  });
-
   constructor() {
-    this.filters.update((current) => ({
-      ...current,
-      status: this.defaultStatus(),
-    }));
+    this.carRequests$
+      .pipe(
+        switchMap(({ page, filters }) => {
+          this.isLoading.set(true);
+          this.hasError.set(false);
+
+          return this.carService.getPage(page, filters).pipe(
+            tap((response) => {
+              this.currentPage.set(page);
+              this.totalItems.set(response.count);
+              this.cars.set(response.results);
+            }),
+            catchError(() => {
+              this.hasError.set(true);
+              return EMPTY;
+            }),
+            finalize(() => this.isLoading.set(false))
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
 
     this.loadFilterOptions();
-    this.loadCars(1);
+
+    // A role may be restored after this component is created. Apply the
+    // correct default and fetch cars once the active role becomes available.
+    effect(() => {
+      const role = this.currentRoleStore.role();
+      if (!role) {
+        return;
+      }
+
+      untracked(() => {
+        this.filters.set({
+          status: role === UserRole.Admin ? 'all' : 'active',
+          ownerPhone: '',
+          brandId: null,
+          modelId: null,
+          year: null,
+          vin: '',
+          plateNumber: '',
+        });
+        this.loadCars(1);
+      });
+    });
   }
 
   protected getStatusLabel(status: Car['status']): string {
@@ -147,7 +169,8 @@ export class CarsPageComponent {
     this.loadCars(this.currentPage());
   }
 
-  protected goToPage(page: number): void {
+  protected onPageChange(pageIndex: number): void {
+    const page = pageIndex + 1;
     if (page === this.currentPage() || page < 1 || page > this.totalPages() || this.isLoading()) {
       return;
     }
@@ -159,28 +182,17 @@ export class CarsPageComponent {
     forkJoin({
       brands: this.carService.getBrands(),
       models: this.carService.getModels(),
-    }).subscribe({
-      next: ({ brands, models }) => {
-        this.brands.set(brands);
-        this.models.set(models);
-      },
-    });
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ brands, models }) => {
+          this.brands.set(brands);
+          this.models.set(models);
+        },
+      });
   }
 
   private loadCars(page: number): void {
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
-    this.carService
-      .getPage(page, this.filters())
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.currentPage.set(page);
-          this.totalItems.set(response.count);
-          this.cars.set(response.results);
-        },
-        error: () => this.hasError.set(true),
-      });
+    this.carRequests$.next({ page, filters: { ...this.filters() } });
   }
 }

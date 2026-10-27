@@ -13,6 +13,7 @@
   <app-car-filters
     [isStaff]="isStaffRole()"
     [defaultStatus]="defaultStatus()"
+    [appliedFilters]="filters()"
     [brands]="brands()"
     [models]="models()"
     (filtersChange)="onFiltersChange($event)"
@@ -96,47 +97,7 @@
 
     @if (totalPages() > 1) {
       <nav class="pagination" aria-label="Пагинация автомобилей">
-        <button
-          tuiButton
-          appearance="flat"
-          type="button"
-          size="m"
-          [disabled]="currentPage() === 1 || isLoading()"
-          (click)="goToPage(currentPage() - 1)"
-        >
-          <tui-icon icon="@tui.move-left" />
-        </button>
-
-        <div class="pagination-pages">
-          @for (item of pageItems(); track $index) {
-            @if (item === 'ellipsis') {
-              <span class="pagination-ellipsis" aria-hidden="true">…</span>
-            } @else {
-              <button
-                tuiButton
-                [appearance]="item === currentPage() ? 'primary' : 'flat'"
-                type="button"
-                size="m"
-                [attr.aria-current]="item === currentPage() ? 'page' : null"
-                [disabled]="isLoading()"
-                (click)="goToPage(item)"
-              >
-                {{ item }}
-              </button>
-            }
-          }
-        </div>
-
-        <button
-          tuiButton
-          appearance="flat"
-          type="button"
-          size="m"
-          [disabled]="currentPage() === totalPages() || isLoading()"
-          (click)="goToPage(currentPage() + 1)"
-        >
-          <tui-icon icon="@tui.move-right" />
-        </button>
+        <tui-pagination [length]="totalPages()" [index]="currentPage() - 1" (indexChange)="onPageChange($event)" />
       </nav>
     }
   }
