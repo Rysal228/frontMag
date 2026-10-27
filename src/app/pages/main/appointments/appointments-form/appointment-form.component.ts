@@ -65,13 +65,10 @@ export class AppointmentFormComponent {
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
   protected readonly today = TuiDay.currentLocal();
 
-  // Taiga UI owns input/chip interaction. Only objects from the 1C
-  // ВидыРабот catalog survive the reactive-control validation.
   protected readonly selectedWorksControl = new FormControl<WorkType[]>([], { nonNullable: true });
   protected readonly selectedWorks = signal<WorkType[]>([]);
   protected readonly workTypeSuggestions = signal<WorkType[]>([]);
-  protected readonly stringifyWorkType = (value: unknown): string =>
-    this.isWorkType(value) ? value.name : '';
+  protected readonly stringifyWorkType = (value: unknown): string => (this.isWorkType(value) ? value.name : '');
   protected readonly disabledWorkType = (value: unknown): boolean => !this.isKnownWorkType(value);
 
   protected readonly form = new FormGroup({
@@ -117,9 +114,7 @@ export class AppointmentFormComponent {
 
           return this.appointmentService.getAvailability(date).pipe(
             tap((availability) => this.dayType.set(availability.dayType)),
-            map((availability) =>
-              availability.availableSlots.map((time) => ({ value: time, label: time }))
-            ),
+            map((availability) => availability.availableSlots.map((time) => ({ value: time, label: time }))),
             catchError(() => {
               this.hasAvailabilityError.set(true);
               return of([] as SelectOption[]);
@@ -137,9 +132,7 @@ export class AppointmentFormComponent {
         debounceTime(250),
         distinctUntilChanged(),
         switchMap((search) =>
-          this.appointmentService.getWorkTypes(search).pipe(
-            catchError(() => of([] as WorkType[]))
-          )
+          this.appointmentService.getWorkTypes(search).pipe(catchError(() => of([] as WorkType[])))
         ),
         takeUntilDestroyed(this.destroyRef)
       )
@@ -150,27 +143,23 @@ export class AppointmentFormComponent {
         this.workTypeSuggestions.set(items);
       });
 
-    this.selectedWorksControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((selected) => {
-        const safeItems: WorkType[] = [];
-        // TuiInputChip can emit free-text strings. Never allow those to
-        // become selected catalog rows, even if typed and confirmed by Enter.
-        for (const candidate of selected as unknown[]) {
-          if (!this.isWorkType(candidate)) {
-            continue;
-          }
-          const known = this.workTypesById.get(candidate.id);
-          if (known && !safeItems.some(({ id }) => id === known.id)) {
-            safeItems.push(known);
-          }
+    this.selectedWorksControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((selected) => {
+      const safeItems: WorkType[] = [];
+
+      for (const candidate of selected as unknown[]) {
+        if (!this.isWorkType(candidate)) {
+          continue;
         }
-        if (safeItems.length !== selected.length ||
-            safeItems.some((item, index) => item !== selected[index])) {
-          this.selectedWorksControl.setValue(safeItems, { emitEvent: false });
+        const known = this.workTypesById.get(candidate.id);
+        if (known && !safeItems.some(({ id }) => id === known.id)) {
+          safeItems.push(known);
         }
-        this.selectedWorks.set(safeItems);
-      });
+      }
+      if (safeItems.length !== selected.length || safeItems.some((item, index) => item !== selected[index])) {
+        this.selectedWorksControl.setValue(safeItems, { emitEvent: false });
+      }
+      this.selectedWorks.set(safeItems);
+    });
   }
 
   protected onWorkTypeInput(event: Event): void {
@@ -183,14 +172,16 @@ export class AppointmentFormComponent {
   }
 
   protected onWorkTypeEnter(event: Event): void {
-    // Avoid accidental form submission when typing a query in the chip input.
     event.preventDefault();
   }
 
   private isWorkType(value: unknown): value is WorkType {
-    return typeof value === 'object' && value !== null &&
+    return (
+      typeof value === 'object' &&
+      value !== null &&
       typeof (value as WorkType).id === 'string' &&
-      typeof (value as WorkType).name === 'string';
+      typeof (value as WorkType).name === 'string'
+    );
   }
 
   private isKnownWorkType(value: unknown): boolean {
@@ -208,9 +199,15 @@ export class AppointmentFormComponent {
     this.hasError.set(false);
 
     this.appointmentService
-      .create(createAppointmentPayload(
-        car, date, time, this.selectedWorks().map(({ id }) => id), description
-      ))
+      .create(
+        createAppointmentPayload(
+          car,
+          date,
+          time,
+          this.selectedWorks().map(({ id }) => id),
+          description
+        )
+      )
       .subscribe({
         next: () => {
           this.saving.set(false);

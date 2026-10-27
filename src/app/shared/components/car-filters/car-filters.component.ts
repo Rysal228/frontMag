@@ -68,8 +68,6 @@ export class CarFiltersComponent {
       )
       .subscribe((value) => this.applyPhoneSearch(value));
 
-    // Keep the visible controls in sync with the filters actually used by
-    // the page, including when the active role arrives asynchronously.
     effect(() => this.filters.set({ ...this.appliedFilters() }));
   }
 

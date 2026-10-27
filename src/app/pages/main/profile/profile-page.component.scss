@@ -20,7 +20,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--tui-text-action);
-  font-size: 10px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 1.4px;
 }
@@ -146,11 +146,8 @@
 .profile-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-top: 30px;
-  padding-top: 21px;
-  border-top: 1px solid var(--app-border);
+  justify-content: end;
+  padding-top: 16px;
 }
 
 .profile-actions > span {
@@ -175,7 +172,7 @@
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 16px;
 }
 
 .legend {

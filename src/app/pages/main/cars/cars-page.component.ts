@@ -15,8 +15,8 @@ import { EMPTY, Subject, catchError, finalize, forkJoin, switchMap, tap } from '
 import { TuiButton } from '@taiga-ui/core';
 import { TuiPagination } from '@taiga-ui/kit';
 
-import { Car, CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
 import { CarFiltersComponent } from 'app/shared/components/car-filters/car-filters.component';
+import { Car, CarBrand, CarFilters, CarModel } from 'app/shared/models/car.model';
 import { CarService } from 'app/shared/services/car.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { UserRole } from 'app/shared/types/roles.types';
@@ -133,8 +133,6 @@ export class CarsPageComponent {
 
     this.loadFilterOptions();
 
-    // A role may be restored after this component is created. Apply the
-    // correct default and fetch cars once the active role becomes available.
     effect(() => {
       const role = this.currentRoleStore.role();
       if (!role) {

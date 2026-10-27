@@ -9,8 +9,6 @@
   --layout-grid-gap-tablet: 16px;
   --layout-grid-gap-mobile: 12px;
 
-  // Shared ServiceCar surfaces. Taiga UI remains the component library;
-  // these tokens only describe the application's responsive layout.
   --app-page-background: #f3f6fb;
   --app-surface: #ffffff;
   --app-surface-subtle: #f7f9fc;
@@ -192,11 +190,9 @@ tui-root[data-theme="light"] {
 }
 
 [tuiAppearance][data-appearance="outline"] {
-  color: var(--tui-text-primary-on-accent-1);
+  color: var(--tui-text-primary);
 }
 
-// Unified order/work/payment status chips throughout the app.
-// Appearance from 1C provides the fallback; known status codes refine it.
 .status-badge {
   display: inline-flex;
   min-width: 0;
@@ -228,7 +224,6 @@ tui-root[data-theme="light"] {
   color: var(--app-status-negative);
 }
 
-// Explicit codes take precedence over a generic appearance value.
 .status-badge[data-status-code="completed"],
 .status-badge[data-status-code="confirmed"],
 .status-badge[data-status-code="approved"] {

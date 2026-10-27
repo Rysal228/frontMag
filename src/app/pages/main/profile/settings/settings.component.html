@@ -2,7 +2,6 @@
   <header class="settings-heading">
     <span class="eyebrow">УПРАВЛЕНИЕ АККАУНТОМ</span>
     <h2 id="profile-settings-heading">Настройки</h2>
-    <p>Безопасность и персонализация</p>
   </header>
 
   <div class="settings-list">
@@ -11,7 +10,7 @@
         <strong>Пароль</strong>
         <span>Настройки безопасности</span>
       </div>
-      <button tuiButton appearance="outline" size="s" type="button" (click)="changePassword()">Изменить</button>
+      <button tuiButton size="s" type="button" (click)="changePassword()">Изменить</button>
     </div>
 
     @if (canChangeRole()) {
@@ -20,7 +19,7 @@
           <strong>Активная роль</strong>
           <span>Переключить рабочий режим</span>
         </div>
-        <button tuiButton appearance="outline" size="s" type="button" (click)="changeRole()">Сменить</button>
+        <button tuiButton size="s" type="button" (click)="changeRole()">Сменить</button>
       </div>
     }
 
@@ -37,7 +36,7 @@
         <strong>Выход из аккаунта</strong>
         <span>Завершить текущий сеанс</span>
       </div>
-      <button tuiButton appearance="outline" size="s" type="button" (click)="logout()">Выйти</button>
+      <button tuiButton size="s" type="button" (click)="logout()">Выйти</button>
     </div>
   </div>
 </section>

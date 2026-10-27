@@ -4,7 +4,7 @@ import { finalize } from 'rxjs';
 
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
 import { TuiDay, TuiHovered } from '@taiga-ui/cdk';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
@@ -30,6 +30,7 @@ import { SettingsComponent } from './settings/settings.component';
     TuiRingChart,
     TuiHovered,
     SettingsComponent,
+    TuiIcon,
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',

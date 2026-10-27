@@ -27,7 +27,7 @@ export class StatisticsPageComponent {
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
 
-  protected readonly trendPoints = computed<Array<[number, number]>>(() =>
+  protected readonly trendPoints = computed<[number, number][]>(() =>
     (this.dashboard()?.ordersTrend ?? []).map((point, index): [number, number] => [index, point.count])
   );
   protected readonly trendWidth = computed(() => Math.max(this.trendPoints().length - 1, 1));
@@ -45,19 +45,25 @@ export class StatisticsPageComponent {
     }
     const ticks = Math.min(trend.length, 5);
     return Array.from({ length: ticks }, (_, index) => {
-      const at = Math.round(index * (trend.length - 1) / Math.max(1, ticks - 1));
+      const at = Math.round((index * (trend.length - 1)) / Math.max(1, ticks - 1));
       const date = trend[at]?.date ?? '';
       return date.length === 10 ? `${date.slice(8, 10)}.${date.slice(5, 7)}` : date;
     });
   });
 
-  protected readonly statusCounts = computed(() => (this.dashboard()?.statusDistribution ?? []).map((item) => item.count));
+  protected readonly statusCounts = computed(() =>
+    (this.dashboard()?.statusDistribution ?? []).map((item) => item.count)
+  );
   protected readonly workCounts = computed(() => (this.dashboard()?.topWorkTypes ?? []).map((item) => item.count));
   protected readonly workLabels = computed(() => this.workCounts().map((_, index) => String(index + 1)));
   protected readonly workMax = computed(() => Math.max(1, ...this.workCounts()));
   protected readonly workYLabels = computed(() => ['0', String(this.workMax())]);
-  protected readonly weekdayPercentages = computed(() => (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.percent));
-  protected readonly weekdayLabels = computed(() => (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.weekdayName));
+  protected readonly weekdayPercentages = computed(() =>
+    (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.percent)
+  );
+  protected readonly weekdayLabels = computed(() =>
+    (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.weekdayName)
+  );
 
   protected readonly formatRubles = (value: number): string =>
     new Intl.NumberFormat('ru-RU', {
@@ -111,7 +117,6 @@ export class StatisticsPageComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ periods, defaultDays }) => {
-          // Period choices and the initial selection are supplied by Django.
           const options = periods.map(({ days }) => days);
           this.periods.set(options);
           const chosen = options.includes(defaultDays ?? NaN) ? defaultDays : (options[0] ?? null);

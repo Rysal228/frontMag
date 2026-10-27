@@ -1,11 +1,10 @@
 <main class="profile-page">
   <header class="profile-heading">
-    <span class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
     <h1>Мой профиль</h1>
     <p>Управляйте личными данными и настройками аккаунта</p>
   </header>
 
-  <section class="profile-banner" aria-label="Информация об аккаунте">
+  <!-- <section class="profile-banner" aria-label="Информация об аккаунте">
     <span class="profile-avatar" aria-hidden="true">{{ initials() }}</span>
     <div class="profile-identity">
       <span class="role-chip">{{ roleLabel() }}</span>
@@ -14,8 +13,8 @@
         <p>{{ user()!.phone }}</p>
       }
     </div>
-    <span class="banner-mark" aria-hidden="true">✦</span>
-  </section>
+    <tui-icon class="banner-mark" icon="@tui.car"></tui-icon>
+  </section> -->
 
   <div class="profile-grid">
     <section class="profile-card personal-card" aria-labelledby="personal-heading">
@@ -23,7 +22,6 @@
         <div>
           <span class="eyebrow">ОБ УЧЁТНОЙ ЗАПИСИ</span>
           <h2 id="personal-heading">Личные данные</h2>
-          <p>Информация, которая используется в вашем профиле ServiceCar</p>
         </div>
       </header>
 
@@ -50,7 +48,6 @@
       </form>
 
       <footer class="profile-actions">
-        <span>Номер телефона доступен для просмотра, но не для редактирования в профиле.</span>
         <button
           tuiButton
           appearance="primary"
@@ -71,9 +68,8 @@
         <section class="profile-card statistics" aria-labelledby="mechanic-statistics-heading">
           <header class="card-heading">
             <div>
-              <span class="eyebrow">СПЕЦИАЛИСТ</span>
+              <span class="eyebrow">Аналитика</span>
               <h2 id="mechanic-statistics-heading">Статусы заказов</h2>
-              <p>Демонстрационные показатели</p>
             </div>
           </header>
 
