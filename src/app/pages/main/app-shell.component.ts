@@ -7,7 +7,9 @@ import { TuiButton } from '@taiga-ui/core';
 
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
+import { ThemeService } from 'app/shared/services/theme.service';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
+import { UserRole } from 'app/shared/types/roles.types';
 
 type NavigationItem = {
   readonly label: string;
@@ -25,13 +27,31 @@ type NavigationItem = {
 })
 export class AppShellComponent {
   private static readonly NAVIGATION_PAGE_SIZE = 3;
-  private static readonly MOBILE_BREAKPOINT = '(max-width: 767px)';
 
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly currentUser = inject(CurrentUserStore);
+  private readonly themeService = inject(ThemeService);
   private readonly roleCatalog = inject(ROLE_CATALOG);
+  private touchStartX: number | null = null;
+
+  protected readonly theme = this.themeService.effectiveTheme;
+  protected readonly currentSection = signal('Главная');
+  protected readonly roleLabel = computed(() => {
+    switch (this.currentRole.role()) {
+      case UserRole.Admin:
+        return 'Менеджер';
+      case UserRole.Mechanic:
+        return 'Специалист';
+      default:
+        return 'Пользователь';
+    }
+  });
+  protected readonly userInitials = computed(() => {
+    const user = this.currentUser.user();
+    return ((user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')).toUpperCase() || 'SC';
+  });
 
   protected readonly homeRoute = computed(
     () => this.roleCatalog.find(({ role }) => role === this.currentRole.role())?.homeRoute ?? '/roles'
@@ -63,13 +83,7 @@ export class AppShellComponent {
     },
   ]);
 
-  private readonly mobileMediaQuery =
-    typeof window !== 'undefined' ? window.matchMedia(AppShellComponent.MOBILE_BREAKPOINT) : null;
-
-  protected readonly isMobile = signal(this.mobileMediaQuery?.matches ?? false);
   protected readonly navigationPageIndex = signal(0);
-
-  protected readonly isCarouselMode = computed(() => this.isMobile() || this.navigationItems().length > 5);
 
   protected readonly navigationPages = computed(() => {
     const items = this.navigationItems();
@@ -81,17 +95,10 @@ export class AppShellComponent {
   });
 
   constructor() {
-    if (this.mobileMediaQuery) {
-      const updateMobileState = (event: MediaQueryListEvent): void => this.isMobile.set(event.matches);
-
-      this.mobileMediaQuery.addEventListener('change', updateMobileState);
-      this.destroyRef.onDestroy(() => this.mobileMediaQuery?.removeEventListener('change', updateMobileState));
-    }
-
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        takeUntilDestroyed()
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => this.updateNavigationPage());
 
@@ -111,6 +118,34 @@ export class AppShellComponent {
 
     if (itemIndex >= 0) {
       this.navigationPageIndex.set(Math.floor(itemIndex / AppShellComponent.NAVIGATION_PAGE_SIZE));
+      this.currentSection.set(this.navigationItems()[itemIndex].label);
+    }
+  }
+
+  protected toggleTheme(): void {
+    this.themeService.setTheme(this.theme() === 'dark' ? 'light' : 'dark');
+  }
+
+  protected onNavigationTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.changedTouches[0]?.clientX ?? null;
+  }
+
+  protected onNavigationTouchEnd(event: TouchEvent): void {
+    const endX = event.changedTouches[0]?.clientX;
+    if (this.touchStartX === null || endX === undefined) {
+      return;
+    }
+
+    const distance = endX - this.touchStartX;
+    this.touchStartX = null;
+    if (Math.abs(distance) < 55) {
+      return;
+    }
+
+    if (distance < 0) {
+      this.nextNavigationPage();
+    } else {
+      this.previousNavigationPage();
     }
   }
 

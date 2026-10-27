@@ -3,9 +3,18 @@
 }
 
 .statistics-page {
-  max-width: 1280px;
+  max-width: 1540px;
   margin: 0 auto;
-  padding: 24px 24px 40px;
+  padding: 30px 32px 48px;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--tui-text-action);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
 }
 
 .page-heading {
@@ -19,7 +28,9 @@
 
 .page-heading h1 {
   margin: 0 0 6px;
-  font-size: 28px;
+  font-size: clamp(25px, 2.8vw, 34px);
+  font-weight: 790;
+  letter-spacing: -1px;
   line-height: 1.2;
 }
 
@@ -55,9 +66,10 @@
 .chart-card {
   box-sizing: border-box;
   min-width: 0;
-  border: 1px solid var(--tui-border-normal);
+  border: 1px solid var(--app-border);
   border-radius: 18px;
-  background: var(--tui-background-base);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
 }
 
 .metric-card {
@@ -65,6 +77,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 19px;
+  border-top: 3px solid var(--tui-background-accent-1);
 }
 
 .metric-label {
@@ -75,7 +88,8 @@
 .metric-card strong {
   overflow-wrap: anywhere;
   font-size: clamp(23px, 2vw, 32px);
-  font-weight: 650;
+  font-weight: 790;
+  letter-spacing: -0.8px;
   line-height: 1.15;
 }
 
@@ -90,7 +104,7 @@
 }
 
 .chart-card {
-  padding: 20px;
+  padding: 23px;
 }
 
 .chart-card_wide {
@@ -238,7 +252,7 @@
 
 @media (max-width: 680px) {
   .statistics-page {
-    padding: 16px 14px 28px;
+    padding: 20px 15px 32px;
   }
 
   .page-heading h1 {

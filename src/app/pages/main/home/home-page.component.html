@@ -1,56 +1,193 @@
-<main class="container home-page">
-  <div class="grid home-grid">
-    <div class="home-content">
-      <header class="header">
-        <h1 class="title">Главная</h1>
-        <p class="subtitle">Новости и актуальная информация нашего сервиса</p>
-      </header>
+<div class="home-page">
+  <header class="page-heading">
+    <div>
+      <span class="eyebrow">SERVICECAR / ГЛАВНАЯ</span>
+      <h1>
+        @switch (role()) {
+          @case (userRole.Admin) {
+            Рабочий стол менеджера
+          }
+          @case (userRole.Mechanic) {
+            Рабочий стол специалиста
+          }
+          @default {
+            Добро пожаловать!
+          }
+        }
+      </h1>
+      <p>
+        @switch (role()) {
+          @case (userRole.Admin) {
+            Ближайшие записи клиентов и новости автосервиса
+          }
+          @case (userRole.Mechanic) {
+            Ваши ближайшие работы и объявления сервиса
+          }
+          @default {
+            Ваша следующая запись и последние новости
+          }
+        }
+      </p>
+    </div>
+    <span class="heading-symbol" aria-hidden="true">✦</span>
+  </header>
 
-      <section class="news" aria-labelledby="news-title">
-        <h2 id="news-title" class="section-title">Новости</h2>
+  <div class="home-layout">
+    <section class="appointments-panel" aria-labelledby="appointments-heading">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">РАСПИСАНИЕ</span>
+          <h2 id="appointments-heading">
+            @switch (role()) {
+              @case (userRole.Admin) {
+                Ближайшие записи
+              }
+              @case (userRole.Mechanic) {
+                Мои ближайшие работы
+              }
+              @default {
+                Ваша ближайшая запись
+              }
+            }
+          </h2>
+        </div>
+        <a class="text-link" routerLink="/appointments">Все записи <span aria-hidden="true">→</span></a>
+      </div>
 
-        @if (isLoading()) {
-          <div class="state">Загрузка новостей...</div>
-        } @else if (hasError()) {
-          <div class="state state_error">
-            <p>Не удалось загрузить новости.</p>
-            <button tuiButton appearance="outline" type="button" (click)="reload()">Повторить</button>
+      @if (isAppointmentsLoading()) {
+        <div class="appointment-empty">Загружаем расписание...</div>
+      } @else if (appointmentsError()) {
+        <div class="appointment-empty">
+          <p>Не удалось загрузить ближайшие записи.</p>
+          <button tuiButton appearance="outline" size="s" type="button" (click)="reloadUpcoming()">Повторить</button>
+        </div>
+      } @else if (!upcoming().length) {
+        <div class="appointment-empty">
+          <span class="empty-icon" aria-hidden="true">✓</span>
+          <strong>
+            @if (role() === userRole.Mechanic) {
+              Назначенных работ пока нет
+            } @else {
+              Предстоящих записей пока нет
+            }
+          </strong>
+          <p>Актуальные записи появятся здесь автоматически.</p>
+          @if (role() === userRole.User) {
+            <a tuiButton size="m" routerLink="/appointments">Перейти к записям</a>
+          }
+        </div>
+      } @else if (role() === userRole.User && nearest(); as order) {
+        <a class="featured-appointment" [routerLink]="['/appointments', order.id]">
+          <div class="featured-topline">
+            <span class="appointment-tag">БЛИЖАЙШАЯ ЗАПИСЬ</span>
+            <span class="status-pill" [class.status-pill_negative]="order.status.appearance === 'negative'">
+              {{ order.status.name }}
+            </span>
           </div>
-        } @else if (!news().length) {
-          <div class="empty">
-            <div class="empty-title">Новостей пока нет</div>
-            <p>Здесь будут отображаться новости и объявления.</p>
-          </div>
-        } @else {
-          <div class="list">
-            @for (item of news(); track item.id) {
-              <article class="news-card">
-                <div class="news-body">
-                  <time class="news-date" [attr.datetime]="item.createdAt">
-                    {{ item.createdAt | date: 'dd.MM.yyyy HH:mm' }}
-                  </time>
-
-                  <h3 class="news-title">{{ item.title }}</h3>
-
-                  @if (item.content) {
-                    <p class="news-content">{{ item.content }}</p>
+          <time class="featured-time" [attr.datetime]="order.appointmentAt">
+            {{ order.appointmentAt | date: 'd MMMM' : '+0700' : 'ru' }}
+            <span>в {{ order.appointmentAt | date: 'HH:mm' : '+0700' }}</span>
+          </time>
+          <span class="featured-car">{{ order.carName }}</span>
+          @if (order.carPlateNumber) {
+            <span class="featured-plate">{{ order.carPlateNumber }}</span>
+          }
+          @if (order.works.length) {
+            <span class="featured-works"
+              >{{ order.works[0].name }}
+              @if (order.works.length > 1) {
+                и ещё {{ order.works.length - 1 }}
+              }
+            </span>
+          }
+          <span class="featured-action">Посмотреть запись <span aria-hidden="true">→</span></span>
+        </a>
+      } @else {
+        <div class="appointments-list">
+          @for (order of upcoming(); track order.id) {
+            <a class="appointment-row" [routerLink]="['/appointments', order.id]">
+              <time class="date-block" [attr.datetime]="order.appointmentAt">
+                <strong>{{ order.appointmentAt | date: 'dd' : '+0700' }}</strong>
+                <span>{{ order.appointmentAt | date: 'MMM' : '+0700' : 'ru' }}</span>
+              </time>
+              <div class="appointment-details">
+                <div class="appointment-name">{{ order.carName }}</div>
+                <div class="appointment-meta">
+                  {{ order.appointmentAt | date: 'HH:mm' : '+0700' }}
+                  @if (order.carPlateNumber) {
+                    · {{ order.carPlateNumber }}
+                  }
+                  @if (order.orderNumber) {
+                    · №{{ order.orderNumber }}
                   }
                 </div>
-
-                @if (item.image) {
-                  <img class="news-image" [src]="item.image" [alt]="item.title" />
+                @if (order.works.length) {
+                  <div class="appointment-work">{{ order.works[0].name }}</div>
                 }
-              </article>
-            }
-          </div>
-
-          @if (isLoadingMore()) {
-            <div class="load-more">Загрузка новостей...</div>
+              </div>
+              <span class="row-status" [class.row-status_negative]="order.status.appearance === 'negative'">
+                {{ order.status.name }}
+              </span>
+              <span class="row-chevron" aria-hidden="true">→</span>
+            </a>
           }
+        </div>
+      }
+    </section>
 
+    <section class="news-panel" aria-labelledby="news-title">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">НОВОСТИ СЕРВИСА</span>
+          <h2 id="news-title">Последние новости</h2>
+        </div>
+      </div>
+
+      @if (isLoading()) {
+        <div class="news-state">Загрузка новостей...</div>
+      } @else if (hasError() && !news().length) {
+        <div class="news-state">
+          <p>Не удалось загрузить новости.</p>
+          <button tuiButton appearance="outline" type="button" size="s" (click)="reload()">Повторить</button>
+        </div>
+      } @else if (!news().length) {
+        <div class="news-state">
+          <strong>Новостей пока нет</strong>
+          <p>Здесь будут отображаться новости и объявления.</p>
+        </div>
+      } @else {
+        <div class="news-list">
+          @for (item of news(); track item.id) {
+            <article class="news-card">
+              @if (item.image) {
+                <img class="news-image" [src]="item.image" [alt]="item.title" loading="lazy" />
+              }
+              <div class="news-body">
+                <time class="news-date" [attr.datetime]="item.createdAt">
+                  {{ item.createdAt | date: 'dd MMMM yyyy' : '' : 'ru' }}
+                </time>
+                <h3>{{ item.title }}</h3>
+                @if (item.content) {
+                  <p class="news-content">{{ item.content }}</p>
+                }
+              </div>
+            </article>
+          }
+        </div>
+
+        @if (isLoadingMore()) {
+          <div class="load-more">Загрузка новостей...</div>
+        }
+        @if (hasError()) {
+          <div class="load-more">
+            <p>Не удалось загрузить следующие новости.</p>
+            <button tuiButton appearance="outline" type="button" size="s" (click)="retryLoadMore()">Повторить</button>
+          </div>
+        }
+        @if (!hasError() && hasMore()) {
           <div #loadMoreTrigger class="load-more-trigger" aria-hidden="true"></div>
         }
-      </section>
-    </div>
+      }
+    </section>
   </div>
-</main>
+</div>

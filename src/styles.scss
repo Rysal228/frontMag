@@ -9,6 +9,17 @@
   --layout-grid-gap-tablet: 16px;
   --layout-grid-gap-mobile: 12px;
 
+  // Shared ServiceCar surfaces. Taiga UI remains the component library;
+  // these tokens only describe the application's responsive layout.
+  --app-page-background: #f3f6fb;
+  --app-surface: #ffffff;
+  --app-surface-subtle: #f7f9fc;
+  --app-border: #e5ebf3;
+  --app-sidebar-background: #192b47;
+  --app-sidebar-text: #b8c8df;
+  --app-accent-soft: #edf2ff;
+  --app-shadow: 0 10px 35px rgb(21 45 76 / 6%);
+
   --tui-background-base: #fff;
   --tui-background-base-alt: #f6f6f6;
   --tui-background-neutral-1: rgba(0, 0, 0, 0.04);
@@ -92,15 +103,29 @@
 }
 
 @mixin dark-theme-vars {
-  --tui-background-base: #121212;
-  --tui-background-base-alt: #121212;
+  --tui-background-base: #202b39;
+  --tui-background-base-alt: #141c27;
+  --tui-background-accent-1: #ff914c;
+  --tui-background-accent-1-hover: #ffa76b;
+  --tui-background-accent-1-pressed: #dc7334;
+  --tui-text-primary-on-accent-1: #141c27;
   --tui-background-neutral-1-hover: #434343;
 
-  --tui-text-primary: #f5f5f5;
-  --tui-text-action: white;
-  --tui-text-secondary: rgb(185 186 192 / 65%);
+  --tui-text-primary: #edf3fc;
+  --tui-text-action: #ffad73;
+  --tui-text-secondary: #a0b0c4;
+  --tui-border-normal: #364558;
 
   --tui-service-autofill-background: none;
+
+  --app-page-background: #141c27;
+  --app-surface: #202b39;
+  --app-surface-subtle: #192330;
+  --app-border: #364558;
+  --app-sidebar-background: #0c131e;
+  --app-sidebar-text: #a1b2c6;
+  --app-accent-soft: #473527;
+  --app-shadow: 0 10px 32px rgb(0 0 0 / 15%);
 
   //custom
   --color-background-01: #1e2026;
@@ -109,11 +134,24 @@
 
 @mixin light-theme-vars {
   --tui-background-base: #ffffff;
-  --tui-background-base-alt: #ffffff;
+  --tui-background-base-alt: #f3f6fb;
+  --tui-background-accent-1: #446cdb;
+  --tui-background-accent-1-hover: #5b80e5;
+  --tui-background-accent-1-pressed: #3155bd;
+  --tui-text-action: #446cdb;
 
   --tui-text-primary: #1a1a1a;
   --tui-service-autofill-background: none;
   --tui-text-secondary: rgb(13 15 30 / 65%);
+
+  --app-page-background: #f3f6fb;
+  --app-surface: #ffffff;
+  --app-surface-subtle: #f7f9fc;
+  --app-border: #e5ebf3;
+  --app-sidebar-background: #192b47;
+  --app-sidebar-text: #b8c8df;
+  --app-accent-soft: #edf2ff;
+  --app-shadow: 0 10px 35px rgb(21 45 76 / 6%);
 
   //custom
   --color-background-01: #ffffff;
