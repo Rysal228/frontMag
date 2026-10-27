@@ -29,9 +29,11 @@
     <div class="empty">
       <div class="empty-title">{{ emptyTitle() }}</div>
       <p>
-        {{ isStaffRole()
-          ? 'Измените параметры фильтрации, чтобы найти нужный автомобиль.'
-          : 'Добавьте автомобиль или измените параметры фильтрации.' }}
+        {{
+          isStaffRole()
+            ? 'Измените параметры фильтрации, чтобы найти нужный автомобиль.'
+            : 'Добавьте автомобиль или измените параметры фильтрации.'
+        }}
       </p>
     </div>
   } @else {
@@ -86,9 +88,7 @@
               <div class="car-placeholder"><span>Фото автомобиля отсутствует</span></div>
             }
 
-            <a tuiButton appearance="outline" type="button" [routerLink]="['/cars', car.id]">
-              Подробнее
-            </a>
+            <button tuiButton type="button" [routerLink]="['/cars', car.id]">Подробнее</button>
           </article>
         }
       </div>
@@ -100,6 +100,7 @@
           tuiButton
           appearance="flat"
           type="button"
+          size="m"
           [disabled]="currentPage() === 1 || isLoading()"
           (click)="goToPage(currentPage() - 1)"
         >
@@ -115,6 +116,7 @@
                 tuiButton
                 [appearance]="item === currentPage() ? 'primary' : 'flat'"
                 type="button"
+                size="m"
                 [attr.aria-current]="item === currentPage() ? 'page' : null"
                 [disabled]="isLoading()"
                 (click)="goToPage(item)"
@@ -129,6 +131,7 @@
           tuiButton
           appearance="flat"
           type="button"
+          size="m"
           [disabled]="currentPage() === totalPages() || isLoading()"
           (click)="goToPage(currentPage() + 1)"
         >

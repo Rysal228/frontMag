@@ -23,7 +23,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--tui-text-action);
-  font-size: 10px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 1.5px;
 }
@@ -40,19 +40,6 @@
   margin: 10px 0 0;
   color: var(--tui-text-secondary);
   font-size: 13px;
-}
-
-.heading-symbol {
-  display: grid;
-  width: 53px;
-  height: 53px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid var(--app-border);
-  border-radius: 15px;
-  background: var(--app-surface);
-  color: var(--tui-text-action);
-  font-size: 25px;
 }
 
 .home-layout {
@@ -347,7 +334,7 @@
 
 .news-content {
   margin: 10px 0 0;
-  color: var(--tui-text-secondary);
+  color: var(--tui-text-primary);
   font-size: 12px;
   line-height: 1.65;
   overflow-wrap: anywhere;
@@ -382,10 +369,6 @@
 
   .page-heading h1 {
     font-size: 25px;
-  }
-
-  .heading-symbol {
-    display: none;
   }
 
   .appointments-panel,

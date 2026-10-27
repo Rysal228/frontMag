@@ -1,6 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import eruda from 'eruda';
 
 import { TuiRoot } from '@taiga-ui/core';
 
@@ -14,15 +13,10 @@ import { ThemeService } from './shared/services/theme.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   protected readonly initialization = inject(AppInitializationService);
   private readonly themeService = inject(ThemeService);
   private readonly oneCIntegrationApiService = inject(OneCIntegrationApiService);
 
   protected readonly theme = this.themeService.preference;
-
-  ngOnInit(): void {
-    eruda.init();
-    this.oneCIntegrationApiService.testConnection().subscribe((value) => console.log('value from 1c:', value));
-  }
 }

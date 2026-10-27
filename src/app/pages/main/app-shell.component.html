@@ -1,9 +1,11 @@
 <div class="shell">
   <aside class="sidebar" aria-label="Боковая навигация">
     <a class="brand" [routerLink]="homeRoute()">
-      <span class="brand-mark" aria-hidden="true">✦</span>
+      <span class="brand-mark" aria-hidden="true">
+        <tui-icon icon="@tui.car"></tui-icon>
+      </span>
       <span class="brand-name">
-        ServiceCar
+        CherSerCar
         <small>автосервис</small>
       </span>
     </a>
@@ -23,18 +25,13 @@
         </a>
       }
     </nav>
-
-    <div class="sidebar-footer">
-      <strong>Сервис под контролем</strong>
-      <span>Записи и автомобили в одном рабочем пространстве</span>
-    </div>
   </aside>
 
   <div class="app-main">
     <header class="topbar">
       <div class="location">
-        <span class="mobile-brand">SC</span>
-        <span class="breadcrumb-root">ServiceCar</span>
+        <span class="mobile-brand">CSC</span>
+        <span class="breadcrumb-root">CherSerCar</span>
         <span class="breadcrumb-divider">/</span>
         <strong>{{ currentSection() }}</strong>
       </div>

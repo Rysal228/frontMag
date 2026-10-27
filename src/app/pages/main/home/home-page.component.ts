@@ -68,22 +68,20 @@ export class HomePageComponent implements OnDestroy {
     const userId = this.currentUser.user()?.id;
     const orders = this.allUpcoming();
 
-    // The API returns orders for all specialists. Only display assignments
-    // for the current mechanic; wait for the profile before showing results.
     if (role === UserRole.Mechanic) {
       return userId ? orders.filter((order) => order.mechanics.includes(userId)).slice(0, 4) : [];
     }
 
     return orders.slice(0, role === UserRole.User ? 1 : 4);
   });
+
   protected readonly nearest = computed(() => this.upcoming()[0] ?? null);
 
   private offset = 0;
 
   constructor() {
     this.loadNews();
-    // The active role is loaded asynchronously with the profile. Start the
-    // corresponding date window only when the role is known.
+
     effect((onCleanup) => {
       if (this.role()) {
         const subscription = untracked(() => this.loadUpcoming());
@@ -117,8 +115,6 @@ export class HomePageComponent implements OnDestroy {
     this.isAppointmentsLoading.set(true);
     this.appointmentsError.set(false);
 
-    // 1C sorts by the order's creation date, not the appointment date. Read
-    // all pages in the upcoming date window, then sort by appointmentAt.
     const now = new Date();
     const serviceTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
     const from = serviceTime.toISOString().slice(0, 10);
@@ -142,8 +138,6 @@ export class HomePageComponent implements OnDestroy {
     return this.appointmentService
       .getFilterPermissions()
       .pipe(
-        // The date filter can be switched off per role in Django Admin.
-        // When unavailable, load unfiltered pages and select dates locally.
         catchError(() => of(null)),
         switchMap((permissions) => {
           const filters = permissions?.date_range ? dateFilters : undefined;

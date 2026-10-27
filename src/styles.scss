@@ -108,7 +108,7 @@
   --tui-background-accent-1: #ff914c;
   --tui-background-accent-1-hover: #ffa76b;
   --tui-background-accent-1-pressed: #dc7334;
-  --tui-text-primary-on-accent-1: #141c27;
+  --tui-text-primary-on-accent-1: #edf3fc;
   --tui-background-neutral-1-hover: #434343;
 
   --tui-text-primary: #edf3fc;
@@ -138,6 +138,7 @@
   --tui-background-accent-1: #446cdb;
   --tui-background-accent-1-hover: #5b80e5;
   --tui-background-accent-1-pressed: #3155bd;
+  --tui-text-primary-on-accent-1: #edf3fc;
   --tui-text-action: #446cdb;
 
   --tui-text-primary: #1a1a1a;
@@ -176,4 +177,8 @@ tui-root[data-theme="dark"] {
 
 tui-root[data-theme="light"] {
   @include light-theme-vars;
+}
+
+[tuiAppearance][data-appearance="outline"] {
+  color: var(--tui-text-primary-on-accent-1);
 }

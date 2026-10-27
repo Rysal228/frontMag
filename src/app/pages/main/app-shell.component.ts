@@ -3,11 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 
+import { ThemeService } from 'app/shared/services/theme.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
-import { ThemeService } from 'app/shared/services/theme.service';
 import { ROLE_CATALOG } from 'app/shared/tokens/role-catalog';
 import { UserRole } from 'app/shared/types/roles.types';
 
@@ -20,7 +20,7 @@ type NavigationItem = {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TuiButton, TuiIcon],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +50,7 @@ export class AppShellComponent {
   });
   protected readonly userInitials = computed(() => {
     const user = this.currentUser.user();
-    return ((user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')).toUpperCase() || 'SC';
+    return ((user?.lastName?.[0] ?? '') + (user?.firstName?.[0] ?? '')).toUpperCase() || 'CSC';
   });
 
   protected readonly homeRoute = computed(

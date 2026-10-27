@@ -17,7 +17,7 @@ export const DEFAULT_ROLE_CATALOG: readonly RoleDefinition[] = [
   },
   {
     role: UserRole.Admin,
-    label: 'Администратор',
+    label: 'Менеджер',
     icon: '@tui.user-cog',
     appearance: 'outline',
     homeRoute: '/main',
