@@ -40,3 +40,7 @@
     </div>
   </div>
 </section>
+
+@if (passwordDialogOpen()) {
+  <app-password-dialog (closed)="closePasswordDialog()" />
+}
