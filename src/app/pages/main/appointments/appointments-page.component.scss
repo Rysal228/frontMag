@@ -66,6 +66,10 @@
   color: var(--tui-text-negative);
 }
 
+tui-pagination {
+  margin-top: 24px;
+}
+
 @media (max-width: 767px) {
   .appointments-page,
   .appointments-page.container {
