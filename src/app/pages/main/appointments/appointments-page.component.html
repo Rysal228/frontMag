@@ -1,26 +1,25 @@
 <section class="appointments-page" [class.container]="useExpandableCards()">
   <header class="header">
-    <h1>Информация о записях:</h1>
+    <h1>Записи на обслуживание</h1>
 
     @if (canCreate()) {
-    <span
-      tuiHintAppearance="dark"
-      tuiHintDirection="top"
-      [tuiHint]="!cars().length ? 'Чтобы записаться, сначала добавьте автомобиль в разделе «Мои авто».' : null"
-    >
-      <button
-        tuiButton
-        appearance="outline"
-        type="button"
-        [iconStart]="'@tui.calendar-plus'"
-        [disabled]="isLoading() || !cars().length"
-        (click)="openCreate()"
+      <span
+        tuiHintAppearance="dark"
+        tuiHintDirection="top"
+        [tuiHint]="!cars().length ? 'Чтобы записаться, сначала добавьте автомобиль в разделе «Мои авто».' : null"
       >
-        Записаться
-      </button>
-    </span>
+        <button
+          tuiButton
+          appearance="outline"
+          type="button"
+          [iconStart]="'@tui.calendar-plus'"
+          [disabled]="isLoading() || !cars().length"
+          (click)="openCreate()"
+        >
+          Записаться
+        </button>
+      </span>
     }
-
   </header>
 
   <app-order-filters
@@ -59,11 +58,7 @@
     </div>
 
     @if (totalPages() > 1) {
-      <tui-pagination
-        [length]="totalPages()"
-        [index]="currentPage() - 1"
-        (indexChange)="onPageChange($event)"
-      />
+      <tui-pagination [length]="totalPages()" [index]="currentPage() - 1" (indexChange)="onPageChange($event)" />
     }
   }
 </section>

@@ -4,16 +4,17 @@
 
 .profile {
   box-sizing: border-box;
-  max-width: 720px;
+  max-width: 860px;
   min-height: 100%;
   margin: 0 auto;
-  padding: 18px 20px 28px;
+  padding: 30px 32px 48px;
 }
 
 .title {
-  margin: 0 0 14px;
-  font-size: 25px;
-  font-weight: 400;
+  margin: 0 0 22px;
+  font-size: clamp(25px, 2.8vw, 34px);
+  font-weight: 790;
+  letter-spacing: -1px;
   line-height: 1.2;
 }
 
@@ -57,7 +58,12 @@
 
 @media (max-width: 360px) {
   .profile {
-    padding-right: 16px;
-    padding-left: 16px;
+    padding: 20px 15px 32px;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 767px) {
+  .profile {
+    padding: 20px 15px 32px;
   }
 }
