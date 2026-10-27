@@ -9,7 +9,7 @@
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
   margin-bottom: 1.5rem;
 }
 
@@ -24,13 +24,11 @@
 .statuses {
   display: flex;
   flex-wrap: wrap;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .statuses span {
-  padding: .4rem .75rem;
-  border-radius: 999px;
-  background: var(--tui-background-neutral-1);
+  flex: 0 0 auto;
 }
 
 .details {
@@ -47,7 +45,7 @@
 
 dl {
   display: grid;
-  gap: .75rem;
+  gap: 0.75rem;
 }
 
 dl > div {
@@ -67,7 +65,7 @@ dd {
 
 ul {
   display: grid;
-  gap: .75rem;
+  gap: 0.75rem;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -107,10 +105,9 @@ li {
   }
 }
 
-
 .refusal {
   display: grid;
-  gap: .75rem;
+  gap: 0.75rem;
   margin-top: 2rem;
   padding: 1rem;
   border: 1px solid var(--tui-border-normal);
@@ -120,9 +117,9 @@ li {
 .refusal textarea {
   width: 100%;
   box-sizing: border-box;
-  padding: .75rem;
+  padding: 0.75rem;
   border: 1px solid var(--tui-border-normal);
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   background: var(--tui-background-base);
   color: var(--tui-text-primary);
   font: inherit;

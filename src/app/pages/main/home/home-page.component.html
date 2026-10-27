@@ -78,7 +78,11 @@
         <a class="featured-appointment" [routerLink]="['/appointments', order.id]">
           <div class="featured-topline">
             <span class="appointment-tag">БЛИЖАЙШАЯ ЗАПИСЬ</span>
-            <span class="status-pill" [class.status-pill_negative]="order.status.appearance === 'negative'">
+            <span
+              class="status-badge status-pill"
+              [attr.data-appearance]="order.status.appearance"
+              [attr.data-status-code]="order.status.code"
+            >
               {{ order.status.name }}
             </span>
           </div>
@@ -123,7 +127,11 @@
                   <div class="appointment-work">{{ order.works[0].name }}</div>
                 }
               </div>
-              <span class="row-status" [class.row-status_negative]="order.status.appearance === 'negative'">
+              <span
+                class="status-badge row-status"
+                [attr.data-appearance]="order.status.appearance"
+                [attr.data-status-code]="order.status.code"
+              >
                 {{ order.status.name }}
               </span>
               <span class="row-chevron" aria-hidden="true">→</span>
@@ -157,9 +165,6 @@
         <div class="news-list">
           @for (item of news(); track item.id) {
             <article class="news-card">
-              @if (item.image) {
-                <img class="news-image" [src]="item.image" [alt]="item.title" loading="lazy" />
-              }
               <div class="news-body">
                 <time class="news-date" [attr.datetime]="item.createdAt">
                   {{ item.createdAt | date: 'dd MMMM yyyy' : '' : 'ru' }}
@@ -169,6 +174,9 @@
                   <p class="news-content">{{ item.content }}</p>
                 }
               </div>
+              @if (item.image) {
+                <img class="news-image" [src]="item.image" [alt]="item.title" loading="lazy" />
+              }
             </article>
           }
         </div>

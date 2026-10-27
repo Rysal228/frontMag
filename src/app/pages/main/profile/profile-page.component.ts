@@ -41,6 +41,26 @@ export class ProfilePageComponent {
   private readonly orderStatusService = inject(OrderStatusService);
 
   protected readonly user = this.currentUser.user;
+  protected readonly displayName = computed(() => {
+    const user = this.user();
+    return [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Ваш профиль';
+  });
+  protected readonly initials = computed(() => {
+    const user = this.user();
+    return ((user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')).toUpperCase() || 'SC';
+  });
+  protected readonly roleLabel = computed(() => {
+    switch (this.currentRole.role()) {
+      case UserRole.Admin:
+        return 'Менеджер';
+      case UserRole.Mechanic:
+        return 'Специалист';
+      case UserRole.User:
+        return 'Клиент';
+      default:
+        return 'Пользователь';
+    }
+  });
   protected activeItemIndex = NaN;
   // тестовые данные под замену в будущем
   private readonly testValues = [35, 40, 10, 15, 12, 18];
@@ -74,6 +94,7 @@ export class ProfilePageComponent {
 
   protected readonly isSaving = signal(false);
   protected readonly today = TuiDay.currentLocal();
+  private statusesRequested = false;
 
   constructor() {
     this.form.controls.phone.disable();
@@ -97,9 +118,12 @@ export class ProfilePageComponent {
       );
     });
 
-    if (this.isMechanic()) {
-      this.loadOrderStatuses();
-    }
+    effect(() => {
+      if (this.isMechanic() && !this.statusesRequested) {
+        this.statusesRequested = true;
+        this.loadOrderStatuses();
+      }
+    });
   }
 
   private loadOrderStatuses(): void {

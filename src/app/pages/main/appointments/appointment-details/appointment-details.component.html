@@ -19,12 +19,27 @@
           <p>{{ appointment()!.carName }}</p>
         </div>
         <div class="statuses">
-          <span>{{ appointment()!.status.name }}</span>
+          <span
+            class="status-badge"
+            [attr.data-appearance]="appointment()!.status.appearance"
+            [attr.data-status-code]="appointment()!.status.code"
+            >{{ appointment()!.status.name }}</span
+          >
           @if (appointment()!.workStatus) {
-            <span>{{ appointment()!.workStatus!.name }}</span>
+            <span
+              class="status-badge"
+              [attr.data-appearance]="appointment()!.workStatus!.appearance"
+              [attr.data-status-code]="appointment()!.workStatus!.code"
+              >{{ appointment()!.workStatus!.name }}</span
+            >
           }
           @if (appointment()!.paymentStatus) {
-            <span>{{ appointment()!.paymentStatus!.name }}</span>
+            <span
+              class="status-badge"
+              [attr.data-appearance]="appointment()!.paymentStatus!.appearance"
+              [attr.data-status-code]="appointment()!.paymentStatus!.code"
+              >{{ appointment()!.paymentStatus!.name }}</span
+            >
           }
         </div>
       </header>

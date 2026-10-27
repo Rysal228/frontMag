@@ -19,6 +19,10 @@
   --app-sidebar-text: #b8c8df;
   --app-accent-soft: #edf2ff;
   --app-shadow: 0 10px 35px rgb(21 45 76 / 6%);
+  --app-status-positive: #168a64;
+  --app-status-warning: #b57113;
+  --app-status-pending: #cc6a2d;
+  --app-status-negative: #cb4250;
 
   --tui-background-base: #fff;
   --tui-background-base-alt: #f6f6f6;
@@ -126,6 +130,10 @@
   --app-sidebar-text: #a1b2c6;
   --app-accent-soft: #473527;
   --app-shadow: 0 10px 32px rgb(0 0 0 / 15%);
+  --app-status-positive: #52dbb2;
+  --app-status-warning: #ffbc61;
+  --app-status-pending: #ff9c62;
+  --app-status-negative: #ff8992;
 
   //custom
   --color-background-01: #1e2026;
@@ -153,6 +161,10 @@
   --app-sidebar-text: #b8c8df;
   --app-accent-soft: #edf2ff;
   --app-shadow: 0 10px 35px rgb(21 45 76 / 6%);
+  --app-status-positive: #168a64;
+  --app-status-warning: #b57113;
+  --app-status-pending: #cc6a2d;
+  --app-status-negative: #cb4250;
 
   //custom
   --color-background-01: #ffffff;
@@ -181,4 +193,64 @@ tui-root[data-theme="light"] {
 
 [tuiAppearance][data-appearance="outline"] {
   color: var(--tui-text-primary-on-accent-1);
+}
+
+// Unified order/work/payment status chips throughout the app.
+// Appearance from 1C provides the fallback; known status codes refine it.
+.status-badge {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: var(--tui-background-neutral-1);
+  color: var(--tui-text-primary);
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+}
+
+.status-badge[data-appearance="positive"] {
+  background: rgb(29 174 124 / 15%);
+  color: var(--app-status-positive);
+}
+
+.status-badge[data-appearance="warning"] {
+  background: rgb(228 158 46 / 16%);
+  color: var(--app-status-warning);
+}
+
+.status-badge[data-appearance="negative"] {
+  background: rgb(224 76 86 / 14%);
+  color: var(--app-status-negative);
+}
+
+// Explicit codes take precedence over a generic appearance value.
+.status-badge[data-status-code="completed"],
+.status-badge[data-status-code="confirmed"],
+.status-badge[data-status-code="approved"] {
+  background: rgb(29 174 124 / 15%);
+  color: var(--app-status-positive);
+}
+
+.status-badge[data-status-code="in_progress"] {
+  background: rgb(228 158 46 / 16%);
+  color: var(--app-status-warning);
+}
+
+.status-badge[data-status-code="under_review"],
+.status-badge[data-status-code="waiting"],
+.status-badge[data-status-code="pending"] {
+  background: rgb(246 128 60 / 16%);
+  color: var(--app-status-pending);
+}
+
+.status-badge[data-status-code="cancelled"],
+.status-badge[data-status-code="rejected"],
+.status-badge[data-status-code="refused"] {
+  background: rgb(224 76 86 / 14%);
+  color: var(--app-status-negative);
 }

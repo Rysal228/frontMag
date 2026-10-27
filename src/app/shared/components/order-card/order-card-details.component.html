@@ -9,7 +9,11 @@
 
   <p>
     Статус работ:
-    <span class="status" [attr.data-appearance]="order().workStatus?.appearance">
+    <span
+      class="status status-badge"
+      [attr.data-appearance]="order().workStatus?.appearance"
+      [attr.data-status-code]="order().workStatus?.code"
+    >
       {{ order().workStatus?.name || '-' }}
     </span>
   </p>
@@ -19,7 +23,15 @@
   }
 
   @if (order().paymentStatus) {
-    <p>Оплата: {{ order().paymentStatus?.name }}</p>
+    <p>
+      Оплата:
+      <span
+        class="status-badge"
+        [attr.data-appearance]="order().paymentStatus?.appearance"
+        [attr.data-status-code]="order().paymentStatus?.code"
+        >{{ order().paymentStatus?.name }}</span
+      >
+    </p>
   }
 
   @if (isAdminRole()) {

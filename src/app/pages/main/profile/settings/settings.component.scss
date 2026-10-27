@@ -1,24 +1,89 @@
 :host {
   display: block;
+  min-width: 0;
 }
 
 .settings {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.settings-heading {
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--tui-text-action);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.settings-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 780;
+  letter-spacing: -0.4px;
+}
+
+.settings-heading p {
+  margin: 8px 0 0;
+  color: var(--tui-text-secondary);
+  font-size: 13px;
+}
+
+.settings-list {
   display: grid;
-  gap: 10px;
-  max-width: 720px;
-  margin: 24px auto 0;
-  padding: 0 20px 28px;
 }
 
-.settings h2 {
-  margin: 0 0 4px;
-  font-size: 18px;
-  font-weight: 500;
+.setting-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 0;
+  border-top: 1px solid var(--app-border);
 }
 
-@media (max-width: 360px) {
+.setting-description {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.setting-description strong {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.setting-description span {
+  color: var(--tui-text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.setting-row > button,
+.setting-row > app-theme-toggle {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 767px) {
   .settings {
-    padding-right: 16px;
-    padding-left: 16px;
+    padding: 19px;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 370px) {
+  .setting-row_theme {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
