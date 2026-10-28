@@ -18,7 +18,6 @@ import { Appointment } from 'app/shared/models/appointment.model';
 export class OrderCardComponent {
   public readonly order = input.required<Appointment>();
   public readonly showCarInfo = input(false);
-  public readonly showPayment = input(false);
   public readonly compactExpandable = input(false);
 
   protected readonly expanded = signal(false);

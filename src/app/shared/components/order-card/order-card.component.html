@@ -57,8 +57,5 @@
 
     <app-order-card-details [order]="order()" [showCarInfo]="showCarInfo()" />
 
-    @if (showPayment() && order().status.requiresPayment) {
-      <button tuiButton appearance="outline" type="button" class="payment-button">Оплатить</button>
-    }
   </a>
 }
