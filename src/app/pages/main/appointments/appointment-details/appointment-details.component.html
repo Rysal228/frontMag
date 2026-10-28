@@ -133,76 +133,7 @@
             </dl>
           </section>
 
-          <section class="panel specialists-panel" aria-labelledby="specialists-title">
-            <div>
-            <h2 id="specialists-title">Специалисты</h2>
-            @if (appointment()!.permissions.canAssignMechanics) {
-              <tui-textfield multi [stringify]="stringifyMechanic" [disabledItemHandler]="disabledMechanic">
-                <label tuiLabel>Выберите специалистов</label>
-                <input
-                  tuiInputChip
-                  [formControl]="mechanicsControl"
-                  [placeholder]="mechanicsControl.value.length ? '' : 'Введите ФИО или телефон'"
-                  (input)="searchMechanics($event)"
-                />
-                <tui-input-chip *tuiItem />
-                @if (availableMechanics().length) {
-                  <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
-                    @for (mechanic of availableMechanics(); track mechanic.id) {
-                      <button tuiOption new [value]="mechanic">
-                        {{ stringifyMechanic(mechanic) }}
-                        @if (mechanic.phone) {
-                          ({{ mechanic.phone }})
-                        }
-                      </button>
-                    }
-                  </tui-data-list>
-                }
-              </tui-textfield>
-              <button
-                tuiButton
-                appearance="primary"
-                type="button"
-                [disabled]="isSavingMechanics() || mechanicsControl.pristine"
-                (click)="saveMechanics()"
-              >
-                {{ isSavingMechanics() ? 'Сохранение...' : 'Сохранить специалистов' }}
-              </button>
-            } @else if (appointment()!.mechanics.length) {
-              <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
-            } @else {
-              <p>Специалисты пока не назначены.</p>
-            }
-            </div>
-          </section>
 
-          @if (canRefuse()) {
-          <section class="refusal">
-            <h2>Отказ от заказа</h2>
-            <label for="refusal-reason">Причина отказа</label>
-            <textarea
-              id="refusal-reason"
-              rows="3"
-              [value]="refusalReason()"
-              (input)="refusalReason.set($any($event.target).value)"
-              placeholder="Укажите причину отказа"
-              [disabled]="isSubmittingRefusal()"
-            ></textarea>
-            @if (refusalError()) {
-              <p class="refusal-error">{{ refusalError() }}</p>
-            }
-            <button
-              tuiButton
-              appearance="primary"
-              type="button"
-              [disabled]="isSubmittingRefusal() || !refusalReason().trim()"
-              (click)="refuseOrder()"
-            >
-              {{ isSubmittingRefusal() ? 'Отказ...' : 'Отказать в заказе' }}
-            </button>
-          </section>
-          }
-          <div class="chat-panel"><app-order-chat [orderId]="appointment()!.id" /></div>
         </div>
 
         <aside class="order-side">
@@ -273,6 +204,79 @@
           }
         </aside>
       </div>
+      <div class="order-actions">
+          <section class="panel specialists-panel" aria-labelledby="specialists-title">
+            <div>
+            <h2 id="specialists-title">Специалисты</h2>
+            @if (appointment()!.permissions.canAssignMechanics) {
+              <tui-textfield multi [stringify]="stringifyMechanic" [disabledItemHandler]="disabledMechanic">
+                <label tuiLabel>Выберите специалистов</label>
+                <input
+                  tuiInputChip
+                  [formControl]="mechanicsControl"
+                  [placeholder]="mechanicsControl.value.length ? '' : 'Введите ФИО или телефон'"
+                  (input)="searchMechanics($event)"
+                />
+                <tui-input-chip *tuiItem />
+                @if (availableMechanics().length) {
+                  <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
+                    @for (mechanic of availableMechanics(); track mechanic.id) {
+                      <button tuiOption new [value]="mechanic">
+                        {{ stringifyMechanic(mechanic) }}
+                        @if (mechanic.phone) {
+                          ({{ mechanic.phone }})
+                        }
+                      </button>
+                    }
+                  </tui-data-list>
+                }
+              </tui-textfield>
+              <button
+                tuiButton
+                appearance="primary"
+                type="button"
+                [disabled]="isSavingMechanics() || mechanicsControl.pristine"
+                (click)="saveMechanics()"
+              >
+                {{ isSavingMechanics() ? 'Сохранение...' : 'Сохранить специалистов' }}
+              </button>
+            } @else if (appointment()!.mechanics.length) {
+              <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
+            } @else {
+              <p>Специалисты пока не назначены.</p>
+            }
+            </div>
+          </section>
+
+          @if (canRefuse()) {
+          <section class="refusal">
+            <h2>Отказ от заказа</h2>
+            <label for="refusal-reason">Причина отказа</label>
+            <textarea
+              id="refusal-reason"
+              rows="3"
+              [value]="refusalReason()"
+              (input)="refusalReason.set($any($event.target).value)"
+              placeholder="Укажите причину отказа"
+              [disabled]="isSubmittingRefusal()"
+            ></textarea>
+            @if (refusalError()) {
+              <p class="refusal-error">{{ refusalError() }}</p>
+            }
+            <button
+              tuiButton
+              appearance="primary"
+              type="button"
+              [disabled]="isSubmittingRefusal() || !refusalReason().trim()"
+              (click)="refuseOrder()"
+            >
+              {{ isSubmittingRefusal() ? 'Отказ...' : 'Отказать в заказе' }}
+            </button>
+          </section>
+          }
+      </div>
+      <div class="chat-panel"><app-order-chat [orderId]="appointment()!.id" /></div>
+
     }
   </section>
 </main>
