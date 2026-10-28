@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -17,6 +17,8 @@ import { TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
 
 import { OrderChatComponent } from 'app/shared/components/order-chat/order-chat.component';
 import { Appointment } from 'app/shared/models/appointment.model';
+import { Car } from 'app/shared/models/car.model';
+import { CarService } from 'app/shared/services/car.service';
 import { Mechanic } from 'app/shared/models/user.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
@@ -36,6 +38,7 @@ import { UserService } from 'app/shared/services/user.service';
     TuiMultiSelect,
     TuiOption,
     DatePipe,
+    DecimalPipe,
     ReactiveFormsModule,
     TuiTextfield,
   ],
@@ -49,10 +52,12 @@ export class AppointmentDetailsComponent {
   private readonly mechanicSearch$ = new Subject<{ search: string; selectedIds: string[] }>();
   private mechanicSearchText = '';
   private readonly appointmentService = inject(AppointmentService);
+  private readonly carService = inject(CarService);
   private readonly userService = inject(UserService);
   private readonly currentRole = inject(CurrentRoleStore);
 
   protected readonly appointment = signal<Appointment | null>(null);
+  protected readonly car = signal<Car | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
   protected readonly mechanics = signal<Mechanic[]>([]);
@@ -93,9 +98,10 @@ export class AppointmentDetailsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.queueMechanicSearch());
 
-    this.route.paramMap.subscribe((params) => {
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const id = params.get('id');
       this.appointment.set(null);
+      this.car.set(null);
       this.hasError.set(!id);
       this.isLoading.set(!!id);
 
@@ -105,12 +111,26 @@ export class AppointmentDetailsComponent {
 
       this.appointmentService
         .getById(id)
-        .pipe(finalize(() => this.isLoading.set(false)))
+        .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.isLoading.set(false)))
         .subscribe({
           next: (appointment) => {
             this.appointment.set(appointment);
+            // The order keeps its vehicle snapshot; car lookup only enriches
+            // the card with an optional photo/archive state. A 403/404 is harmless.
+            this.carService.getById(appointment.car)
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: (car) => {
+                  if (this.appointment()?.id === appointment.id) this.car.set(car);
+                },
+                error: () => {
+                  if (this.appointment()?.id === appointment.id) this.car.set(null);
+                },
+              });
             if (appointment.permissions.canAssignMechanics) {
-              this.userService.getMechanics('', appointment.mechanics).subscribe({
+              this.userService.getMechanics('', appointment.mechanics)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
                 next: (mechanics) => {
                   this.mechanics.set(mechanics);
                   this.mechanicsControl.setValue(
