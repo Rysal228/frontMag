@@ -141,7 +141,14 @@ export class AppointmentDetailsComponent {
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe({
                   next: (mechanics) => {
-                    this.mechanics.set(mechanics);
+                    if (this.appointment()?.id !== appointment.id) return;
+                    // Merge selected profiles into the preloaded roster: the
+                    // two requests can finish in either order.
+                    this.mechanics.update((previous) => {
+                      const byId = new Map(previous.map((mechanic) => [mechanic.id, mechanic]));
+                      mechanics.forEach((mechanic) => byId.set(mechanic.id, mechanic));
+                      return [...byId.values()];
+                    });
                     this.mechanicsControl.setValue(
                       mechanics.filter(({ id }) => appointment.mechanics.includes(id)),
                       { emitEvent: false }
