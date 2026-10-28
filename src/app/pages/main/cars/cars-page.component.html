@@ -13,7 +13,7 @@
   </header>
 
   <app-car-filters
-    [isStaff]="isStaffRole()"
+    [canSearchByOwnerPhone]="isManagerRole()"
     [defaultStatus]="defaultStatus()"
     [appliedFilters]="filters()"
     [brands]="brands()"
@@ -65,7 +65,9 @@
                 <td>
                   <div class="owner">
                     <span>{{ car.ownerName }}</span>
-                    <span class="owner-phone">{{ car.ownerPhone }}</span>
+                    @if (isManagerRole()) {
+                      <span class="owner-phone">{{ car.ownerPhone }}</span>
+                    }
                   </div>
                 </td>
                 <td>{{ getStatusLabel(car.status) }}</td>

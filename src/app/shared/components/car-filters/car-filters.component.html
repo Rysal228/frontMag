@@ -1,5 +1,5 @@
 <div class="filters">
-  @if (isStaff()) {
+  @if (canSearchByOwnerPhone()) {
     <app-form-field label="Телефон владельца" class="search">
       <app-text-field
         type="tel"
@@ -32,7 +32,7 @@
       </button>
     </tui-badged-content>
 
-    @if (activeFilterCount() || filters().ownerPhone) {
+    @if (activeFilterCount() || (canSearchByOwnerPhone() && filters().ownerPhone)) {
       <button tuiButton appearance="secondary" size="m" type="button" (click)="resetAll()">Сбросить всё</button>
     }
   </div>
