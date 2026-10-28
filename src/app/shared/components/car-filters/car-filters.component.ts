@@ -44,7 +44,7 @@ export class CarFiltersComponent {
   private readonly phoneSearch$ = new Subject<string>();
   private readonly cancelPhoneSearch$ = new Subject<void>();
 
-  public readonly isStaff = input(false);
+  public readonly canSearchByOwnerPhone = input(false);
   public readonly defaultStatus = input<CarFilters['status']>('active');
   public readonly appliedFilters = input.required<CarFilters>();
   public readonly brands = input<CarBrand[]>([]);
@@ -68,7 +68,7 @@ export class CarFiltersComponent {
       )
       .subscribe((value) => this.applyPhoneSearch(value));
 
-    effect(() => this.filters.set({ ...this.appliedFilters() }));
+    effect(() => this.filters.set(this.sanitizeFilters(this.appliedFilters())));
   }
 
   protected openModal(): void {
@@ -80,11 +80,13 @@ export class CarFiltersComponent {
   }
 
   protected onModalFiltersChange(filters: CarFilters): void {
-    this.filters.set(filters);
-    this.filtersChange.emit({ ...filters });
+    const safe = this.sanitizeFilters(filters);
+    this.filters.set(safe);
+    this.filtersChange.emit(safe);
   }
 
   protected onOwnerPhoneSearch(value: string): void {
+    if (!this.canSearchByOwnerPhone()) return;
     this.filters.update((current) => ({ ...current, ownerPhone: value }));
     this.phoneSearch$.next(value);
   }
@@ -128,7 +130,14 @@ export class CarFiltersComponent {
     this.emit();
   }
 
+  private sanitizeFilters(filters: CarFilters): CarFilters {
+    return {
+      ...filters,
+      ownerPhone: this.canSearchByOwnerPhone() ? filters.ownerPhone : '',
+    };
+  }
+
   private emit(): void {
-    this.filtersChange.emit({ ...this.filters() });
+    this.filtersChange.emit(this.sanitizeFilters(this.filters()));
   }
 }

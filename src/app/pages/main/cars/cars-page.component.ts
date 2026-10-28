@@ -48,6 +48,8 @@ export class CarsPageComponent {
     plateNumber: '',
   });
 
+  protected readonly isManagerRole = computed(() => this.currentRoleStore.role() === UserRole.Admin);
+
   protected readonly isStaffRole = computed(() => {
     const role = this.currentRoleStore.role();
 
