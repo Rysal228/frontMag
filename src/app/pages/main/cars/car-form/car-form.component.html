@@ -1,7 +1,5 @@
 <section class="car-form-page">
-  <a class="back-link" routerLink="/cars">
-    <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span></a
-  >
+  <a tuiButton appearance="outline" type="button" routerLink="/cars">Вернуться к автомобилям</a>
 
   @if (isLoading()) {
     <div class="state">Загрузка автомобиля...</div>

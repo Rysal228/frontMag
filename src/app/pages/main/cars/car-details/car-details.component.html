@@ -13,10 +13,7 @@
   </aside>
 
   <section class="car-details-page">
-    <a class="back-link" routerLink="/cars">
-      <tui-icon icon="@tui.arrow-left" /> <span>Вернуться к разделу "Авто"</span>
-    </a>
-
+    <a tuiButton appearance="outline" type="button" routerLink="/cars">Вернуться к автомобилям</a>
     @if (isLoading()) {
       <div class="state">Загрузка автомобиля...</div>
     } @else if (hasError() || !car()) {
@@ -34,13 +31,7 @@
             </div>
 
             @if (canManageCar() && car()!.status === 'archived') {
-              <button
-                tuiButton
-                appearance="primary"
-                type="button"
-                [disabled]="isRestoring()"
-                (click)="restoreCar()"
-              >
+              <button tuiButton appearance="primary" type="button" [disabled]="isRestoring()" (click)="restoreCar()">
                 {{ isRestoring() ? 'Восстановление...' : 'Восстановить автомобиль' }}
               </button>
             } @else if (canManageCar()) {
