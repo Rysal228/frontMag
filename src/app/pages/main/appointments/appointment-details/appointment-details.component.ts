@@ -66,6 +66,9 @@ export class AppointmentDetailsComponent {
   protected readonly isSubmittingRefusal = signal(false);
   protected readonly refusalError = signal('');
   protected readonly isMechanicRole = this.currentRole.role() === 'mechanic';
+  protected readonly isUserRole = this.currentRole.role() === 'user';
+  protected readonly isAdminRole = this.currentRole.role() === 'admin';
+  protected readonly mechanicsDropdownOpen = signal(false);
   protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
   protected readonly stringifyMechanic = (item: unknown): string => {
     if (!this.isMechanic(item)) {
@@ -87,7 +90,7 @@ export class AppointmentDetailsComponent {
             previous.selectedIds.every((id, index) => id === current.selectedIds[index])
         ),
         switchMap(({ search, selectedIds }) =>
-          this.userService.getMechanics(search.trim().length < 2 ? '' : search.trim(), selectedIds)
+          this.userService.getMechanics(search.trim() || '*', selectedIds)
         ),
         tap((mechanics) => this.mechanics.set(mechanics)),
         takeUntilDestroyed(this.destroyRef)
@@ -102,6 +105,9 @@ export class AppointmentDetailsComponent {
       const id = params.get('id');
       this.appointment.set(null);
       this.car.set(null);
+      this.mechanics.set([]);
+      this.mechanicsDropdownOpen.set(false);
+      this.mechanicSearchText = '*';
       this.hasError.set(!id);
       this.isLoading.set(!!id);
 
@@ -141,6 +147,21 @@ export class AppointmentDetailsComponent {
                       { emitEvent: false }
                     );
                     this.mechanicsControl.markAsPristine();
+                  },
+                });
+              // Preload unselected options so focus/click opens an already
+              // populated dropdown instead of waiting for the first keystroke.
+              this.userService
+                .getMechanics('*', appointment.mechanics)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
+                  next: (roster) => {
+                    if (this.appointment()?.id !== appointment.id) return;
+                    this.mechanics.update((previous) => {
+                      const byId = new Map(previous.map((mechanic) => [mechanic.id, mechanic]));
+                      roster.forEach((mechanic) => byId.set(mechanic.id, mechanic));
+                      return [...byId.values()];
+                    });
                   },
                 });
             } else {
@@ -214,8 +235,13 @@ export class AppointmentDetailsComponent {
     return this.mechanics().filter(({ id }) => !selectedIds.has(id));
   }
 
+  protected onMechanicsFocus(): void {
+    this.mechanicsDropdownOpen.set(true);
+  }
+
   protected searchMechanics(event: Event): void {
-    this.queueMechanicSearch((event.target as HTMLInputElement).value);
+    this.mechanicsDropdownOpen.set(true);
+    this.queueMechanicSearch((event.target as HTMLInputElement).value.trim() || '*');
   }
 
   private queueMechanicSearch(search = this.mechanicSearchText): void {

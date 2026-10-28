@@ -99,3 +99,10 @@
   .vehicle-facts { grid-template-columns: minmax(0, 1fr); }
   .payment-amount { flex-wrap: wrap; }
 }
+
+.mechanic-empty {
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--tui-text-secondary);
+  font-size: 13px;
+}

@@ -104,19 +104,33 @@
             aria-label="Текст сообщения"
             (keydown.enter)="onComposerKeydown($event)"
           ></textarea>
-          <label class="attach-button" [class.attach-button_disabled]="!isConnected() || isSending()">
-            <span aria-hidden="true">📎</span>
-            <span>Прикрепить</span>
-            <input
-              type="file"
-              multiple
-              accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
-              [disabled]="!isConnected() || isSending()"
-              (change)="onFilesSelected($event)"
-            />
-          </label>
+          <input
+            #fileInput
+            type="file"
+            multiple
+            hidden
+            accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
+            [disabled]="!isConnected() || isSending()"
+            (change)="onFilesSelected($event)"
+          />
+          <button
+            tuiButton
+            class="attach-button"
+            appearance="outline"
+            size="m"
+            type="button"
+            iconStart="@tui.paperclip"
+            [disabled]="!isConnected() || isSending()"
+            (click)="fileInput.click()"
+          >
+            Прикрепить
+          </button>
         </div>
         <button
+          tuiButton
+          class="send-button"
+          appearance="primary"
+          size="m"
           type="submit"
           [disabled]="!isConnected() || (!messageControl.value.trim() && !selectedFiles().length) || messageControl.invalid || isSending()"
         >

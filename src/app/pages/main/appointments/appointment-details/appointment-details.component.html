@@ -136,7 +136,7 @@
                 <dt>Описание</dt>
                 <dd>{{ appointment()!.description || 'Не указано' }}</dd>
               </div>
-              @if (appointment()!.ownerPhone) {
+              @if (isAdminRole && appointment()!.ownerPhone) {
                 <div>
                   <dt>Телефон владельца</dt>
                   <dd>{{ appointment()!.ownerPhone }}</dd>
@@ -232,31 +232,40 @@
         </aside>
       </div>
       <div class="order-actions">
+        @if (!isUserRole) {
         <section class="panel specialists-panel" aria-labelledby="specialists-title">
           <div>
             <h2 id="specialists-title">Специалисты</h2>
             @if (appointment()!.permissions.canAssignMechanics) {
-              <tui-textfield multi [stringify]="stringifyMechanic" [disabledItemHandler]="disabledMechanic">
+              <tui-textfield
+                multi
+                [stringify]="stringifyMechanic"
+                [disabledItemHandler]="disabledMechanic"
+                [open]="mechanicsDropdownOpen()"
+                (openChange)="mechanicsDropdownOpen.set($event)"
+              >
                 <label tuiLabel>Выберите специалистов</label>
                 <input
                   tuiInputChip
                   [formControl]="mechanicsControl"
                   [placeholder]="mechanicsControl.value.length ? '' : 'Введите ФИО или телефон'"
+                  (focus)="onMechanicsFocus()"
+                  (click)="onMechanicsFocus()"
                   (input)="searchMechanics($event)"
                 />
                 <tui-input-chip *tuiItem />
-                @if (availableMechanics().length) {
-                  <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
-                    @for (mechanic of availableMechanics(); track mechanic.id) {
-                      <button tuiOption new [value]="mechanic">
-                        {{ stringifyMechanic(mechanic) }}
-                        @if (mechanic.phone) {
-                          ({{ mechanic.phone }})
-                        }
-                      </button>
-                    }
-                  </tui-data-list>
-                }
+                <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
+                  @for (mechanic of availableMechanics(); track mechanic.id) {
+                    <button tuiOption new [value]="mechanic">
+                      {{ stringifyMechanic(mechanic) }}
+                      @if (mechanic.phone) {
+                        ({{ mechanic.phone }})
+                      }
+                    </button>
+                  } @empty {
+                    <p class="mechanic-empty">Нет доступных специалистов</p>
+                  }
+                </tui-data-list>
               </tui-textfield>
               <button
                 tuiButton
@@ -274,6 +283,7 @@
             }
           </div>
         </section>
+        }
 
         @if (canRefuse()) {
           <section class="refusal">
