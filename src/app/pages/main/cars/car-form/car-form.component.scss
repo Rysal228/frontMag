@@ -11,16 +11,18 @@
 }
 
 .back-link {
-  display: flex;
-  margin-bottom: 16px;
-  width: max-content;
-  border: 1px solid var(--color-border-01);
+  display: inline-flex;
   align-items: center;
-  padding: 8px;
-  border-radius: 16px;
+  gap: 8px;
   color: var(--tui-text-action);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   text-decoration: none;
+  padding-bottom: 16px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
 }
 
 .title {
