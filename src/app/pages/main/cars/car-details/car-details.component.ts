@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
@@ -35,6 +35,7 @@ export class CarDetailsComponent {
   protected readonly isRestoring = signal(false);
   protected readonly hasError = signal(false);
   protected readonly canManageCar = signal(false);
+  protected readonly isAdminRole = computed(() => this.currentRoleStore.role() === UserRole.Admin);
 
   constructor() {
     this.route.paramMap.subscribe((params) => {
