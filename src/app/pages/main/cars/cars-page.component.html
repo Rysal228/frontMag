@@ -6,7 +6,9 @@
     </div>
 
     @if (!isStaffRole()) {
-      <a tuiButton appearance="primary" type="button" routerLink="/cars/new">Добавить авто</a>
+      <button tuiButton size="m" appearance="primary" type="button" routerLink="/cars/new" iconStart="@tui.plus">
+        Добавить авто
+      </button>
     }
   </header>
 

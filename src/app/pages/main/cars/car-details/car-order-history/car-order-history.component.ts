@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untr
 import { finalize } from 'rxjs';
 import { forkJoin } from 'rxjs';
 
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiPagination } from '@taiga-ui/kit';
 
 import { OrderCardComponent } from 'app/shared/components/order-card/order-card.component';
@@ -21,7 +21,7 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 @Component({
   selector: 'app-car-order-history',
   standalone: true,
-  imports: [OrderCardComponent, OrderFiltersComponent, TuiButton, TuiPagination],
+  imports: [OrderCardComponent, OrderFiltersComponent, TuiButton, TuiIcon, TuiPagination],
   templateUrl: './car-order-history.component.html',
   styleUrl: './car-order-history.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
