@@ -205,14 +205,14 @@ export class AppointmentDetailsComponent {
     this.refusalError.set('');
     this.appointmentService.getStatuses().subscribe({
       next: (statuses) => {
-        const completedStatus = statuses.find(({ code }) => code === 'completed');
-        if (!completedStatus) {
-          this.refusalError.set('Не удалось найти статус завершения заказа.');
+        const cancelledStatus = statuses.find(({ code }) => code === 'cancelled');
+        if (!cancelledStatus) {
+          this.refusalError.set('Не удалось найти статус отмены заказа.');
           this.isSubmittingRefusal.set(false);
           return;
         }
 
-        this.appointmentService.transitionStatus(order.id, completedStatus.id, reason).subscribe({
+        this.appointmentService.transitionStatus(order.id, cancelledStatus.id, reason).subscribe({
           next: (updated) => {
             this.appointment.set(updated);
             this.refusalReason.set('');

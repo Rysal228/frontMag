@@ -63,6 +63,7 @@ export type Appointment = {
   refusalReason: string;
   price: number;
   createdAt: string;
+  closedAt?: string | null;
   ownerPhone?: string;
 };
 

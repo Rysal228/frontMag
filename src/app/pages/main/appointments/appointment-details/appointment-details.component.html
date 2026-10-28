@@ -42,6 +42,15 @@
               <strong>{{ appointment()!.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</strong>
             </div>
           </div>
+          @if (appointment()!.closedAt) {
+            <div class="meta-pair">
+              <tui-icon icon="@tui.check-circle-2" />
+              <div>
+                <span class="meta-label">Заказ закрыт</span>
+                <strong>{{ appointment()!.closedAt | date: 'dd.MM.yyyy, HH:mm' }}</strong>
+              </div>
+            </div>
+          }
         </div>
       </header>
 
@@ -160,25 +169,42 @@
                 <h2 id="progress-title">Статус заказа</h2>
               </div>
             </div>
-            <ol class="status-steps" aria-label="Основные статусы заказа">
-              <li
-                [class.is-current]="appointment()!.status.code === 'under_review'"
-                [class.is-done]="
-                  appointment()!.status.code === 'in_progress' || appointment()!.status.code === 'completed'
-                "
-              >
-                <span class="step-marker">1</span><span>На рассмотрении</span>
-              </li>
-              <li
-                [class.is-current]="appointment()!.status.code === 'in_progress'"
-                [class.is-done]="appointment()!.status.code === 'completed'"
-              >
-                <span class="step-marker">2</span><span>В работе</span>
-              </li>
-              <li [class.is-current]="appointment()!.status.code === 'completed'">
-                <span class="step-marker">3</span><span>Завершён</span>
-              </li>
-            </ol>
+            @if (appointment()!.status.code === 'cancelled') {
+              <p class="order-cancelled-status">
+                Заказ отменён. Причина отказа указана в информации о заказе.
+              </p>
+            } @else {
+              <ol class="status-steps" aria-label="Основные статусы заказа">
+                <li
+                  [class.is-current]="appointment()!.status.code === 'under_review'"
+                  [class.is-done]="
+                    appointment()!.status.code === 'in_progress' ||
+                    appointment()!.status.code === 'completed' ||
+                    appointment()!.status.code === 'closed'
+                  "
+                >
+                  <span class="step-marker">1</span><span>На рассмотрении</span>
+                </li>
+                <li
+                  [class.is-current]="appointment()!.status.code === 'in_progress'"
+                  [class.is-done]="
+                    appointment()!.status.code === 'completed' ||
+                    appointment()!.status.code === 'closed'
+                  "
+                >
+                  <span class="step-marker">2</span><span>В работе</span>
+                </li>
+                <li
+                  [class.is-current]="appointment()!.status.code === 'completed'"
+                  [class.is-done]="appointment()!.status.code === 'closed'"
+                >
+                  <span class="step-marker">3</span><span>Завершён</span>
+                </li>
+                <li [class.is-current]="appointment()!.status.code === 'closed'">
+                  <span class="step-marker">4</span><span>Закрыт</span>
+                </li>
+              </ol>
+            }
             <div class="work-stage">
               <span class="meta-label">Текущий статус работ</span>
               @if (appointment()!.workStatus) {

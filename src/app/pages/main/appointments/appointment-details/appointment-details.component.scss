@@ -106,3 +106,13 @@
   color: var(--tui-text-secondary);
   font-size: 13px;
 }
+
+.order-cancelled-status {
+  border-radius: 12px;
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  color: var(--app-status-negative);
+  background: var(--app-surface-subtle);
+  font-size: 13px;
+  line-height: 1.5;
+}
