@@ -23,7 +23,8 @@
               class="status-badge"
               [attr.data-appearance]="appointment()!.status.appearance"
               [attr.data-status-code]="appointment()!.status.code"
-            >{{ appointment()!.status.name }}</span>
+              >{{ appointment()!.status.name }}</span
+            >
           </div>
         </div>
         <div class="order-hero__meta">
@@ -53,7 +54,9 @@
                 <h2 id="vehicle-title">Автомобиль</h2>
               </div>
               @if (car()) {
-                <a class="panel-link" [routerLink]="['/cars', appointment()!.car]">Карточка автомобиля <tui-icon icon="@tui.arrow-up-right" /></a>
+                <a class="panel-link" [routerLink]="['/cars', appointment()!.car]"
+                  >Карточка автомобиля <tui-icon icon="@tui.arrow-up-right"
+                /></a>
               }
             </div>
             <div class="vehicle-summary">
@@ -69,10 +72,19 @@
                 <h3>{{ appointment()!.carName }}</h3>
                 <span class="vehicle-year">{{ appointment()!.carYear }} год выпуска</span>
                 <dl class="vehicle-facts">
-                  <div><dt>VIN</dt><dd>{{ appointment()!.carVin || 'Не указан' }}</dd></div>
-                  <div><dt>Госномер</dt><dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd></div>
+                  <div>
+                    <dt>VIN</dt>
+                    <dd>{{ appointment()!.carVin || 'Не указан' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Госномер</dt>
+                    <dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd>
+                  </div>
                   @if (car()) {
-                    <div><dt>Состояние</dt><dd>{{ car()!.status === 'archived' ? 'В архиве' : 'Активный' }}</dd></div>
+                    <div>
+                      <dt>Состояние</dt>
+                      <dd>{{ car()!.status === 'archived' ? 'В архиве' : 'Активный' }}</dd>
+                    </div>
                   }
                 </dl>
               </div>
@@ -125,15 +137,19 @@
                 <dd>{{ appointment()!.description || 'Не указано' }}</dd>
               </div>
               @if (appointment()!.ownerPhone) {
-                <div><dt>Телефон владельца</dt><dd>{{ appointment()!.ownerPhone }}</dd></div>
+                <div>
+                  <dt>Телефон владельца</dt>
+                  <dd>{{ appointment()!.ownerPhone }}</dd>
+                </div>
               }
               @if (appointment()!.refusalReason) {
-                <div><dt>Причина отказа</dt><dd>{{ appointment()!.refusalReason }}</dd></div>
+                <div>
+                  <dt>Причина отказа</dt>
+                  <dd>{{ appointment()!.refusalReason }}</dd>
+                </div>
               }
             </dl>
           </section>
-
-
         </div>
 
         <aside class="order-side">
@@ -145,12 +161,18 @@
               </div>
             </div>
             <ol class="status-steps" aria-label="Основные статусы заказа">
-              <li [class.is-current]="appointment()!.status.code === 'under_review'"
-                  [class.is-done]="appointment()!.status.code === 'in_progress' || appointment()!.status.code === 'completed'">
+              <li
+                [class.is-current]="appointment()!.status.code === 'under_review'"
+                [class.is-done]="
+                  appointment()!.status.code === 'in_progress' || appointment()!.status.code === 'completed'
+                "
+              >
                 <span class="step-marker">1</span><span>На рассмотрении</span>
               </li>
-              <li [class.is-current]="appointment()!.status.code === 'in_progress'"
-                  [class.is-done]="appointment()!.status.code === 'completed'">
+              <li
+                [class.is-current]="appointment()!.status.code === 'in_progress'"
+                [class.is-done]="appointment()!.status.code === 'completed'"
+              >
                 <span class="step-marker">2</span><span>В работе</span>
               </li>
               <li [class.is-current]="appointment()!.status.code === 'completed'">
@@ -160,16 +182,17 @@
             <div class="work-stage">
               <span class="meta-label">Текущий статус работ</span>
               @if (appointment()!.workStatus) {
-                <span class="status-badge"
-                      [attr.data-appearance]="appointment()!.workStatus!.appearance"
-                      [attr.data-status-code]="appointment()!.workStatus!.code">
+                <span
+                  class="status-badge"
+                  [attr.data-appearance]="appointment()!.workStatus!.appearance"
+                  [attr.data-status-code]="appointment()!.workStatus!.code"
+                >
                   {{ appointment()!.workStatus!.name }}
                 </span>
               } @else {
                 <span>Не указан</span>
               }
             </div>
-            <p class="help-text">Этапы отражают текущий статус заказа. Статус работ ведётся отдельно.</p>
           </section>
 
           @if (!isMechanicRole) {
@@ -183,9 +206,11 @@
               <div class="payment-top">
                 <span class="meta-label">Статус оплаты</span>
                 @if (appointment()!.paymentStatus) {
-                  <span class="status-badge"
-                        [attr.data-appearance]="appointment()!.paymentStatus!.appearance"
-                        [attr.data-status-code]="appointment()!.paymentStatus!.code">
+                  <span
+                    class="status-badge"
+                    [attr.data-appearance]="appointment()!.paymentStatus!.appearance"
+                    [attr.data-status-code]="appointment()!.paymentStatus!.code"
+                  >
                     {{ appointment()!.paymentStatus!.name }}
                   </span>
                 } @else {
@@ -199,14 +224,16 @@
               <button tuiButton appearance="primary" type="button" class="payment-placeholder" disabled>
                 Онлайн-оплата скоро
               </button>
-              <p class="help-text">Платёжная система ещё не подключена. Этот блок не списывает деньги и не меняет статус оплаты.</p>
+              <p class="help-text">
+                Платёжная система ещё не подключена. Этот блок не списывает деньги и не меняет статус оплаты.
+              </p>
             </section>
           }
         </aside>
       </div>
       <div class="order-actions">
-          <section class="panel specialists-panel" aria-labelledby="specialists-title">
-            <div>
+        <section class="panel specialists-panel" aria-labelledby="specialists-title">
+          <div>
             <h2 id="specialists-title">Специалисты</h2>
             @if (appointment()!.permissions.canAssignMechanics) {
               <tui-textfield multi [stringify]="stringifyMechanic" [disabledItemHandler]="disabledMechanic">
@@ -245,10 +272,10 @@
             } @else {
               <p>Специалисты пока не назначены.</p>
             }
-            </div>
-          </section>
+          </div>
+        </section>
 
-          @if (canRefuse()) {
+        @if (canRefuse()) {
           <section class="refusal">
             <h2>Отказ от заказа</h2>
             <label for="refusal-reason">Причина отказа</label>
@@ -273,10 +300,9 @@
               {{ isSubmittingRefusal() ? 'Отказ...' : 'Отказать в заказе' }}
             </button>
           </section>
-          }
+        }
       </div>
       <div class="chat-panel"><app-order-chat [orderId]="appointment()!.id" /></div>
-
     }
   </section>
 </main>

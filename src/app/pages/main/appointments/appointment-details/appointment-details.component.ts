@@ -18,11 +18,11 @@ import { TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
 import { OrderChatComponent } from 'app/shared/components/order-chat/order-chat.component';
 import { Appointment } from 'app/shared/models/appointment.model';
 import { Car } from 'app/shared/models/car.model';
-import { CarService } from 'app/shared/services/car.service';
 import { Mechanic } from 'app/shared/models/user.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
-import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { CarService } from 'app/shared/services/car.service';
 import { UserService } from 'app/shared/services/user.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 
 @Component({
   selector: 'app-appointment-details',
@@ -111,13 +111,15 @@ export class AppointmentDetailsComponent {
 
       this.appointmentService
         .getById(id)
-        .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.isLoading.set(false)))
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.isLoading.set(false))
+        )
         .subscribe({
           next: (appointment) => {
             this.appointment.set(appointment);
-            // The order keeps its vehicle snapshot; car lookup only enriches
-            // the card with an optional photo/archive state. A 403/404 is harmless.
-            this.carService.getById(appointment.car)
+            this.carService
+              .getById(appointment.car)
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
                 next: (car) => {
@@ -128,18 +130,19 @@ export class AppointmentDetailsComponent {
                 },
               });
             if (appointment.permissions.canAssignMechanics) {
-              this.userService.getMechanics('', appointment.mechanics)
+              this.userService
+                .getMechanics('', appointment.mechanics)
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe({
-                next: (mechanics) => {
-                  this.mechanics.set(mechanics);
-                  this.mechanicsControl.setValue(
-                    mechanics.filter(({ id }) => appointment.mechanics.includes(id)),
-                    { emitEvent: false }
-                  );
-                  this.mechanicsControl.markAsPristine();
-                },
-              });
+                  next: (mechanics) => {
+                    this.mechanics.set(mechanics);
+                    this.mechanicsControl.setValue(
+                      mechanics.filter(({ id }) => appointment.mechanics.includes(id)),
+                      { emitEvent: false }
+                    );
+                    this.mechanicsControl.markAsPristine();
+                  },
+                });
             } else {
               this.mechanicsControl.setValue([], { emitEvent: false });
               this.mechanicsControl.markAsPristine();
@@ -152,14 +155,13 @@ export class AppointmentDetailsComponent {
 
   protected canRefuse(): boolean {
     const order = this.appointment();
-    return this.currentRole.role() === 'admin' && !!order && order.permissions.canTransitionStatus && (
-      (order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
-      (order.status.code === 'in_progress' && [
-        'waiting_arrival',
-        'intake',
-        'owner_approval',
-        'execution',
-      ].includes(order.workStatus?.code ?? ''))
+    return (
+      this.currentRole.role() === 'admin' &&
+      !!order &&
+      order.permissions.canTransitionStatus &&
+      ((order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
+        (order.status.code === 'in_progress' &&
+          ['waiting_arrival', 'intake', 'owner_approval', 'execution'].includes(order.workStatus?.code ?? '')))
     );
   }
 
