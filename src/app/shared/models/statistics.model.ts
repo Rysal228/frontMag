@@ -46,7 +46,6 @@ export type StatisticsDashboard = {
   weekdayOccupancy: WeekdayOccupancyPoint[];
 };
 
-/** Counts of distinct orders ever assigned to the active mechanic. */
 export interface MechanicStatistics {
   total: number;
   inProgress: number;
