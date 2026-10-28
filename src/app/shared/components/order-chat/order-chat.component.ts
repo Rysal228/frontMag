@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TuiButton } from '@taiga-ui/core';
 
 import { OrderChatApiService } from 'app/shared/api/order-chat-api.service';
 import { ChatAttachment, ChatMessage, ChatRoom, ChatSocketEvent } from 'app/shared/models/chat.model';
@@ -15,7 +16,7 @@ const ACCEPTED_FILE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'a
 @Component({
   selector: 'app-order-chat',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, TuiButton],
   templateUrl: './order-chat.component.html',
   styleUrl: './order-chat.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

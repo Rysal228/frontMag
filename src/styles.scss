@@ -249,3 +249,8 @@ tui-root[data-theme="light"] {
   background: rgb(224 76 86 / 14%);
   color: var(--app-status-negative);
 }
+
+.status-badge[data-status-code="closed"] {
+  background: rgb(29 174 124 / 15%);
+  color: var(--app-status-positive);
+}

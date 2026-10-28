@@ -13,111 +13,273 @@
         <a routerLink="/appointments">Вернуться к записям</a>
       </div>
     } @else {
-      <header class="header">
-        <div>
-          <h1>Заказ №{{ appointment()!.orderNumber }}</h1>
-          <p>{{ appointment()!.carName }}</p>
+      <header class="order-hero panel">
+        <div class="order-hero__headline">
+          <div class="order-hero__icon"><tui-icon icon="@tui.wrench" /></div>
+          <div class="order-hero__title">
+            <span class="eyebrow">Запись на обслуживание</span>
+            <h1>Заказ №{{ appointment()!.orderNumber }}</h1>
+            <span
+              class="status-badge"
+              [attr.data-appearance]="appointment()!.status.appearance"
+              [attr.data-status-code]="appointment()!.status.code"
+              >{{ appointment()!.status.name }}</span
+            >
+          </div>
         </div>
-        <div class="statuses">
-          <span
-            class="status-badge"
-            [attr.data-appearance]="appointment()!.status.appearance"
-            [attr.data-status-code]="appointment()!.status.code"
-            >{{ appointment()!.status.name }}</span
-          >
-          @if (appointment()!.workStatus) {
-            <span
-              class="status-badge"
-              [attr.data-appearance]="appointment()!.workStatus!.appearance"
-              [attr.data-status-code]="appointment()!.workStatus!.code"
-              >{{ appointment()!.workStatus!.name }}</span
-            >
-          }
-          @if (appointment()!.paymentStatus) {
-            <span
-              class="status-badge"
-              [attr.data-appearance]="appointment()!.paymentStatus!.appearance"
-              [attr.data-status-code]="appointment()!.paymentStatus!.code"
-              >{{ appointment()!.paymentStatus!.name }}</span
-            >
+        <div class="order-hero__meta">
+          <div class="meta-pair">
+            <tui-icon icon="@tui.calendar-days" />
+            <div>
+              <span class="meta-label">Дата и время записи</span>
+              <strong>{{ appointment()!.appointmentAt | date: 'dd.MM.yyyy, HH:mm' }}</strong>
+            </div>
+          </div>
+          <div class="meta-pair">
+            <tui-icon icon="@tui.clock" />
+            <div>
+              <span class="meta-label">Заказ создан</span>
+              <strong>{{ appointment()!.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</strong>
+            </div>
+          </div>
+          @if (appointment()!.closedAt) {
+            <div class="meta-pair">
+              <tui-icon icon="@tui.clock" />
+              <div>
+                <span class="meta-label">Заказ закрыт</span>
+                <strong>{{ appointment()!.closedAt | date: 'dd.MM.yyyy, HH:mm' }}</strong>
+              </div>
+            </div>
           }
         </div>
       </header>
 
-      <section class="details">
-        <div>
-          <h2>Автомобиль</h2>
-          <dl>
-            <div>
-              <dt>Марка и модель</dt>
-              <dd>{{ appointment()!.carName }}</dd>
+      <div class="order-layout">
+        <div class="order-main">
+          <section class="panel vehicle-panel" aria-labelledby="vehicle-title">
+            <div class="panel-header">
+              <div class="panel-heading">
+                <tui-icon icon="@tui.car-front" />
+                <h2 id="vehicle-title">Автомобиль</h2>
+              </div>
+              @if (car()) {
+                <a class="panel-link" [routerLink]="['/cars', appointment()!.car]"
+                  >Карточка автомобиля <tui-icon icon="@tui.arrow-up-right"
+                /></a>
+              }
             </div>
-            <div>
-              <dt>Год</dt>
-              <dd>{{ appointment()!.carYear }}</dd>
+            <div class="vehicle-summary">
+              <div class="vehicle-photo">
+                @if (car()?.photo) {
+                  <img [src]="car()!.photo!" [alt]="appointment()!.carName" loading="lazy" />
+                } @else {
+                  <tui-icon icon="@tui.car-front" />
+                  <span>Фото отсутствует</span>
+                }
+              </div>
+              <div class="vehicle-info">
+                <h3>{{ appointment()!.carName }}</h3>
+                <span class="vehicle-year">{{ appointment()!.carYear }} год выпуска</span>
+                <dl class="vehicle-facts">
+                  <div>
+                    <dt>VIN</dt>
+                    <dd>{{ appointment()!.carVin || 'Не указан' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Госномер</dt>
+                    <dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd>
+                  </div>
+                  @if (car()) {
+                    <div>
+                      <dt>Состояние</dt>
+                      <dd>{{ car()!.status === 'archived' ? 'В архиве' : 'Активный' }}</dd>
+                    </div>
+                  }
+                </dl>
+              </div>
             </div>
-            <div>
-              <dt>VIN</dt>
-              <dd>{{ appointment()!.carVin || 'Не указан' }}</dd>
-            </div>
-            <div>
-              <dt>Гос. номер</dt>
-              <dd>{{ appointment()!.carPlateNumber || 'Не указан' }}</dd>
-            </div>
-          </dl>
-        </div>
+          </section>
 
-        <div>
-          <h2>Запись</h2>
-          <dl>
-            <div>
-              <dt>Дата и время</dt>
-              <dd>{{ appointment()!.appointmentAt | date: 'dd.MM.yyyy HH:mm' }}</dd>
+          <section class="panel works-panel" aria-labelledby="works-title">
+            <div class="panel-header">
+              <div class="panel-heading">
+                <tui-icon icon="@tui.wrench" />
+                <h2 id="works-title">Работы</h2>
+              </div>
+              <span class="panel-caption">{{ appointment()!.works.length }} поз.</span>
             </div>
-            <div>
-              <dt>Владелец</dt>
-              <dd>{{ appointment()!.ownerPhone || 'Не указан' }}</dd>
-            </div>
-            <div>
-              <dt>Описание</dt>
-              <dd>{{ appointment()!.description || 'Не указано' }}</dd>
-            </div>
-            @if (appointment()!.refusalReason) {
-              <div>
-                <dt>Причина отказа</dt>
-                <dd>{{ appointment()!.refusalReason }}</dd>
+            @if (appointment()!.works.length) {
+              <ul class="works-list">
+                @for (work of appointment()!.works; track work.id) {
+                  <li>
+                    <div class="work-info">
+                      <span class="work-number">{{ $index + 1 }}</span>
+                      <span>{{ work.name }}</span>
+                    </div>
+                    @if (!isMechanicRole) {
+                      <strong>{{ work.price | number: '1.0-2' }} ₽</strong>
+                    }
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="empty-hint">Работы пока не добавлены.</p>
+            }
+            @if (!isMechanicRole) {
+              <div class="works-total">
+                <span>Итого за работы</span>
+                <strong>{{ appointment()!.price | number: '1.0-2' }} ₽</strong>
               </div>
             }
-          </dl>
+          </section>
+
+          <section class="panel note-panel" aria-labelledby="order-info-title">
+            <div class="panel-header">
+              <div class="panel-heading">
+                <tui-icon icon="@tui.clipboard-list" />
+                <h2 id="order-info-title">Информация о заказе</h2>
+              </div>
+            </div>
+            <dl class="order-facts">
+              <div>
+                <dt>Описание</dt>
+                <dd>{{ appointment()!.description || 'Не указано' }}</dd>
+              </div>
+              @if (isAdminRole && appointment()!.ownerPhone) {
+                <div>
+                  <dt>Телефон владельца</dt>
+                  <dd>{{ appointment()!.ownerPhone }}</dd>
+                </div>
+              }
+              @if (appointment()!.refusalReason) {
+                <div>
+                  <dt>Причина отказа</dt>
+                  <dd>{{ appointment()!.refusalReason }}</dd>
+                </div>
+              }
+            </dl>
+          </section>
         </div>
 
-        <div>
-          <h2>Работы</h2>
-          <ul>
-            @for (work of appointment()!.works; track work.id) {
-              <li>
-                <span>{{ work.name }}</span>
-                @if (!isMechanicRole) {
-                  <strong>{{ work.price }} ₽</strong>
-                }
-              </li>
+        <aside class="order-side">
+          <section class="panel progress-panel" aria-labelledby="progress-title">
+            <div class="panel-header">
+              <div class="panel-heading">
+                <tui-icon icon="@tui.list-checks" />
+                <h2 id="progress-title">Статус заказа</h2>
+              </div>
+            </div>
+            @if (appointment()!.status.code === 'cancelled') {
+              <p class="order-cancelled-status">
+                Заказ отменён. Причина отказа указана в информации о заказе.
+              </p>
+            } @else {
+              <ol class="status-steps" aria-label="Основные статусы заказа">
+                <li
+                  [class.is-current]="appointment()!.status.code === 'under_review'"
+                  [class.is-done]="
+                    appointment()!.status.code === 'in_progress' ||
+                    appointment()!.status.code === 'completed' ||
+                    appointment()!.status.code === 'closed'
+                  "
+                >
+                  <span class="step-marker">1</span><span>На рассмотрении</span>
+                </li>
+                <li
+                  [class.is-current]="appointment()!.status.code === 'in_progress'"
+                  [class.is-done]="
+                    appointment()!.status.code === 'completed' ||
+                    appointment()!.status.code === 'closed'
+                  "
+                >
+                  <span class="step-marker">2</span><span>В работе</span>
+                </li>
+                <li
+                  [class.is-current]="appointment()!.status.code === 'completed'"
+                  [class.is-done]="appointment()!.status.code === 'closed'"
+                >
+                  <span class="step-marker">3</span><span>Завершён</span>
+                </li>
+                <li [class.is-current]="appointment()!.status.code === 'closed'">
+                  <span class="step-marker">4</span><span>Закрыт</span>
+                </li>
+              </ol>
             }
-          </ul>
-        </div>
+            <div class="work-stage">
+              <span class="meta-label">Текущий статус работ</span>
+              @if (appointment()!.workStatus) {
+                <span
+                  class="status-badge"
+                  [attr.data-appearance]="appointment()!.workStatus!.appearance"
+                  [attr.data-status-code]="appointment()!.workStatus!.code"
+                >
+                  {{ appointment()!.workStatus!.name }}
+                </span>
+              } @else {
+                <span>Не указан</span>
+              }
+            </div>
+          </section>
 
-        <div>
-          <h2>Специалисты</h2>
-          @if (appointment()!.permissions.canAssignMechanics) {
-            <tui-textfield multi [stringify]="stringifyMechanic" [disabledItemHandler]="disabledMechanic">
-              <label tuiLabel>Выберите специалистов</label>
-              <input
-                tuiInputChip
-                [formControl]="mechanicsControl"
-                [placeholder]="mechanicsControl.value.length ? '' : 'Введите ФИО или телефон'"
-                (input)="searchMechanics($event)"
-              />
-              <tui-input-chip *tuiItem />
-              @if (availableMechanics().length) {
+          @if (!isMechanicRole) {
+            <section class="panel payment-panel" aria-labelledby="payment-title">
+              <div class="panel-header">
+                <div class="panel-heading">
+                  <tui-icon icon="@tui.wallet" />
+                  <h2 id="payment-title">Оплата заказа</h2>
+                </div>
+              </div>
+              <div class="payment-top">
+                <span class="meta-label">Статус оплаты</span>
+                @if (appointment()!.paymentStatus) {
+                  <span
+                    class="status-badge"
+                    [attr.data-appearance]="appointment()!.paymentStatus!.appearance"
+                    [attr.data-status-code]="appointment()!.paymentStatus!.code"
+                  >
+                    {{ appointment()!.paymentStatus!.name }}
+                  </span>
+                } @else {
+                  <span class="muted">Не указан</span>
+                }
+              </div>
+              <div class="payment-amount">
+                <span>Стоимость работ</span>
+                <strong>{{ appointment()!.price | number: '1.0-2' }} ₽</strong>
+              </div>
+              <button tuiButton appearance="primary" type="button" class="payment-placeholder" disabled>
+                Онлайн-оплата скоро
+              </button>
+              <p class="help-text">
+                Платёжная система ещё не подключена. Этот блок не списывает деньги и не меняет статус оплаты.
+              </p>
+            </section>
+          }
+        </aside>
+      </div>
+      <div class="order-actions">
+        @if (!isUserRole) {
+        <section class="panel specialists-panel" aria-labelledby="specialists-title">
+          <div>
+            <h2 id="specialists-title">Специалисты</h2>
+            @if (appointment()!.permissions.canAssignMechanics) {
+              <tui-textfield
+                multi
+                [stringify]="stringifyMechanic"
+                [disabledItemHandler]="disabledMechanic"
+                [open]="mechanicsDropdownOpen()"
+                (openChange)="mechanicsDropdownOpen.set($event)"
+              >
+                <label tuiLabel>Выберите специалистов</label>
+                <input
+                  tuiInputChip
+                  [formControl]="mechanicsControl"
+                  [placeholder]="mechanicsControl.value.length ? '' : 'Введите ФИО или телефон'"
+                  (focus)="onMechanicsFocus()"
+                  (click)="onMechanicsFocus()"
+                  (input)="searchMechanics($event)"
+                />
+                <tui-input-chip *tuiItem />
                 <tui-data-list *tuiTextfieldDropdown tuiMultiSelectGroup>
                   @for (mechanic of availableMechanics(); track mechanic.id) {
                     <button tuiOption new [value]="mechanic">
@@ -126,62 +288,57 @@
                         ({{ mechanic.phone }})
                       }
                     </button>
+                  } @empty {
+                    <p class="mechanic-empty">Нет доступных специалистов</p>
                   }
                 </tui-data-list>
-              }
-            </tui-textfield>
+              </tui-textfield>
+              <button
+                tuiButton
+                appearance="primary"
+                type="button"
+                [disabled]="isSavingMechanics() || mechanicsControl.pristine"
+                (click)="saveMechanics()"
+              >
+                {{ isSavingMechanics() ? 'Сохранение...' : 'Сохранить специалистов' }}
+              </button>
+            } @else if (appointment()!.mechanics.length) {
+              <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
+            } @else {
+              <p>Специалисты пока не назначены.</p>
+            }
+          </div>
+        </section>
+        }
+
+        @if (canRefuse()) {
+          <section class="refusal">
+            <h2>Отказ от заказа</h2>
+            <label for="refusal-reason">Причина отказа</label>
+            <textarea
+              id="refusal-reason"
+              rows="3"
+              [value]="refusalReason()"
+              (input)="refusalReason.set($any($event.target).value)"
+              placeholder="Укажите причину отказа"
+              [disabled]="isSubmittingRefusal()"
+            ></textarea>
+            @if (refusalError()) {
+              <p class="refusal-error">{{ refusalError() }}</p>
+            }
             <button
               tuiButton
               appearance="primary"
               type="button"
-              [disabled]="isSavingMechanics() || mechanicsControl.pristine"
-              (click)="saveMechanics()"
+              [disabled]="isSubmittingRefusal() || !refusalReason().trim()"
+              (click)="refuseOrder()"
             >
-              {{ isSavingMechanics() ? 'Сохранение...' : 'Сохранить специалистов' }}
+              {{ isSubmittingRefusal() ? 'Отказ...' : 'Отказать в заказе' }}
             </button>
-          } @else if (appointment()!.mechanics.length) {
-            <p>Назначено специалистов: {{ appointment()!.mechanics.length }}</p>
-          } @else {
-            <p>Специалисты пока не назначены.</p>
-          }
-        </div>
-      </section>
-
-      <app-order-chat [orderId]="appointment()!.id" />
-
-      @if (!isMechanicRole) {
-        <section class="total">
-          <span>Итого</span>
-          <strong>{{ appointment()!.price }} ₽</strong>
-        </section>
-      }
-
-      @if (canRefuse()) {
-        <section class="refusal">
-          <h2>Отказ от заказа</h2>
-          <label for="refusal-reason">Причина отказа</label>
-          <textarea
-            id="refusal-reason"
-            rows="3"
-            [value]="refusalReason()"
-            (input)="refusalReason.set($any($event.target).value)"
-            placeholder="Укажите причину отказа"
-            [disabled]="isSubmittingRefusal()"
-          ></textarea>
-          @if (refusalError()) {
-            <p class="refusal-error">{{ refusalError() }}</p>
-          }
-          <button
-            tuiButton
-            appearance="primary"
-            type="button"
-            [disabled]="isSubmittingRefusal() || !refusalReason().trim()"
-            (click)="refuseOrder()"
-          >
-            {{ isSubmittingRefusal() ? 'Отказ...' : 'Отказать в заказе' }}
-          </button>
-        </section>
-      }
+          </section>
+        }
+      </div>
+      <div class="chat-panel"><app-order-chat [orderId]="appointment()!.id" /></div>
     }
   </section>
 </main>

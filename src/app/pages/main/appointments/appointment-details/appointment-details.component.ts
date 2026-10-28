@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -17,10 +17,12 @@ import { TuiInputChip, TuiMultiSelect } from '@taiga-ui/kit';
 
 import { OrderChatComponent } from 'app/shared/components/order-chat/order-chat.component';
 import { Appointment } from 'app/shared/models/appointment.model';
+import { Car } from 'app/shared/models/car.model';
 import { Mechanic } from 'app/shared/models/user.model';
 import { AppointmentService } from 'app/shared/services/appointment.service';
-import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
+import { CarService } from 'app/shared/services/car.service';
 import { UserService } from 'app/shared/services/user.service';
+import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 
 @Component({
   selector: 'app-appointment-details',
@@ -36,6 +38,7 @@ import { UserService } from 'app/shared/services/user.service';
     TuiMultiSelect,
     TuiOption,
     DatePipe,
+    DecimalPipe,
     ReactiveFormsModule,
     TuiTextfield,
   ],
@@ -49,10 +52,12 @@ export class AppointmentDetailsComponent {
   private readonly mechanicSearch$ = new Subject<{ search: string; selectedIds: string[] }>();
   private mechanicSearchText = '';
   private readonly appointmentService = inject(AppointmentService);
+  private readonly carService = inject(CarService);
   private readonly userService = inject(UserService);
   private readonly currentRole = inject(CurrentRoleStore);
 
   protected readonly appointment = signal<Appointment | null>(null);
+  protected readonly car = signal<Car | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
   protected readonly mechanics = signal<Mechanic[]>([]);
@@ -61,6 +66,9 @@ export class AppointmentDetailsComponent {
   protected readonly isSubmittingRefusal = signal(false);
   protected readonly refusalError = signal('');
   protected readonly isMechanicRole = this.currentRole.role() === 'mechanic';
+  protected readonly isUserRole = this.currentRole.role() === 'user';
+  protected readonly isAdminRole = this.currentRole.role() === 'admin';
+  protected readonly mechanicsDropdownOpen = signal(false);
   protected readonly mechanicsControl = new FormControl<Mechanic[]>([], { nonNullable: true });
   protected readonly stringifyMechanic = (item: unknown): string => {
     if (!this.isMechanic(item)) {
@@ -82,7 +90,7 @@ export class AppointmentDetailsComponent {
             previous.selectedIds.every((id, index) => id === current.selectedIds[index])
         ),
         switchMap(({ search, selectedIds }) =>
-          this.userService.getMechanics(search.trim().length < 2 ? '' : search.trim(), selectedIds)
+          this.userService.getMechanics(search.trim() || '*', selectedIds)
         ),
         tap((mechanics) => this.mechanics.set(mechanics)),
         takeUntilDestroyed(this.destroyRef)
@@ -93,9 +101,13 @@ export class AppointmentDetailsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.queueMechanicSearch());
 
-    this.route.paramMap.subscribe((params) => {
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const id = params.get('id');
       this.appointment.set(null);
+      this.car.set(null);
+      this.mechanics.set([]);
+      this.mechanicsDropdownOpen.set(false);
+      this.mechanicSearchText = '*';
       this.hasError.set(!id);
       this.isLoading.set(!!id);
 
@@ -105,21 +117,60 @@ export class AppointmentDetailsComponent {
 
       this.appointmentService
         .getById(id)
-        .pipe(finalize(() => this.isLoading.set(false)))
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.isLoading.set(false))
+        )
         .subscribe({
           next: (appointment) => {
             this.appointment.set(appointment);
-            if (appointment.permissions.canAssignMechanics) {
-              this.userService.getMechanics('', appointment.mechanics).subscribe({
-                next: (mechanics) => {
-                  this.mechanics.set(mechanics);
-                  this.mechanicsControl.setValue(
-                    mechanics.filter(({ id }) => appointment.mechanics.includes(id)),
-                    { emitEvent: false }
-                  );
-                  this.mechanicsControl.markAsPristine();
+            this.carService
+              .getById(appointment.car)
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: (car) => {
+                  if (this.appointment()?.id === appointment.id) this.car.set(car);
+                },
+                error: () => {
+                  if (this.appointment()?.id === appointment.id) this.car.set(null);
                 },
               });
+            if (appointment.permissions.canAssignMechanics) {
+              this.userService
+                .getMechanics('', appointment.mechanics)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
+                  next: (mechanics) => {
+                    if (this.appointment()?.id !== appointment.id) return;
+                    // Merge selected profiles into the preloaded roster: the
+                    // two requests can finish in either order.
+                    this.mechanics.update((previous) => {
+                      const byId = new Map(previous.map((mechanic) => [mechanic.id, mechanic]));
+                      mechanics.forEach((mechanic) => byId.set(mechanic.id, mechanic));
+                      return [...byId.values()];
+                    });
+                    this.mechanicsControl.setValue(
+                      mechanics.filter(({ id }) => appointment.mechanics.includes(id)),
+                      { emitEvent: false }
+                    );
+                    this.mechanicsControl.markAsPristine();
+                  },
+                });
+              // Preload unselected options so focus/click opens an already
+              // populated dropdown instead of waiting for the first keystroke.
+              this.userService
+                .getMechanics('*', appointment.mechanics)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
+                  next: (roster) => {
+                    if (this.appointment()?.id !== appointment.id) return;
+                    this.mechanics.update((previous) => {
+                      const byId = new Map(previous.map((mechanic) => [mechanic.id, mechanic]));
+                      roster.forEach((mechanic) => byId.set(mechanic.id, mechanic));
+                      return [...byId.values()];
+                    });
+                  },
+                });
             } else {
               this.mechanicsControl.setValue([], { emitEvent: false });
               this.mechanicsControl.markAsPristine();
@@ -132,14 +183,13 @@ export class AppointmentDetailsComponent {
 
   protected canRefuse(): boolean {
     const order = this.appointment();
-    return this.currentRole.role() === 'admin' && !!order && order.permissions.canTransitionStatus && (
-      (order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
-      (order.status.code === 'in_progress' && [
-        'waiting_arrival',
-        'intake',
-        'owner_approval',
-        'execution',
-      ].includes(order.workStatus?.code ?? ''))
+    return (
+      this.currentRole.role() === 'admin' &&
+      !!order &&
+      order.permissions.canTransitionStatus &&
+      ((order.status.code === 'under_review' && order.workStatus?.code === 'manager_review') ||
+        (order.status.code === 'in_progress' &&
+          ['waiting_arrival', 'intake', 'owner_approval', 'execution'].includes(order.workStatus?.code ?? '')))
     );
   }
 
@@ -155,14 +205,14 @@ export class AppointmentDetailsComponent {
     this.refusalError.set('');
     this.appointmentService.getStatuses().subscribe({
       next: (statuses) => {
-        const completedStatus = statuses.find(({ code }) => code === 'completed');
-        if (!completedStatus) {
-          this.refusalError.set('Не удалось найти статус завершения заказа.');
+        const cancelledStatus = statuses.find(({ code }) => code === 'cancelled');
+        if (!cancelledStatus) {
+          this.refusalError.set('Не удалось найти статус отмены заказа.');
           this.isSubmittingRefusal.set(false);
           return;
         }
 
-        this.appointmentService.transitionStatus(order.id, completedStatus.id, reason).subscribe({
+        this.appointmentService.transitionStatus(order.id, cancelledStatus.id, reason).subscribe({
           next: (updated) => {
             this.appointment.set(updated);
             this.refusalReason.set('');
@@ -192,8 +242,13 @@ export class AppointmentDetailsComponent {
     return this.mechanics().filter(({ id }) => !selectedIds.has(id));
   }
 
+  protected onMechanicsFocus(): void {
+    this.mechanicsDropdownOpen.set(true);
+  }
+
   protected searchMechanics(event: Event): void {
-    this.queueMechanicSearch((event.target as HTMLInputElement).value);
+    this.mechanicsDropdownOpen.set(true);
+    this.queueMechanicSearch((event.target as HTMLInputElement).value.trim() || '*');
   }
 
   private queueMechanicSearch(search = this.mechanicSearchText): void {
