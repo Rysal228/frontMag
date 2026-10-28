@@ -44,7 +44,7 @@
           </div>
           @if (appointment()!.closedAt) {
             <div class="meta-pair">
-              <tui-icon icon="@tui.check-circle-2" />
+              <tui-icon icon="@tui.clock" />
               <div>
                 <span class="meta-label">Заказ закрыт</span>
                 <strong>{{ appointment()!.closedAt | date: 'dd.MM.yyyy, HH:mm' }}</strong>
