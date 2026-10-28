@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { TuiLegendItem, TuiRingChart } from '@taiga-ui/addon-charts';
 import { TuiDay, TuiHovered } from '@taiga-ui/cdk';
@@ -9,8 +10,8 @@ import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { TextFieldComponent } from 'app/shared/components/text-field/text-field.component';
-import { OrderStatus } from 'app/shared/models/order-status.model';
-import { OrderStatusService } from 'app/shared/services/order-status.service';
+import { MechanicStatistics } from 'app/shared/models/statistics.model';
+import { StatisticsApiService } from 'app/shared/api/statistics-api.service';
 import { CurrentRoleStore } from 'app/shared/storage/current-role-store';
 import { CurrentUserStore } from 'app/shared/storage/current-user-store';
 import { UserRole } from 'app/shared/types/roles.types';
@@ -39,7 +40,8 @@ import { SettingsComponent } from './settings/settings.component';
 export class ProfilePageComponent {
   private readonly currentUser = inject(CurrentUserStore);
   private readonly currentRole = inject(CurrentRoleStore);
-  private readonly orderStatusService = inject(OrderStatusService);
+  private readonly statisticsApi = inject(StatisticsApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly user = this.currentUser.user;
   protected readonly displayName = computed(() => {
@@ -63,15 +65,14 @@ export class ProfilePageComponent {
     }
   });
   protected activeItemIndex = NaN;
-  // тестовые данные под замену в будущем
-  private readonly testValues = [35, 40, 10, 15, 12, 18];
-
-  protected readonly value = computed(() => this.orderStatuses().map((_, index) => this.testValues[index] ?? 0));
-  //
-  protected readonly orderStatuses = signal<OrderStatus[]>([]);
-
-  protected readonly labels = computed(() => this.orderStatuses().map(({ name }) => name));
-
+  protected readonly mechanicStats = signal<MechanicStatistics | null>(null);
+  protected readonly mechanicStatsLoading = signal(true);
+  protected readonly mechanicStatsError = signal(false);
+  protected readonly value = computed(() => {
+    const stats = this.mechanicStats();
+    return stats ? [stats.inProgress, stats.completed] : [0, 0];
+  });
+  protected readonly labels = ['В работе', 'Завершено'] as const;
   protected readonly sum = (total: number, value: number): number => total + value;
 
   protected readonly isMechanic = computed(() => this.currentRole.role() === UserRole.Mechanic);
@@ -95,7 +96,7 @@ export class ProfilePageComponent {
 
   protected readonly isSaving = signal(false);
   protected readonly today = TuiDay.currentLocal();
-  private statusesRequested = false;
+  private statsRequested = false;
 
   constructor() {
     this.form.controls.phone.disable();
@@ -120,17 +121,25 @@ export class ProfilePageComponent {
     });
 
     effect(() => {
-      if (this.isMechanic() && !this.statusesRequested) {
-        this.statusesRequested = true;
-        this.loadOrderStatuses();
+      if (this.isMechanic() && !this.statsRequested) {
+        this.statsRequested = true;
+        this.loadMechanicStats();
       }
     });
   }
 
-  private loadOrderStatuses(): void {
-    this.orderStatusService.getAll().subscribe((statuses) => {
-      this.orderStatuses.set(statuses);
-    });
+  protected loadMechanicStats(): void {
+    this.mechanicStatsLoading.set(true);
+    this.mechanicStatsError.set(false);
+    this.statisticsApi.getMechanicStatistics()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.mechanicStatsLoading.set(false))
+      )
+      .subscribe({
+        next: (stats) => this.mechanicStats.set(stats),
+        error: () => this.mechanicStatsError.set(true),
+      });
   }
 
   protected isItemActive(index: number): boolean {

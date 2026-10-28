@@ -73,27 +73,47 @@
             </div>
           </header>
 
-          <div class="statistics-content">
-            <tui-ring-chart [value]="value()" [(activeItemIndex)]="activeItemIndex">
-              <span>{{ value().reduce(sum, 0) }}</span>
-              <div>Всего</div>
-            </tui-ring-chart>
-
-            <div class="legend">
-              @for (label of labels(); track label; let index = $index) {
-                <tui-legend-item
-                  size="s"
-                  class="item"
-                  [active]="isItemActive(index)"
-                  [color]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
-                  [text]="label"
-                  (tuiHoveredChange)="onHover(index, $event)"
-                >
-                  <span>{{ value()[index] || 0 }}</span>
-                </tui-legend-item>
-              }
+          @if (mechanicStatsLoading()) {
+            <p class="statistics-state">Загрузка статистики...</p>
+          } @else if (mechanicStatsError()) {
+            <div class="statistics-state">
+              <p>Не удалось получить статистику специалиста.</p>
+              <button tuiButton size="s" appearance="outline" type="button" (click)="loadMechanicStats()">Повторить</button>
             </div>
-          </div>
+          } @else if (mechanicStats(); as stats) {
+            <div class="statistics-metrics">
+              <div><span>Всего когда-либо назначенных</span><strong>{{ stats.total }}</strong></div>
+              <div><span>В работе</span><strong>{{ stats.inProgress }}</strong></div>
+              <div><span>Завершено</span><strong>{{ stats.completed }}</strong></div>
+            </div>
+
+            @if (stats.inProgress + stats.completed > 0) {
+              <div class="statistics-content">
+                <tui-ring-chart [value]="value()" [(activeItemIndex)]="activeItemIndex">
+                  <span>{{ stats.inProgress + stats.completed }}</span>
+                  <div>Активные и завершённые</div>
+                </tui-ring-chart>
+
+                <div class="legend">
+                  @for (label of labels; track label; let index = $index) {
+                    <tui-legend-item
+                      size="s"
+                      class="item"
+                      [active]="isItemActive(index)"
+                      [color]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
+                      [text]="label"
+                      (tuiHoveredChange)="onHover(index, $event)"
+                    >
+                      <span>{{ value()[index] || 0 }}</span>
+                    </tui-legend-item>
+                  }
+                </div>
+              </div>
+            } @else {
+              <p class="statistics-state">Пока нет заказов в работе или завершённых заказов.</p>
+            }
+            <p class="statistics-note">Всего учитывает все назначения, включая снятые. В работе — текущие назначения, завершено — участие на момент завершения заказа.</p>
+          }
         </section>
       }
     </div>

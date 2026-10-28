@@ -306,6 +306,10 @@
   object-fit: cover;
 }
 
+.news-card_no_image .news-body {
+  max-width: none;
+}
+
 .news-body {
   min-width: 0;
   max-width: 680px;
