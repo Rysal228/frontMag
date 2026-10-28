@@ -45,3 +45,9 @@ export type StatisticsDashboard = {
   topWorkTypes: WorkTypeStatisticsPoint[];
   weekdayOccupancy: WeekdayOccupancyPoint[];
 };
+
+export interface MechanicStatistics {
+  total: number;
+  inProgress: number;
+  completed: number;
+}
