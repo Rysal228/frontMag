@@ -52,6 +52,7 @@
 
 .back-link {
   display: flex;
+  width: max-content;
   margin-bottom: 16px;
   border: 1px solid var(--color-border-01);
   align-items: center;

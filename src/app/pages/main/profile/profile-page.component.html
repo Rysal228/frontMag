@@ -77,14 +77,22 @@
             <p class="statistics-state">Загрузка статистики...</p>
           } @else if (mechanicStatsError()) {
             <div class="statistics-state">
-              <p>Не удалось получить статистику специалиста.</p>
-              <button tuiButton size="s" appearance="outline" type="button" (click)="loadMechanicStats()">Повторить</button>
+              <p>Не удалось получить статистику.</p>
+              <button tuiButton size="s" appearance="outline" type="button" (click)="loadMechanicStats()">
+                Повторить
+              </button>
             </div>
           } @else if (mechanicStats(); as stats) {
             <div class="statistics-metrics">
-              <div><span>Всего когда-либо назначенных</span><strong>{{ stats.total }}</strong></div>
-              <div><span>В работе</span><strong>{{ stats.inProgress }}</strong></div>
-              <div><span>Завершено</span><strong>{{ stats.completed }}</strong></div>
+              <div>
+                <span>Всего когда-либо назначенных</span><strong>{{ stats.total }}</strong>
+              </div>
+              <div>
+                <span>В работе</span><strong>{{ stats.inProgress }}</strong>
+              </div>
+              <div>
+                <span>Завершено</span><strong>{{ stats.completed }}</strong>
+              </div>
             </div>
 
             @if (stats.inProgress + stats.completed > 0) {
@@ -112,7 +120,6 @@
             } @else {
               <p class="statistics-state">Пока нет заказов в работе или завершённых заказов.</p>
             }
-            <p class="statistics-note">Всего учитывает все назначения, включая снятые. В работе — текущие назначения, завершено — участие на момент завершения заказа.</p>
           }
         </section>
       }
