@@ -33,7 +33,7 @@
 .panel-heading > tui-icon { flex: none; font-size: 21px; color: var(--tui-text-action); }
 .panel h2 { font-size: 17px; line-height: 1.3; margin: 0; }
 .panel-link { display: inline-flex; align-items: center; gap: 4px; color: var(--tui-text-action); font-size: 12px; text-decoration: none; }
-.vehicle-summary { display: grid; grid-template-columns: minmax(160px, 35%) minmax(0, 1fr); gap: 20px; align-items: center; }
+.vehicle-summary { display: grid; gap: 16px; align-items: center; }
 .vehicle-photo { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; overflow: hidden; aspect-ratio: 16 / 10; min-height: 148px; border-radius: 12px; background: var(--app-surface-subtle); color: var(--tui-text-secondary); font-size: 12px; }
 .vehicle-photo > tui-icon { font-size: 30px; }
 .vehicle-photo img { width: 100%; height: 100%; object-fit: cover; }
@@ -89,8 +89,6 @@
   .panel { padding: 17px; border-radius: 15px; }
   .order-hero { padding: 19px; }
   .order-hero__meta { margin-left: 0; gap: 16px; }
-  .vehicle-summary { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  .vehicle-photo { max-height: 240px; }
   .order-side { grid-template-columns: minmax(0, 1fr); }
   .vehicle-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
