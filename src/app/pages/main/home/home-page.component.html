@@ -169,7 +169,7 @@
               [class.news-card_highlighted]="item.id === highlightedNewsId">
               <div class="news-body">
                 <time class="news-date" [attr.datetime]="item.createdAt">
-                  {{ item.createdAt | date: 'dd MMMM yyyy' : '' : 'ru' }}
+                  {{ item.createdAt | date: 'd MMMM yyyy' : '' : 'ru' }}
                 </time>
                 <h3>{{ item.title }}</h3>
                 @if (item.content) {
