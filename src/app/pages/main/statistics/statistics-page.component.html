@@ -202,29 +202,22 @@
               <p>Сколько раз поставили каждую оценку</p>
             </div>
             @if (reviews.summary.ratings) {
-              <div class="rating-distribution">
+              <tui-axes
+                class="bar-axes feedback-rating-axes"
+                [axisYLabels]="ratingYLabels()"
+                [axisXLabels]="ratingLabels()"
+                [horizontalLines]="2"
+              >
+                <tui-bar-chart [value]="[ratingCounts()]" [max]="ratingMax()" [collapsed]="true" />
+              </tui-axes>
+              <ol class="work-legend feedback-rating-legend">
                 @for (item of reviews.distribution; track item.rating) {
-                  <div class="rating-row">
-                    <span class="rating-name">{{ item.rating }} ★</span>
-                    <div
-                      class="rating-track"
-                      role="meter"
-                      [attr.aria-label]="item.rating + ' звёзд'"
-                      [attr.aria-valuenow]="item.count"
-                      [attr.aria-valuemax]="reviews.summary.ratings"
-                      aria-valuemin="0"
-                    >
-                      <div
-                        class="rating-fill"
-                        [class.rating-fill_low]="item.rating <= reviews.thresholds.lowMax"
-                        [class.rating-fill_high]="item.rating >= reviews.thresholds.highMin"
-                        [style.width.%]="ratingShare(item.count, reviews.summary.ratings)"
-                      ></div>
-                    </div>
-                    <strong class="rating-count">{{ item.count }}</strong>
-                  </div>
+                  <li>
+                    <span>{{ item.rating }} ★</span>
+                    <strong>{{ item.count }}</strong>
+                  </li>
                 }
-              </div>
+              </ol>
             } @else {
               <p class="empty-state">За выбранный период оценок пока нет</p>
             }
@@ -235,15 +228,34 @@
               <h3>Оценки по исходам заказов</h3>
               <p>Отдельно по выданным автомобилям и отменам</p>
             </div>
-            <div class="outcome-grid">
-              @for (item of reviews.byOutcome; track item.code) {
-                <div class="outcome-card">
-                  <span>{{ item.label }}</span>
-                  <strong>{{ item.count ? item.averageRating + ' / 5' : '—' }}</strong>
-                  <small>{{ item.count }} оценок · {{ item.highPercent }}% высоких</small>
-                </div>
-              }
-            </div>
+            @if (reviews.summary.ratings) {
+              <div class="status-chart">
+                <tui-ring-chart size="l" [value]="outcomeCounts()">
+                  <span class="ring-total">{{ reviews.summary.ratings }}</span>
+                  <span>оценок</span>
+                </tui-ring-chart>
+                <ul class="legend feedback-outcome-legend">
+                  @for (item of reviews.byOutcome; track item.code; let index = $index) {
+                    <li>
+                      <span
+                        class="legend-dot"
+                        [style.background]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
+                      ></span>
+                      <div class="feedback-outcome-description">
+                        <span class="legend-name">{{ item.label }}</span>
+                        <small>
+                          {{ item.count ? item.averageRating + ' / 5' : '—' }} в среднем · {{ item.highPercent }}%
+                          высоких
+                        </small>
+                      </div>
+                      <strong>{{ item.count }}</strong>
+                    </li>
+                  }
+                </ul>
+              </div>
+            } @else {
+              <p class="empty-state">За выбранный период оценок по заказам нет</p>
+            }
           </article>
         </div>
 

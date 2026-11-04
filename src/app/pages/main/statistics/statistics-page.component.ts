@@ -68,6 +68,18 @@ export class StatisticsPageComponent {
     (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.weekdayName)
   );
 
+  protected readonly ratingCounts = computed(() => (this.feedback()?.distribution ?? []).map((item) => item.count));
+  protected readonly ratingLabels = computed(() =>
+    (this.feedback()?.distribution ?? []).map((item) => `${item.rating} ★`)
+  );
+  protected readonly ratingMax = computed(() => Math.max(1, ...this.ratingCounts()));
+  protected readonly ratingYLabels = computed(() => [
+    '0',
+    String(Math.round(this.ratingMax() / 2)),
+    String(this.ratingMax()),
+  ]);
+  protected readonly outcomeCounts = computed(() => (this.feedback()?.byOutcome ?? []).map((item) => item.count));
+
   protected readonly formatRubles = (value: number): string =>
     new Intl.NumberFormat('ru-RU', {
       style: 'currency',
@@ -77,9 +89,6 @@ export class StatisticsPageComponent {
 
   protected readonly ratingStars = (rating: number): string =>
     '★'.repeat(Math.max(0, Math.min(5, rating))) + '☆'.repeat(Math.max(0, 5 - rating));
-
-  protected readonly ratingShare = (count: number, total: number): number =>
-    total ? Math.round((count / total) * 100) : 0;
 
   protected readonly formatReviewDate = (value: string): string =>
     new Intl.DateTimeFormat('ru-RU', {
