@@ -2,7 +2,7 @@
   <header class="page-heading">
     <div>
       <h1>Статистика</h1>
-      <p>Показатели автосервиса на основе заказов и расписания</p>
+      <p>Заказы, загрузка автосервиса и отзывы клиентов</p>
     </div>
 
     <div class="period-selector" role="group" aria-label="Период статистики">
@@ -151,6 +151,157 @@
         </div>
       </article>
     </div>
+
+    <section class="feedback-section" aria-labelledby="feedback-heading">
+      <div class="feedback-section-heading">
+        <div>
+          <h2 id="feedback-heading">Оценки и отзывы</h2>
+          <p>Оценки клиентов после выдачи автомобиля или отмены заказа за выбранный период</p>
+        </div>
+      </div>
+
+      @if (feedbackError()) {
+        <div class="feedback-alert" role="alert">
+          <p>Не удалось загрузить отзывы. Статистика заказов при этом доступна.</p>
+          <button tuiButton type="button" size="s" appearance="outline" (click)="retryFeedback()">Повторить</button>
+        </div>
+      } @else if (feedback(); as reviews) {
+        <div class="metrics feedback-metrics">
+          <article class="metric-card">
+            <span class="metric-label">Получено оценок</span>
+            <strong>{{ reviews.summary.ratings }}</strong>
+            <small>За {{ periodLabel(reviews.period.days) }}</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Средняя оценка</span>
+            <strong>{{ reviews.summary.ratings ? reviews.summary.averageRating + ' / 5' : '—' }}</strong>
+            <small>По всем оценённым заказам</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Высоких оценок</span>
+            <strong>{{ reviews.summary.highPercent }}%</strong>
+            <small
+              >{{ reviews.thresholds.highMin }}–5 звёзд; низких (1–{{ reviews.thresholds.lowMax }}):
+              {{ reviews.summary.lowCount }}</small
+            >
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Доля ответов</span>
+            <strong>{{ reviews.summary.responseRate }}%</strong>
+            <small
+              >{{ reviews.summary.responsesToRequests }} из {{ reviews.summary.requestsSent }} запросов оценки,
+              отправленных за период</small
+            >
+          </article>
+        </div>
+
+        <div class="feedback-charts">
+          <article class="chart-card">
+            <div class="chart-heading">
+              <h3>Распределение оценок</h3>
+              <p>Сколько раз поставили каждую оценку</p>
+            </div>
+            @if (reviews.summary.ratings) {
+              <tui-axes
+                class="bar-axes feedback-rating-axes"
+                [axisYLabels]="ratingYLabels()"
+                [axisXLabels]="ratingLabels()"
+                [horizontalLines]="2"
+              >
+                <tui-bar-chart [value]="[ratingCounts()]" [max]="ratingMax()" [collapsed]="true" />
+              </tui-axes>
+              <ol class="work-legend feedback-rating-legend">
+                @for (item of reviews.distribution; track item.rating) {
+                  <li>
+                    <span>{{ item.rating }} ★</span>
+                    <strong>{{ item.count }}</strong>
+                  </li>
+                }
+              </ol>
+            } @else {
+              <p class="empty-state">За выбранный период оценок пока нет</p>
+            }
+          </article>
+
+          <article class="chart-card">
+            <div class="chart-heading">
+              <h3>Оценки по исходам заказов</h3>
+              <p>Отдельно по выданным автомобилям и отменам</p>
+            </div>
+            @if (reviews.summary.ratings) {
+              <div class="status-chart">
+                <tui-ring-chart size="l" [value]="outcomeCounts()">
+                  <span class="ring-total">{{ reviews.summary.ratings }}</span>
+                  <span>оценок</span>
+                </tui-ring-chart>
+                <ul class="legend feedback-outcome-legend">
+                  @for (item of reviews.byOutcome; track item.code; let index = $index) {
+                    <li>
+                      <span
+                        class="legend-dot"
+                        [style.background]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
+                      ></span>
+                      <div class="feedback-outcome-description">
+                        <span class="legend-name">{{ item.label }}</span>
+                        <small>
+                          {{ item.count ? item.averageRating + ' / 5' : '—' }} в среднем · {{ item.highPercent }}%
+                          высоких
+                        </small>
+                      </div>
+                      <strong>{{ item.count }}</strong>
+                    </li>
+                  }
+                </ul>
+              </div>
+            } @else {
+              <p class="empty-state">За выбранный период оценок по заказам нет</p>
+            }
+          </article>
+        </div>
+
+        <article class="chart-card feedback-reviews">
+          <div class="chart-heading">
+            <h3>Последние отзывы</h3>
+            <p>До 10 последних оценок за выбранный период</p>
+          </div>
+          @if (reviews.recentReviews.length) {
+            <div class="feedback-review-list">
+              @for (item of reviews.recentReviews; track item.orderId) {
+                <div class="feedback-review" [class.feedback-review_low]="item.band === 'low'">
+                  <div class="feedback-review-head">
+                    <div class="feedback-review-title">
+                      <a [routerLink]="['/appointments', item.orderId]">Заказ №{{ item.orderNumber }}</a>
+                      <span>{{ item.carName }}</span>
+                    </div>
+                    <div
+                      class="feedback-review-score"
+                      [class.feedback-review-score_low]="item.band === 'low'"
+                      [attr.aria-label]="'Оценка ' + item.rating + ' из 5'"
+                    >
+                      {{ ratingStars(item.rating) }}
+                    </div>
+                  </div>
+                  <div class="feedback-review-meta">
+                    <span>{{ item.outcome === 'closed' ? 'Автомобиль выдан' : 'Заказ отменён' }}</span>
+                    <span>{{ formatReviewDate(item.respondedAt) }}</span>
+                  </div>
+                  @if (item.reason) {
+                    <p class="feedback-reason">Причина: {{ item.reason }}</p>
+                  }
+                  @if (item.comment) {
+                    <p class="feedback-comment">{{ item.comment }}</p>
+                  } @else if (!item.reason) {
+                    <p class="feedback-no-comment">Без текстового отзыва</p>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty-state">Пока никто не оставил отзыв за выбранный период</p>
+          }
+        </article>
+      }
+    </section>
   } @else {
     <div class="status-message">Нет данных для отображения.</div>
   }

@@ -3,7 +3,13 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { StatisticsDashboard, StatisticsPeriod, StatisticsPeriodsResponse, MechanicStatistics } from 'app/shared/models/statistics.model';
+import {
+  FeedbackStatisticsDashboard,
+  StatisticsDashboard,
+  StatisticsPeriod,
+  StatisticsPeriodsResponse,
+  MechanicStatistics,
+} from 'app/shared/models/statistics.model';
 
 @Injectable({ providedIn: 'root' })
 export class StatisticsApiService {
@@ -19,6 +25,12 @@ export class StatisticsApiService {
 
   public getDashboard(days: StatisticsPeriod): Observable<StatisticsDashboard> {
     return this.http.get<StatisticsDashboard>(API_ENDPOINTS.orders.statistics, {
+      params: new HttpParams().set('days', days),
+    });
+  }
+
+  public getFeedbackDashboard(days: StatisticsPeriod): Observable<FeedbackStatisticsDashboard> {
+    return this.http.get<FeedbackStatisticsDashboard>(API_ENDPOINTS.feedback.statistics, {
       params: new HttpParams().set('days', days),
     });
   }

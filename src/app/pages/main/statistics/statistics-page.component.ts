@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of, Subject, switchMap, tap } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { catchError, forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
 import { TuiAxes, TuiBarChart, TuiLineChart, TuiRingChart } from '@taiga-ui/addon-charts';
 import { TuiButton } from '@taiga-ui/core';
 
 import { StatisticsApiService } from 'app/shared/api/statistics-api.service';
-import { StatisticsDashboard, StatisticsPeriod } from 'app/shared/models/statistics.model';
+import { FeedbackStatisticsDashboard, StatisticsDashboard, StatisticsPeriod } from 'app/shared/models/statistics.model';
 
 @Component({
   selector: 'app-statistics-page',
   standalone: true,
-  imports: [TuiAxes, TuiBarChart, TuiButton, TuiLineChart, TuiRingChart],
+  imports: [RouterLink, TuiAxes, TuiBarChart, TuiButton, TuiLineChart, TuiRingChart],
   templateUrl: './statistics-page.component.html',
   styleUrl: './statistics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +25,8 @@ export class StatisticsPageComponent {
   protected readonly periods = signal<readonly StatisticsPeriod[]>([]);
   protected readonly period = signal<StatisticsPeriod | null>(null);
   protected readonly dashboard = signal<StatisticsDashboard | null>(null);
+  protected readonly feedback = signal<FeedbackStatisticsDashboard | null>(null);
+  protected readonly feedbackError = signal(false);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
 
@@ -65,12 +68,36 @@ export class StatisticsPageComponent {
     (this.dashboard()?.weekdayOccupancy ?? []).map((item) => item.weekdayName)
   );
 
+  protected readonly ratingCounts = computed(() => (this.feedback()?.distribution ?? []).map((item) => item.count));
+  protected readonly ratingLabels = computed(() =>
+    (this.feedback()?.distribution ?? []).map((item) => `${item.rating} ★`)
+  );
+  protected readonly ratingMax = computed(() => Math.max(1, ...this.ratingCounts()));
+  protected readonly ratingYLabels = computed(() => [
+    '0',
+    String(Math.round(this.ratingMax() / 2)),
+    String(this.ratingMax()),
+  ]);
+  protected readonly outcomeCounts = computed(() => (this.feedback()?.byOutcome ?? []).map((item) => item.count));
+
   protected readonly formatRubles = (value: number): string =>
     new Intl.NumberFormat('ru-RU', {
       style: 'currency',
       currency: 'RUB',
       maximumFractionDigits: 0,
     }).format(value);
+
+  protected readonly ratingStars = (rating: number): string =>
+    '★'.repeat(Math.max(0, Math.min(5, rating))) + '☆'.repeat(Math.max(0, 5 - rating));
+
+  protected readonly formatReviewDate = (value: string): string =>
+    new Intl.DateTimeFormat('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
 
   protected readonly periodLabel = (days: number): string => {
     const category = new Intl.PluralRules('ru-RU').select(days);
@@ -89,9 +116,18 @@ export class StatisticsPageComponent {
         tap(() => {
           this.isLoading.set(true);
           this.hasError.set(false);
+          this.feedbackError.set(false);
         }),
         switchMap((days) =>
-          this.api.getDashboard(days).pipe(
+          forkJoin({
+            orders: this.api.getDashboard(days),
+            feedback: this.api.getFeedbackDashboard(days).pipe(
+              catchError(() => {
+                this.feedbackError.set(true);
+                return of(null);
+              })
+            ),
+          }).pipe(
             catchError(() => {
               this.hasError.set(true);
               return of(null);
@@ -101,7 +137,8 @@ export class StatisticsPageComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((response) => {
-        this.dashboard.set(response);
+        this.dashboard.set(response?.orders ?? null);
+        this.feedback.set(response?.feedback ?? null);
         this.isLoading.set(false);
       });
 
@@ -123,6 +160,7 @@ export class StatisticsPageComponent {
           this.period.set(chosen);
           if (chosen === null) {
             this.dashboard.set(null);
+            this.feedback.set(null);
             this.isLoading.set(false);
             return;
           }
@@ -132,6 +170,7 @@ export class StatisticsPageComponent {
           this.periods.set([]);
           this.period.set(null);
           this.dashboard.set(null);
+          this.feedback.set(null);
           this.hasError.set(true);
           this.isLoading.set(false);
         },
@@ -147,5 +186,12 @@ export class StatisticsPageComponent {
 
   protected retry(): void {
     this.loadPeriods();
+  }
+
+  protected retryFeedback(): void {
+    const days = this.period();
+    if (days !== null) {
+      this.selection$.next(days);
+    }
   }
 }
