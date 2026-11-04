@@ -48,6 +48,7 @@
 
       <app-form-field label="Тип работ (необязательно)">
         <tui-textfield
+          #workTypeField
           multi
           [stringify]="stringifyWorkType"
           [disabledItemHandler]="disabledWorkType"
@@ -58,6 +59,7 @@
             [formControl]="selectedWorksControl"
             placeholder="Введите или выберите тип работы"
             (focus)="onWorkTypeFocus()"
+            (click)="onWorkTypeClick()"
             (input)="onWorkTypeInput($event)"
             (keydown.enter)="onWorkTypeEnter($event)"
           />
