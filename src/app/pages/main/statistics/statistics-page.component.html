@@ -206,18 +206,28 @@
                 class="bar-axes feedback-rating-axes"
                 [axisYLabels]="ratingYLabels()"
                 [axisXLabels]="ratingLabels()"
-                [horizontalLines]="2"
+                axisY="none"
+                [horizontalLines]="ratingMax() === 1 ? 1 : 2"
+                [verticalLines]="4"
               >
-                <tui-bar-chart [value]="[ratingCounts()]" [max]="ratingMax()" [collapsed]="true" />
+                <div class="feedback-rating-columns">
+                  @for (item of reviews.distribution; track item.rating; let index = $index) {
+                    <div
+                      class="feedback-rating-column"
+                      role="img"
+                      tabindex="0"
+                      [tuiHint]="ratingHint(item.rating, item.count)"
+                      tuiHintDirection="top"
+                      [attr.aria-label]="ratingHint(item.rating, item.count)"
+                    >
+                      <tui-bar
+                        [style.background]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
+                        [style.height.%]="ratingHeight(item.count)"
+                      />
+                    </div>
+                  }
+                </div>
               </tui-axes>
-              <ol class="work-legend feedback-rating-legend">
-                @for (item of reviews.distribution; track item.rating) {
-                  <li>
-                    <span>{{ item.rating }} ★</span>
-                    <strong>{{ item.count }}</strong>
-                  </li>
-                }
-              </ol>
             } @else {
               <p class="empty-state">За выбранный период оценок пока нет</p>
             }
@@ -226,7 +236,7 @@
           <article class="chart-card">
             <div class="chart-heading">
               <h3>Оценки по исходам заказов</h3>
-              <p>Отдельно по выданным автомобилям и отменам</p>
+              <p>Сравнение успешно завершённых и отменённых заказов</p>
             </div>
             @if (reviews.summary.ratings) {
               <div class="status-chart">
@@ -242,7 +252,7 @@
                         [style.background]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
                       ></span>
                       <div class="feedback-outcome-description">
-                        <span class="legend-name">{{ item.label }}</span>
+                        <span class="legend-name">{{ outcomeLabel(item.code) }}</span>
                         <small>
                           {{ item.count ? item.averageRating + ' / 5' : '—' }} в среднем · {{ item.highPercent }}%
                           высоких
@@ -282,7 +292,7 @@
                     </div>
                   </div>
                   <div class="feedback-review-meta">
-                    <span>{{ item.outcome === 'closed' ? 'Автомобиль выдан' : 'Заказ отменён' }}</span>
+                    <span>{{ outcomeLabel(item.outcome) }}</span>
                     <span>{{ formatReviewDate(item.respondedAt) }}</span>
                   </div>
                   @if (item.reason) {

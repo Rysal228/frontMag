@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
-import { TuiAxes, TuiBarChart, TuiLineChart, TuiRingChart } from '@taiga-ui/addon-charts';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiAxes, TuiBar, TuiBarChart, TuiLineChart, TuiRingChart } from '@taiga-ui/addon-charts';
+import { TuiButton, TuiHint } from '@taiga-ui/core';
 
 import { StatisticsApiService } from 'app/shared/api/statistics-api.service';
 import { FeedbackStatisticsDashboard, StatisticsDashboard, StatisticsPeriod } from 'app/shared/models/statistics.model';
@@ -12,7 +12,7 @@ import { FeedbackStatisticsDashboard, StatisticsDashboard, StatisticsPeriod } fr
 @Component({
   selector: 'app-statistics-page',
   standalone: true,
-  imports: [RouterLink, TuiAxes, TuiBarChart, TuiButton, TuiLineChart, TuiRingChart],
+  imports: [RouterLink, TuiAxes, TuiBar, TuiBarChart, TuiButton, TuiHint, TuiLineChart, TuiRingChart],
   templateUrl: './statistics-page.component.html',
   styleUrl: './statistics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,11 +73,10 @@ export class StatisticsPageComponent {
     (this.feedback()?.distribution ?? []).map((item) => `${item.rating} ★`)
   );
   protected readonly ratingMax = computed(() => Math.max(1, ...this.ratingCounts()));
-  protected readonly ratingYLabels = computed(() => [
-    '0',
-    String(Math.round(this.ratingMax() / 2)),
-    String(this.ratingMax()),
-  ]);
+  protected readonly ratingYLabels = computed(() => {
+    const max = this.ratingMax();
+    return max === 1 ? ['0', '1'] : ['0', String(Math.ceil(max / 2)), String(max)];
+  });
   protected readonly outcomeCounts = computed(() => (this.feedback()?.byOutcome ?? []).map((item) => item.count));
 
   protected readonly formatRubles = (value: number): string =>
@@ -89,6 +88,17 @@ export class StatisticsPageComponent {
 
   protected readonly ratingStars = (rating: number): string =>
     '★'.repeat(Math.max(0, Math.min(5, rating))) + '☆'.repeat(Math.max(0, 5 - rating));
+
+  protected readonly ratingHeight = (count: number): number => (count / this.ratingMax()) * 100;
+
+  protected readonly ratingHint = (rating: number, count: number): string => {
+    const category = new Intl.PluralRules('ru-RU').select(count);
+    const noun = category === 'one' ? 'оценка' : category === 'few' ? 'оценки' : 'оценок';
+    return `${rating} ★ — ${count} ${noun}`;
+  };
+
+  protected readonly outcomeLabel = (outcome: 'closed' | 'cancelled'): string =>
+    outcome === 'closed' ? 'Заказ завершился успешно' : 'Заказ был отменён';
 
   protected readonly formatReviewDate = (value: string): string =>
     new Intl.DateTimeFormat('ru-RU', {
