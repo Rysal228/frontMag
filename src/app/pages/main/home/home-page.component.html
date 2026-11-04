@@ -164,7 +164,9 @@
       } @else {
         <div class="news-list">
           @for (item of news(); track item.id) {
-            <article class="news-card" [class.news-card_no_image]="!item.image">
+            <article class="news-card" [attr.id]="'news-' + item.id"
+              [class.news-card_no_image]="!item.image"
+              [class.news-card_highlighted]="item.id === highlightedNewsId">
               <div class="news-body">
                 <time class="news-date" [attr.datetime]="item.createdAt">
                   {{ item.createdAt | date: 'dd MMMM yyyy' : '' : 'ru' }}

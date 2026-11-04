@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_ENDPOINTS } from 'app/shared/consts/urls.const';
-import { NewsPage } from 'app/shared/models/news.model';
+import { News, NewsPage } from 'app/shared/models/news.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,5 +17,9 @@ export class NewsApiService {
       .set('limit', limit);
 
     return this.http.get<NewsPage>(API_ENDPOINTS.news.list, {params});
+  }
+
+  public getById(id: number): Observable<News> {
+    return this.http.get<News>(API_ENDPOINTS.news.details(id));
   }
 }
