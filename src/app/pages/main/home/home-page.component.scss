@@ -294,6 +294,12 @@
   background: var(--app-surface-subtle);
 }
 
+.news-card_highlighted {
+  border-color: var(--tui-text-action);
+  box-shadow: 0 0 0 2px var(--app-accent-soft);
+  scroll-margin: 24px;
+}
+
 .news-image {
   display: block;
   width: clamp(220px, 35%, 420px);

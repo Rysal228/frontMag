@@ -13,7 +13,7 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EMPTY, Subscription, catchError, expand, finalize, of, reduce, switchMap } from 'rxjs';
 
 import { TuiButton } from '@taiga-ui/core';
@@ -41,6 +41,8 @@ export class HomePageComponent implements OnDestroy {
   private readonly appointmentService = inject(AppointmentService);
   private readonly currentRole = inject(CurrentRoleStore);
   private readonly currentUser = inject(CurrentUserStore);
+  private readonly route = inject(ActivatedRoute);
+  private readonly targetNewsId = this.readTargetNewsId();
 
   private observer?: IntersectionObserver;
 
@@ -58,6 +60,7 @@ export class HomePageComponent implements OnDestroy {
   protected readonly isLoadingMore = signal(false);
   protected readonly hasError = signal(false);
   protected readonly hasMore = signal(true);
+  protected readonly highlightedNewsId = this.targetNewsId;
   protected readonly role = this.currentRole.role;
   protected readonly userRole = UserRole;
   protected readonly isAppointmentsLoading = signal(true);
@@ -199,6 +202,7 @@ export class HomePageComponent implements OnDestroy {
           this.news.set(page.results);
           this.offset = page.results.length;
           this.hasMore.set(page.next !== null);
+          this.revealLinkedNews();
         },
         error: () => this.hasError.set(true),
       });
@@ -219,11 +223,49 @@ export class HomePageComponent implements OnDestroy {
       )
       .subscribe({
         next: (page) => {
-          this.news.update((items) => [...items, ...page.results]);
+          this.news.update((items) => [
+            ...items,
+            ...page.results.filter((item) => !items.some((existing) => existing.id === item.id)),
+          ]);
           this.offset += page.results.length;
           this.hasMore.set(page.next !== null);
         },
         error: () => this.hasError.set(true),
       });
+  }
+
+  private readTargetNewsId(): number | null {
+    const value = this.route.snapshot.queryParamMap.get('news');
+    if (!value || !/^[1-9]\d*$/.test(value)) {
+      return null;
+    }
+    const id = Number(value);
+    return Number.isSafeInteger(id) ? id : null;
+  }
+
+  private revealLinkedNews(): void {
+    const id = this.targetNewsId;
+    if (id === null) {
+      return;
+    }
+    if (this.news().some((item) => item.id === id)) {
+      this.scrollToLinkedNews(id);
+      return;
+    }
+    // Older news may not appear on the first page; the detail API still
+    // enforces server-side role visibility, so inaccessible news is not shown.
+    this.newsService.getById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (item) => {
+        this.news.update((items) => [item, ...items]);
+        this.scrollToLinkedNews(id);
+      },
+      error: () => {},
+    });
+  }
+
+  private scrollToLinkedNews(id: number): void {
+    setTimeout(() => document.getElementById(`news-${id}`)?.scrollIntoView({
+      behavior: 'smooth', block: 'center',
+    }), 0);
   }
 }
