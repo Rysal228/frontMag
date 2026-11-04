@@ -8,6 +8,7 @@ import {
   input,
   output,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,6 +16,7 @@ import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map,
 
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiOption, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
+import { TuiDropdownOpen } from '@taiga-ui/core/directives/dropdown';
 import { TuiInputChip, TuiMultiSelect, TuiTextarea } from '@taiga-ui/kit';
 
 import { DateFieldComponent } from 'app/shared/components/date-field/date-field.component';
@@ -47,6 +49,9 @@ import { createAppointmentPayload } from 'app/shared/utils/appointment-payload.u
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppointmentFormComponent {
+  @ViewChild('workTypeField', { read: TuiDropdownOpen })
+  private workTypeDropdown?: TuiDropdownOpen;
+
   private readonly appointmentService = inject(AppointmentService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly workTypeSearch$ = new Subject<string>();
@@ -169,6 +174,17 @@ export class AppointmentFormComponent {
   protected onWorkTypeFocus(): void {
     this.workTypeSuggestions.set([...this.workTypesById.values()]);
     this.workTypeSearch$.next('');
+    this.openWorkTypeDropdown();
+  }
+
+  protected onWorkTypeClick(): void {
+    this.openWorkTypeDropdown();
+  }
+
+  private openWorkTypeDropdown(): void {
+    if (this.availableWorkTypes().length) {
+      this.workTypeDropdown?.toggle(true);
+    }
   }
 
   protected onWorkTypeEnter(event: Event): void {
