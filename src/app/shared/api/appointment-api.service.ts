@@ -120,8 +120,11 @@ export class AppointmentApiService {
     return this.http.post<Appointment>(API_ENDPOINTS.orders.list, request);
   }
 
-  public getAvailability(date: string): Observable<AppointmentAvailability> {
-    const params = new HttpParams().set('date', date);
+  public getAvailability(date: string, workTypeIds: readonly string[] = []): Observable<AppointmentAvailability> {
+    let params = new HttpParams().set('date', date);
+    if (workTypeIds.length) {
+      params = params.set('workTypes', workTypeIds.join(','));
+    }
 
     return this.http.get<AppointmentAvailability>(API_ENDPOINTS.orders.availability, { params });
   }

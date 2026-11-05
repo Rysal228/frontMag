@@ -76,7 +76,7 @@ export class AppointmentService {
     return this.appointmentApiService.setPaymentStatus(id, statusId);
   }
 
-  public getAvailability(date: string): Observable<AppointmentAvailability> {
-    return this.appointmentApiService.getAvailability(date);
+  public getAvailability(date: string, workTypeIds: readonly string[] = []): Observable<AppointmentAvailability> {
+    return this.appointmentApiService.getAvailability(date, workTypeIds);
   }
 }

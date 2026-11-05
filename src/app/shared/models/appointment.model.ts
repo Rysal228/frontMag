@@ -42,6 +42,7 @@ export type WorkStatus = {
 export type WorkType = {
   id: string;
   name: string;
+  estimatedMinutes?: number;
 };
 
 export type Appointment = {
@@ -123,7 +124,9 @@ export type AppointmentAvailability = {
   date: string;
   workingHours: AppointmentWorkingHours | null;
   appointmentDuration: number;
+  plannedDuration: number;
   slotInterval: number;
+  serviceCapacity: number;
   dayType: 'working' | 'nonWorking';
   availableSlots: string[];
   busySlots: TimeInterval[];
