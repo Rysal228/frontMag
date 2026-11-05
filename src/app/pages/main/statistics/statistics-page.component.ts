@@ -1,18 +1,32 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { catchError, forkJoin, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
 
 import { TuiAxes, TuiBar, TuiBarChart, TuiLineChart, TuiRingChart } from '@taiga-ui/addon-charts';
-import { TuiButton, TuiHint } from '@taiga-ui/core';
+import { TuiButton, TuiHint, TuiIcon } from '@taiga-ui/core';
+import { TuiPagination } from '@taiga-ui/kit';
 
 import { StatisticsApiService } from 'app/shared/api/statistics-api.service';
 import { FeedbackStatisticsDashboard, StatisticsDashboard, StatisticsPeriod } from 'app/shared/models/statistics.model';
 
+type StatisticsSelection = { days: StatisticsPeriod; page: number; reviewsOnly: boolean };
+
 @Component({
   selector: 'app-statistics-page',
   standalone: true,
-  imports: [RouterLink, TuiAxes, TuiBar, TuiBarChart, TuiButton, TuiHint, TuiLineChart, TuiRingChart],
+  imports: [
+    RouterLink,
+    TuiAxes,
+    TuiBar,
+    TuiBarChart,
+    TuiButton,
+    TuiHint,
+    TuiIcon,
+    TuiLineChart,
+    TuiPagination,
+    TuiRingChart,
+  ],
   templateUrl: './statistics-page.component.html',
   styleUrl: './statistics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,15 +34,19 @@ import { FeedbackStatisticsDashboard, StatisticsDashboard, StatisticsPeriod } fr
 export class StatisticsPageComponent {
   private readonly api = inject(StatisticsApiService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly selection$ = new Subject<StatisticsPeriod>();
+  private readonly selection$ = new Subject<StatisticsSelection>();
 
   protected readonly periods = signal<readonly StatisticsPeriod[]>([]);
   protected readonly period = signal<StatisticsPeriod | null>(null);
   protected readonly dashboard = signal<StatisticsDashboard | null>(null);
   protected readonly feedback = signal<FeedbackStatisticsDashboard | null>(null);
   protected readonly feedbackError = signal(false);
+  protected readonly reviewsLoading = signal(false);
+  protected readonly reviewsPageError = signal(false);
+  private readonly failedReviewsPage = signal<number | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
+  protected readonly stars = [1, 2, 3, 4, 5] as const;
 
   protected readonly trendPoints = computed<[number, number][]>(() =>
     (this.dashboard()?.ordersTrend ?? []).map((point, index): [number, number] => [index, point.count])
@@ -70,14 +88,20 @@ export class StatisticsPageComponent {
 
   protected readonly ratingCounts = computed(() => (this.feedback()?.distribution ?? []).map((item) => item.count));
   protected readonly ratingLabels = computed(() =>
-    (this.feedback()?.distribution ?? []).map((item) => `${item.rating} ★`)
+    (this.feedback()?.distribution ?? []).map((item) => String(item.rating))
   );
   protected readonly ratingMax = computed(() => Math.max(1, ...this.ratingCounts()));
   protected readonly ratingYLabels = computed(() => {
     const max = this.ratingMax();
     return max === 1 ? ['0', '1'] : ['0', String(Math.ceil(max / 2)), String(max)];
   });
-  protected readonly outcomeCounts = computed(() => (this.feedback()?.byOutcome ?? []).map((item) => item.count));
+  protected readonly sentimentCounts = computed(() => {
+    const distribution = this.feedback()?.distribution ?? [];
+    return [
+      distribution.filter((item) => item.rating >= 4).reduce((sum, item) => sum + item.count, 0),
+      distribution.filter((item) => item.rating <= 3).reduce((sum, item) => sum + item.count, 0),
+    ];
+  });
 
   protected readonly formatRubles = (value: number): string =>
     new Intl.NumberFormat('ru-RU', {
@@ -86,15 +110,12 @@ export class StatisticsPageComponent {
       maximumFractionDigits: 0,
     }).format(value);
 
-  protected readonly ratingStars = (rating: number): string =>
-    '★'.repeat(Math.max(0, Math.min(5, rating))) + '☆'.repeat(Math.max(0, 5 - rating));
-
   protected readonly ratingHeight = (count: number): number => (count / this.ratingMax()) * 100;
 
   protected readonly ratingHint = (rating: number, count: number): string => {
     const category = new Intl.PluralRules('ru-RU').select(count);
     const noun = category === 'one' ? 'оценка' : category === 'few' ? 'оценки' : 'оценок';
-    return `${rating} ★ — ${count} ${noun}`;
+    return `${rating} из 5 — ${count} ${noun}`;
   };
 
   protected readonly outcomeLabel = (outcome: 'closed' | 'cancelled'): string =>
@@ -123,13 +144,31 @@ export class StatisticsPageComponent {
   constructor() {
     this.selection$
       .pipe(
-        tap(() => {
-          this.isLoading.set(true);
-          this.hasError.set(false);
-          this.feedbackError.set(false);
+        tap(({ reviewsOnly }) => {
+          this.reviewsPageError.set(false);
+          if (reviewsOnly) {
+            this.reviewsLoading.set(true);
+          } else {
+            this.isLoading.set(true);
+            this.reviewsLoading.set(false);
+            this.failedReviewsPage.set(null);
+            this.hasError.set(false);
+            this.feedbackError.set(false);
+          }
         }),
-        switchMap((days) =>
-          forkJoin({
+        switchMap(({ days, page, reviewsOnly }) => {
+          if (reviewsOnly) {
+            return this.api.getFeedbackDashboard(days, page).pipe(
+              map((feedback) => ({ reviewsOnly, orders: null, feedback })),
+              catchError(() => {
+                this.reviewsPageError.set(true);
+                this.failedReviewsPage.set(page);
+                return of({ reviewsOnly, orders: null, feedback: null });
+              })
+            );
+          }
+
+          return forkJoin({
             orders: this.api.getDashboard(days),
             feedback: this.api.getFeedbackDashboard(days).pipe(
               catchError(() => {
@@ -138,18 +177,27 @@ export class StatisticsPageComponent {
               })
             ),
           }).pipe(
+            map(({ orders, feedback }) => ({ reviewsOnly, orders, feedback })),
             catchError(() => {
               this.hasError.set(true);
-              return of(null);
+              return of({ reviewsOnly, orders: null, feedback: null });
             })
-          )
-        ),
+          );
+        }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((response) => {
-        this.dashboard.set(response?.orders ?? null);
-        this.feedback.set(response?.feedback ?? null);
-        this.isLoading.set(false);
+        if (response.reviewsOnly) {
+          if (response.feedback) {
+            this.feedback.set(response.feedback);
+            this.failedReviewsPage.set(null);
+          }
+          this.reviewsLoading.set(false);
+        } else {
+          this.dashboard.set(response.orders);
+          this.feedback.set(response.feedback);
+          this.isLoading.set(false);
+        }
       });
 
     this.loadPeriods();
@@ -174,7 +222,7 @@ export class StatisticsPageComponent {
             this.isLoading.set(false);
             return;
           }
-          this.selection$.next(chosen);
+          this.selection$.next({ days: chosen, page: 1, reviewsOnly: false });
         },
         error: () => {
           this.periods.set([]);
@@ -190,7 +238,34 @@ export class StatisticsPageComponent {
   protected setPeriod(days: StatisticsPeriod): void {
     if (this.periods().includes(days) && this.period() !== days) {
       this.period.set(days);
-      this.selection$.next(days);
+      this.selection$.next({ days, page: 1, reviewsOnly: false });
+    }
+  }
+
+  protected onReviewsPageChange(pageIndex: number): void {
+    const days = this.period();
+    const pagination = this.feedback()?.reviewsPagination;
+    const page = pageIndex + 1;
+    if (
+      days === null ||
+      !pagination ||
+      this.isLoading() ||
+      this.reviewsLoading() ||
+      page < 1 ||
+      page > pagination.totalPages ||
+      page === pagination.page
+    ) {
+      return;
+    }
+
+    this.selection$.next({ days, page, reviewsOnly: true });
+  }
+
+  protected retryReviewsPage(): void {
+    const days = this.period();
+    const page = this.failedReviewsPage();
+    if (days !== null && page !== null && !this.reviewsLoading()) {
+      this.selection$.next({ days, page, reviewsOnly: true });
     }
   }
 
@@ -201,7 +276,7 @@ export class StatisticsPageComponent {
   protected retryFeedback(): void {
     const days = this.period();
     if (days !== null) {
-      this.selection$.next(days);
+      this.selection$.next({ days, page: 1, reviewsOnly: false });
     }
   }
 }

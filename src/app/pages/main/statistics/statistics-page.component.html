@@ -181,10 +181,7 @@
 
     <section class="feedback-section" aria-labelledby="feedback-heading">
       <div class="feedback-section-heading">
-        <div>
-          <h2 id="feedback-heading">Оценки и отзывы</h2>
-          <p>Оценки клиентов после выдачи автомобиля или отмены заказа за выбранный период</p>
-        </div>
+        <h2 id="feedback-heading">Оценки и отзывы</h2>
       </div>
 
       @if (feedbackError()) {
@@ -254,32 +251,31 @@
 
           <article class="chart-card">
             <div class="chart-heading">
-              <h3>Оценки по исходам заказов</h3>
-              <p>Сравнение успешно завершённых и отменённых заказов</p>
+              <h3>Положительные и отрицательные отзывы</h3>
             </div>
             @if (reviews.summary.ratings) {
-              <div class="status-chart">
-                <tui-ring-chart size="l" [value]="outcomeCounts()">
+              <div class="status-chart feedback-sentiment-chart">
+                <tui-ring-chart size="l" [value]="sentimentCounts()">
                   <span class="ring-total">{{ reviews.summary.ratings }}</span>
-                  <span>оценок</span>
+                  <span>отзывов</span>
                 </tui-ring-chart>
                 <ul class="legend feedback-outcome-legend">
-                  @for (item of reviews.byOutcome; track item.code; let index = $index) {
-                    <li>
-                      <span
-                        class="legend-dot"
-                        [style.background]="'var(--tui-chart-categorical-' + index.toString().padStart(2, '0') + ')'"
-                      ></span>
-                      <div class="feedback-outcome-description">
-                        <span class="legend-name">{{ outcomeLabel(item.code) }}</span>
-                        <small>
-                          {{ item.count ? item.averageRating + ' / 5' : '—' }} в среднем · {{ item.highPercent }}%
-                          высоких
-                        </small>
-                      </div>
-                      <strong>{{ item.count }}</strong>
-                    </li>
-                  }
+                  <li>
+                    <span class="legend-dot feedback-sentiment-positive"></span>
+                    <div class="feedback-outcome-description">
+                      <span class="legend-name">Положительные</span>
+                      <small>4–5 звёзд</small>
+                    </div>
+                    <strong>{{ sentimentCounts()[0] }}</strong>
+                  </li>
+                  <li>
+                    <span class="legend-dot feedback-sentiment-negative"></span>
+                    <div class="feedback-outcome-description">
+                      <span class="legend-name">Отрицательные</span>
+                      <small>1–3 звезды</small>
+                    </div>
+                    <strong>{{ sentimentCounts()[1] }}</strong>
+                  </li>
                 </ul>
               </div>
             } @else {
@@ -291,12 +287,16 @@
         <article class="chart-card feedback-reviews">
           <div class="chart-heading">
             <h3>Последние отзывы</h3>
-            <p>До 10 последних оценок за выбранный период</p>
+            <p>Всего за период: {{ reviews.reviewsPagination.totalCount }}</p>
           </div>
           @if (reviews.recentReviews.length) {
-            <div class="feedback-review-list">
+            <div
+              class="feedback-review-list"
+              [class.feedback-review-list_loading]="reviewsLoading()"
+              [attr.aria-busy]="reviewsLoading()"
+            >
               @for (item of reviews.recentReviews; track item.orderId) {
-                <div class="feedback-review" [class.feedback-review_low]="item.band === 'low'">
+                <div class="feedback-review" [class.feedback-review_low]="item.rating <= 3">
                   <div class="feedback-review-head">
                     <div class="feedback-review-title">
                       <a [routerLink]="['/appointments', item.orderId]">Заказ №{{ item.orderNumber }}</a>
@@ -304,10 +304,12 @@
                     </div>
                     <div
                       class="feedback-review-score"
-                      [class.feedback-review-score_low]="item.band === 'low'"
+                      [class.feedback-review-score_low]="item.rating <= 3"
                       [attr.aria-label]="'Оценка ' + item.rating + ' из 5'"
                     >
-                      {{ ratingStars(item.rating) }}
+                      @for (star of stars; track star) {
+                        <tui-icon [icon]="star <= item.rating ? '@tui.star-filled' : '@tui.star'" />
+                      }
                     </div>
                   </div>
                   <div class="feedback-review-meta">
@@ -325,6 +327,23 @@
                 </div>
               }
             </div>
+            @if (reviews.reviewsPagination.totalPages > 1) {
+              <nav class="feedback-reviews-pagination" aria-label="Страницы отзывов">
+                <tui-pagination
+                  [length]="reviews.reviewsPagination.totalPages"
+                  [index]="reviews.reviewsPagination.page - 1"
+                  (indexChange)="onReviewsPageChange($event)"
+                />
+              </nav>
+            }
+            @if (reviewsPageError()) {
+              <div class="feedback-page-alert" role="alert">
+                <span>Не удалось загрузить страницу отзывов.</span>
+                <button tuiButton size="s" appearance="outline" type="button" (click)="retryReviewsPage()">
+                  Повторить
+                </button>
+              </div>
+            }
           } @else {
             <p class="empty-state">Пока никто не оставил отзыв за выбранный период</p>
           }

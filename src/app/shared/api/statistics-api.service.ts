@@ -29,9 +29,9 @@ export class StatisticsApiService {
     });
   }
 
-  public getFeedbackDashboard(days: StatisticsPeriod): Observable<FeedbackStatisticsDashboard> {
+  public getFeedbackDashboard(days: StatisticsPeriod, page = 1): Observable<FeedbackStatisticsDashboard> {
     return this.http.get<FeedbackStatisticsDashboard>(API_ENDPOINTS.feedback.statistics, {
-      params: new HttpParams().set('days', days),
+      params: new HttpParams().set('days', days).set('page', page),
     });
   }
 }
