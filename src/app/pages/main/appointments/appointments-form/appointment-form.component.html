@@ -78,6 +78,13 @@
         </tui-textfield>
       </app-form-field>
 
+      @if (plannedDuration(); as duration) {
+        <p class="hint duration-hint">
+          Плановое время приёмки и работ: {{ formatDuration(duration) }}.
+          Фактическое время может отличаться.
+        </p>
+      }
+
       <app-form-field label="Краткое описание">
         <tui-textfield>
           <textarea tuiTextarea formControlName="description" placeholder="Опишите, что необходимо сделать"></textarea>

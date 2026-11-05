@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { Subject, catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap, tap } from 'rxjs';
 
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiOption, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
@@ -68,6 +68,7 @@ export class AppointmentFormComponent {
   protected readonly hasAvailabilityError = signal(false);
   protected readonly timeOptions = signal<SelectOption[]>([]);
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
+  protected readonly plannedDuration = signal<number | null>(null);
   protected readonly today = TuiDay.currentLocal();
 
   protected readonly selectedWorksControl = new FormControl<WorkType[]>([], { nonNullable: true });
@@ -101,24 +102,32 @@ export class AppointmentFormComponent {
       this.workTypeSuggestions.set([...items]);
     });
 
-    this.form.controls.date.valueChanges
+    combineLatest([
+      this.form.controls.date.valueChanges.pipe(startWith(this.form.controls.date.value), distinctUntilChanged()),
+      this.selectedWorksControl.valueChanges.pipe(startWith(this.selectedWorksControl.value)),
+    ])
       .pipe(
-        distinctUntilChanged(),
+        debounceTime(100),
         tap(() => {
           this.form.controls.time.setValue('', { emitEvent: false });
           this.timeOptions.set([]);
           this.dayType.set(null);
+          this.plannedDuration.set(null);
           this.hasAvailabilityError.set(false);
         }),
-        switchMap((date) => {
+        switchMap(([date, works]) => {
           if (!date) {
             return of([] as SelectOption[]);
           }
 
           this.isLoadingSlots.set(true);
+          const workIds = [...new Set(works.filter((work) => this.workTypesById.has(work.id)).map((work) => work.id))];
 
-          return this.appointmentService.getAvailability(date).pipe(
-            tap((availability) => this.dayType.set(availability.dayType)),
+          return this.appointmentService.getAvailability(date, workIds).pipe(
+            tap((availability) => {
+              this.dayType.set(availability.dayType);
+              this.plannedDuration.set(availability.plannedDuration);
+            }),
             map((availability) => availability.availableSlots.map((time) => ({ value: time, label: time }))),
             catchError(() => {
               this.hasAvailabilityError.set(true);
@@ -202,6 +211,13 @@ export class AppointmentFormComponent {
 
   private isKnownWorkType(value: unknown): boolean {
     return this.isWorkType(value) && this.workTypesById.has(value.id);
+  }
+
+  protected formatDuration(minutes: number): string {
+    const hours = Math.floor(minutes / 60);
+    const remainder = minutes % 60;
+    if (!hours) return `${remainder} мин`;
+    return remainder ? `${hours} ч ${remainder} мин` : `${hours} ч`;
   }
 
   protected save(): void {
