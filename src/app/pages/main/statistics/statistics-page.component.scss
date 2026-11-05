@@ -190,6 +190,11 @@
   overflow-wrap: anywhere;
 }
 
+.statistics-chart-hint {
+  display: grid;
+  gap: 4px;
+}
+
 .occupancy-axes {
   height: 280px;
 }
@@ -255,6 +260,10 @@
   font-size: 13px;
 }
 
+.feedback-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .feedback-metrics .metric-card {
   border-top-color: var(--tui-chart-categorical-01);
 }
@@ -293,7 +302,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: help;
+  cursor: default;
 }
 
 .feedback-rating-column tui-bar {
@@ -438,6 +447,10 @@
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .feedback-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 680px) {
@@ -455,6 +468,10 @@
 
   .feedback-charts,
   .feedback-review-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feedback-metrics {
     grid-template-columns: minmax(0, 1fr);
   }
 
