@@ -81,6 +81,12 @@ export type FeedbackStatisticsDashboard = {
     highPercent: number;
   }[];
   recentReviews: FeedbackReview[];
+  reviewsPagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+  };
 };
 
 export type MechanicStatistics = {

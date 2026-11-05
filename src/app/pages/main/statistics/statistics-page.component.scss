@@ -254,18 +254,8 @@
   letter-spacing: -0.5px;
 }
 
-.feedback-section-heading p {
-  margin: 0;
-  color: var(--tui-text-secondary);
-  font-size: 13px;
-}
-
 .feedback-metrics {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.feedback-metrics .metric-card {
-  border-top-color: var(--tui-chart-categorical-01);
 }
 
 .feedback-charts {
@@ -326,6 +316,19 @@
   min-width: 210px;
 }
 
+.feedback-sentiment-chart {
+  --tui-chart-categorical-00: var(--tui-text-positive);
+  --tui-chart-categorical-01: var(--tui-text-negative);
+}
+
+.feedback-sentiment-positive {
+  background: var(--tui-text-positive);
+}
+
+.feedback-sentiment-negative {
+  background: var(--tui-text-negative);
+}
+
 .feedback-outcome-description {
   display: grid;
   flex: 1;
@@ -342,6 +345,28 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.feedback-review-list_loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.feedback-reviews-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.feedback-page-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  color: var(--tui-text-negative);
+  font-size: 13px;
 }
 
 .feedback-review {
@@ -392,10 +417,15 @@
 }
 
 .feedback-review-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   color: var(--tui-text-positive);
   white-space: nowrap;
-  font-size: 17px;
-  letter-spacing: 1px;
+}
+
+.feedback-review-score tui-icon {
+  font-size: 18px;
 }
 
 .feedback-review-score_low {
