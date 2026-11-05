@@ -11,6 +11,9 @@ import { StatisticsApiService } from 'app/shared/api/statistics-api.service';
 import { FeedbackStatisticsDashboard, StatisticsDashboard, StatisticsPeriod } from 'app/shared/models/statistics.model';
 
 type StatisticsSelection = { days: StatisticsPeriod; page: number; reviewsOnly: boolean };
+type ReviewSentiment = { band: 'high' | 'neutral' | 'low'; label: string; range: string; count: number };
+
+const ratingRange = (from: number, to: number): string => (from === to ? `${from} из 5` : `${from}–${to} из 5`);
 
 @Component({
   selector: 'app-statistics-page',
@@ -95,13 +98,48 @@ export class StatisticsPageComponent {
     const max = this.ratingMax();
     return max === 1 ? ['0', '1'] : ['0', String(Math.ceil(max / 2)), String(max)];
   });
-  protected readonly sentimentCounts = computed(() => {
-    const distribution = this.feedback()?.distribution ?? [];
-    return [
-      distribution.filter((item) => item.rating >= 4).reduce((sum, item) => sum + item.count, 0),
-      distribution.filter((item) => item.rating <= 3).reduce((sum, item) => sum + item.count, 0),
+  protected readonly reviewSentiments = computed<ReviewSentiment[]>(() => {
+    const feedback = this.feedback();
+    if (!feedback) {
+      return [];
+    }
+
+    const { lowMax, highMin } = feedback.thresholds;
+    const countInRange = (from: number, to: number): number =>
+      feedback.distribution.reduce(
+        (total, item) => total + (item.rating >= from && item.rating <= to ? item.count : 0),
+        0
+      );
+    const sentiments: ReviewSentiment[] = [
+      {
+        band: 'high',
+        label: 'Положительные',
+        range: ratingRange(highMin, 5),
+        count: countInRange(highMin, 5),
+      },
     ];
+
+    if (highMin > lowMax + 1) {
+      sentiments.push({
+        band: 'neutral',
+        label: 'Нейтральные',
+        range: ratingRange(lowMax + 1, highMin - 1),
+        count: countInRange(lowMax + 1, highMin - 1),
+      });
+    }
+
+    sentiments.push({
+      band: 'low',
+      label: 'Отрицательные',
+      range: ratingRange(1, lowMax),
+      count: countInRange(1, lowMax),
+    });
+    return sentiments;
   });
+  protected readonly sentimentCounts = computed(() => this.reviewSentiments().map((item) => item.count));
+  protected readonly hasNeutralSentiment = computed(() =>
+    this.reviewSentiments().some((item) => item.band === 'neutral')
+  );
 
   protected readonly formatRubles = (value: number): string =>
     new Intl.NumberFormat('ru-RU', {
