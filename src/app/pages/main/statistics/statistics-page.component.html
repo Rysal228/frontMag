@@ -296,7 +296,7 @@
               [attr.aria-busy]="reviewsLoading()"
             >
               @for (item of reviews.recentReviews; track item.orderId) {
-                <div class="feedback-review" [class.feedback-review_low]="item.band === 'low'">
+                <div class="feedback-review" [class.feedback-review_low]="item.rating <= 3">
                   <div class="feedback-review-head">
                     <div class="feedback-review-title">
                       <a [routerLink]="['/appointments', item.orderId]">Заказ №{{ item.orderNumber }}</a>
@@ -304,7 +304,7 @@
                     </div>
                     <div
                       class="feedback-review-score"
-                      [class.feedback-review-score_low]="item.band === 'low'"
+                      [class.feedback-review-score_low]="item.rating <= 3"
                       [attr.aria-label]="'Оценка ' + item.rating + ' из 5'"
                     >
                       @for (star of stars; track star) {
