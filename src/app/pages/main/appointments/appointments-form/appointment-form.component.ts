@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subject, catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap, tap } from 'rxjs';
+import { Subject, catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap, tap, timer } from 'rxjs';
 
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiOption, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
@@ -109,9 +109,6 @@ export class AppointmentFormComponent {
       this.selectedWorksControl.valueChanges.pipe(startWith(this.selectedWorksControl.value)),
     ])
       .pipe(
-        // Блокируем отправку сразу после изменения работ, ещё до debounce.
-        tap(([date]) => this.isLoadingSlots.set(Boolean(date))),
-        debounceTime(100),
         tap(([date]) => {
           // Изменение даты сбрасывает время, но изменение работ — нет.
           // При смене работ сохраняем выбранный слот до ответа сервера.
@@ -133,7 +130,10 @@ export class AppointmentFormComponent {
           this.isLoadingSlots.set(true);
           const workIds = [...new Set(works.filter((work) => this.workTypesById.has(work.id)).map((work) => work.id))];
 
-          return this.appointmentService.getAvailability(date, workIds).pipe(
+          // switchMap отменяет устаревший запрос сразу при изменении работ.
+          // Небольшая задержка перед новым GET не оставляет окно для старого ответа.
+          return timer(100).pipe(
+            switchMap(() => this.appointmentService.getAvailability(date, workIds)),
             tap((availability) => {
               this.dayType.set(availability.dayType);
               this.plannedDuration.set(availability.plannedDuration);
@@ -145,7 +145,7 @@ export class AppointmentFormComponent {
               // Отправка формы заблокирована, пока ответ не получен.
               return of(null);
             }),
-            finalize(() => this.isLoadingSlots.set(false))
+            finalize(() => this.isLoadingSlots.set(false)),
           );
         }),
         takeUntilDestroyed(this.destroyRef)
