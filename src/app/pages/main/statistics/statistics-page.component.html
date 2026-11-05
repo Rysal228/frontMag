@@ -251,31 +251,33 @@
 
           <article class="chart-card">
             <div class="chart-heading">
-              <h3>Положительные и отрицательные отзывы</h3>
+              <h3>Категории отзывов</h3>
             </div>
             @if (reviews.summary.ratings) {
-              <div class="status-chart feedback-sentiment-chart">
+              <div
+                class="status-chart feedback-sentiment-chart"
+                [class.feedback-sentiment-chart_has-neutral]="hasNeutralSentiment()"
+              >
                 <tui-ring-chart size="l" [value]="sentimentCounts()">
                   <span class="ring-total">{{ reviews.summary.ratings }}</span>
                   <span>отзывов</span>
                 </tui-ring-chart>
                 <ul class="legend feedback-outcome-legend">
-                  <li>
-                    <span class="legend-dot feedback-sentiment-positive"></span>
-                    <div class="feedback-outcome-description">
-                      <span class="legend-name">Положительные</span>
-                      <small>4–5 звёзд</small>
-                    </div>
-                    <strong>{{ sentimentCounts()[0] }}</strong>
-                  </li>
-                  <li>
-                    <span class="legend-dot feedback-sentiment-negative"></span>
-                    <div class="feedback-outcome-description">
-                      <span class="legend-name">Отрицательные</span>
-                      <small>1–3 звезды</small>
-                    </div>
-                    <strong>{{ sentimentCounts()[1] }}</strong>
-                  </li>
+                  @for (sentiment of reviewSentiments(); track sentiment.band) {
+                    <li>
+                      <span
+                        class="legend-dot"
+                        [class.feedback-sentiment-positive]="sentiment.band === 'high'"
+                        [class.feedback-sentiment-neutral]="sentiment.band === 'neutral'"
+                        [class.feedback-sentiment-negative]="sentiment.band === 'low'"
+                      ></span>
+                      <div class="feedback-outcome-description">
+                        <span class="legend-name">{{ sentiment.label }}</span>
+                        <small>{{ sentiment.range }}</small>
+                      </div>
+                      <strong>{{ sentiment.count }}</strong>
+                    </li>
+                  }
                 </ul>
               </div>
             } @else {
@@ -296,7 +298,11 @@
               [attr.aria-busy]="reviewsLoading()"
             >
               @for (item of reviews.recentReviews; track item.orderId) {
-                <div class="feedback-review" [class.feedback-review_low]="item.rating <= 3">
+                <div
+                  class="feedback-review"
+                  [class.feedback-review_low]="item.band === 'low'"
+                  [class.feedback-review_neutral]="item.band === 'neutral'"
+                >
                   <div class="feedback-review-head">
                     <div class="feedback-review-title">
                       <a [routerLink]="['/appointments', item.orderId]">Заказ №{{ item.orderNumber }}</a>
@@ -304,7 +310,8 @@
                     </div>
                     <div
                       class="feedback-review-score"
-                      [class.feedback-review-score_low]="item.rating <= 3"
+                      [class.feedback-review-score_low]="item.band === 'low'"
+                      [class.feedback-review-score_neutral]="item.band === 'neutral'"
                       [attr.aria-label]="'Оценка ' + item.rating + ' из 5'"
                     >
                       @for (star of stars; track star) {

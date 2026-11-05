@@ -321,8 +321,17 @@
   --tui-chart-categorical-01: var(--tui-text-negative);
 }
 
+.feedback-sentiment-chart_has-neutral {
+  --tui-chart-categorical-01: var(--tui-text-secondary);
+  --tui-chart-categorical-02: var(--tui-text-negative);
+}
+
 .feedback-sentiment-positive {
   background: var(--tui-text-positive);
+}
+
+.feedback-sentiment-neutral {
+  background: var(--tui-text-secondary);
 }
 
 .feedback-sentiment-negative {
@@ -384,6 +393,10 @@
   border-left: 3px solid var(--tui-text-negative);
 }
 
+.feedback-review_neutral {
+  border-left: 3px solid var(--tui-text-secondary);
+}
+
 .feedback-review-head {
   display: flex;
   align-items: flex-start;
@@ -430,6 +443,10 @@
 
 .feedback-review-score_low {
   color: var(--tui-text-negative);
+}
+
+.feedback-review-score_neutral {
+  color: var(--tui-text-secondary);
 }
 
 .feedback-review-meta {
