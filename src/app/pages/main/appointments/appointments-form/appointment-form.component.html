@@ -28,13 +28,15 @@
           formControlName="time"
           placeholder="Выберите время"
           [options]="timeOptions()"
-          [disabled]="isLoadingSlots() || !form.controls.date.value"
+          [disabled]="isLoadingSlots() || hasAvailabilityError() || !form.controls.date.value"
         />
 
         @if (hasAvailabilityError()) {
           <p class="error">Не удалось загрузить доступное время. Попробуйте выбрать дату ещё раз.</p>
         } @else if (isLoadingSlots()) {
           <p class="hint">Загрузка доступного времени...</p>
+        } @else if (timeBecameUnavailable()) {
+          <p class="hint">После изменения работ выбранное время стало недоступно. Выберите другое.</p>
         } @else if (dayType() === 'nonWorking') {
           <p class="hint">Выбранная дата является выходным днём.</p>
         } @else if (form.controls.date.value && !timeOptions().length) {
@@ -95,7 +97,7 @@
         <p class="error">Не удалось создать запись. Попробуйте ещё раз.</p>
       }
 
-      <button tuiButton appearance="primary" type="submit" [disabled]="saving()">
+      <button tuiButton appearance="primary" type="submit" [disabled]="saving() || isLoadingSlots() || hasAvailabilityError()">
         {{ saving() ? 'Сохранение...' : 'Сохранить' }}
       </button>
     </form>

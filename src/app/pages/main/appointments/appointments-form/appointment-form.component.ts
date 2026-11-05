@@ -56,6 +56,7 @@ export class AppointmentFormComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly workTypeSearch$ = new Subject<string>();
   private readonly workTypesById = new Map<string, WorkType>();
+  private lastAvailabilityDate: string | null = null;
 
   public readonly cars = input<readonly Car[]>([]);
   public readonly workTypes = input<readonly WorkType[]>([]);
@@ -66,6 +67,7 @@ export class AppointmentFormComponent {
   protected readonly isLoadingSlots = signal(false);
   protected readonly hasError = signal(false);
   protected readonly hasAvailabilityError = signal(false);
+  protected readonly timeBecameUnavailable = signal(false);
   protected readonly timeOptions = signal<SelectOption[]>([]);
   protected readonly dayType = signal<'working' | 'nonWorking' | null>(null);
   protected readonly plannedDuration = signal<number | null>(null);
@@ -107,13 +109,21 @@ export class AppointmentFormComponent {
       this.selectedWorksControl.valueChanges.pipe(startWith(this.selectedWorksControl.value)),
     ])
       .pipe(
+        // Блокируем отправку сразу после изменения работ, ещё до debounce.
+        tap(([date]) => this.isLoadingSlots.set(Boolean(date))),
         debounceTime(100),
-        tap(() => {
-          this.form.controls.time.setValue('', { emitEvent: false });
-          this.timeOptions.set([]);
+        tap(([date]) => {
+          // Изменение даты сбрасывает время, но изменение работ — нет.
+          // При смене работ сохраняем выбранный слот до ответа сервера.
+          if (date !== this.lastAvailabilityDate) {
+            this.form.controls.time.setValue('', { emitEvent: false });
+            this.timeOptions.set([]);
+          }
+          this.lastAvailabilityDate = date;
           this.dayType.set(null);
           this.plannedDuration.set(null);
           this.hasAvailabilityError.set(false);
+          this.timeBecameUnavailable.set(false);
         }),
         switchMap(([date, works]) => {
           if (!date) {
@@ -131,14 +141,24 @@ export class AppointmentFormComponent {
             map((availability) => availability.availableSlots.map((time) => ({ value: time, label: time }))),
             catchError(() => {
               this.hasAvailabilityError.set(true);
-              return of([] as SelectOption[]);
+              // Не затираем время/варианты при временной ошибке проверки.
+              // Отправка формы заблокирована, пока ответ не получен.
+              return of(null);
             }),
             finalize(() => this.isLoadingSlots.set(false))
           );
         }),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((options) => this.timeOptions.set(options));
+      .subscribe((options) => {
+        if (options === null) return;
+        this.timeOptions.set(options);
+        const selectedTime = this.form.controls.time.value;
+        if (selectedTime && !options.some(({ value }) => value === selectedTime)) {
+          this.form.controls.time.setValue('', { emitEvent: false });
+          this.timeBecameUnavailable.set(true);
+        }
+      });
 
     this.workTypeSearch$
       .pipe(
@@ -173,6 +193,10 @@ export class AppointmentFormComponent {
         this.selectedWorksControl.setValue(safeItems, { emitEvent: false });
       }
       this.selectedWorks.set(safeItems);
+    });
+
+    this.form.controls.time.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((time) => {
+      if (time) this.timeBecameUnavailable.set(false);
     });
   }
 
@@ -221,7 +245,7 @@ export class AppointmentFormComponent {
   }
 
   protected save(): void {
-    if (this.form.invalid || this.saving()) {
+    if (this.form.invalid || this.saving() || this.isLoadingSlots() || this.hasAvailabilityError()) {
       this.form.markAllAsTouched();
       return;
     }
